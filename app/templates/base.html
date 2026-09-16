@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Banco Digital{% endblock %}</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f4f6f9; color: #1a202c; }
+    nav { background: #1a365d; padding: 12px 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    nav a { color: #fff; text-decoration: none; font-weight: 600; }
+    main { max-width: 900px; margin: 32px auto; padding: 0 16px; }
+    .cartao { background: #fff; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+    label { display: block; margin: 12px 0 4px; font-weight: 600; }
+    input, select { width: 100%; padding: 8px; border: 1px solid #cbd5e0; border-radius: 6px; box-sizing: border-box; }
+    button { margin-top: 16px; padding: 10px 16px; background: #2b6cb0; color: #fff; border: 0; border-radius: 6px; cursor: pointer; }
+    .flash { padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; }
+    .flash.erro { background: #fed7d7; color: #9b2c2c; }
+    .flash.sucesso { background: #c6f6d5; color: #22543d; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e2e8f0; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('dashboard.index') }}">Banco Digital</a>
+    {% if session.get('cliente_id') %}
+      <a href="{{ url_for('pix.transferir') }}">PIX</a>
+      <a href="{{ url_for('emprestimo.simular') }}">Empréstimo</a>
+      <a href="{{ url_for('tarifas.consultar') }}">Tarifas</a>
+      <a href="{{ url_for('credito.consultar') }}">Crédito</a>
+      <a href="{{ url_for('auth.logout') }}" style="margin-left:auto;">Sair</a>
+    {% endif %}
+  </nav>
+  <main>
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% for categoria, mensagem in mensagens %}
+        <div class="flash {{ categoria }}">{{ mensagem }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block conteudo %}{% endblock %}
+  </main>
+</body>
+</html>

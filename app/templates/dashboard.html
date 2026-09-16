@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titulo %}Dashboard{% endblock %}
+{% block conteudo %}
+<div class="cartao">
+  <h2>Olá, {{ cliente.nome }}!</h2>
+  <p><strong>Saldo:</strong> R$ {{ "%.2f"|format(cliente.saldo) }}</p>
+  <p><strong>Score:</strong> {{ cliente.score }}</p>
+</div>
+<div class="cartao" style="margin-top:16px;">
+  <h3>Extrato</h3>
+  {% if transacoes %}
+  <table>
+    <tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Valor</th></tr>
+    {% for t in transacoes %}
+    <tr><td>{{ t.data }}</td><td>{{ t.tipo }}</td><td>{{ t.descricao }}</td><td>R$ {{ "%.2f"|format(t.valor) }}</td></tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p>Nenhuma transação.</p>
+  {% endif %}
+</div>
+{% endblock %}
