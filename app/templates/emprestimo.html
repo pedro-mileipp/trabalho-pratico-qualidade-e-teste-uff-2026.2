@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titulo %}Empréstimo{% endblock %}
+{% block conteudo %}
+<div class="cartao">
+  <h2>Simulação de Empréstimo</h2>
+  <form method="post">
+    <label>Valor do empréstimo (R$)</label>
+    <input type="number" name="principal" step="0.01" min="0.01" required>
+    <label>Prazo (meses)</label>
+    <input type="number" name="meses" min="2" max="60" required>
+    <label>Renda mensal (R$)</label>
+    <input type="number" name="renda" step="0.01" min="0" required>
+    <label>Sistema de amortização</label>
+    <select name="sistema">
+      <option value="price">Price</option>
+      <option value="sac">SAC</option>
+    </select>
+    <button type="submit">Simular</button>
+  </form>
+  {% if resultado %}
+    <h3>Resultado</h3>
+    {% if resultado.aprovado %}
+      <p><strong>Aprovado.</strong> 1ª parcela: R$ {{ "%.2f"|format(resultado.valor_parcela) }} · Total: R$ {{ "%.2f"|format(resultado.total_pago) }}</p>
+      <p>{{ resultado.numero_parcelas }} parcelas.</p>
+    {% else %}
+      <p>Não aprovado: {{ resultado.motivo }}</p>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block titulo %}Tarifas{% endblock %}
+{% block conteudo %}
+<div class="cartao">
+  <h2>Consulta de Tarifas</h2>
+  <form method="post">
+    <label>Tipo de conta</label>
+    <select name="tipo">
+      <option value="corrente">Corrente</option>
+      <option value="poupanca">Poupança</option>
+      <option value="premium">Premium</option>
+    </select>
+    <label>Saldo (R$)</label>
+    <input type="number" name="saldo" step="0.01" min="0" value="0">
+    <label>Transações no mês</label>
+    <input type="number" name="transacoes" min="0" value="0">
+    <label><input type="checkbox" name="pacote"> Possui pacote de serviços</label>
+    <button type="submit">Calcular</button>
+  </form>
+  {% if tarifa is not none %}
+    <p><strong>Tarifa mensal:</strong> R$ {{ "%.2f"|format(tarifa) }}</p>
+  {% endif %}
+</div>
+{% endblock %}

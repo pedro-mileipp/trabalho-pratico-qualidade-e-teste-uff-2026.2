@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block titulo %}Crédito{% endblock %}
+{% block conteudo %}
+<div class="cartao">
+  <h2>Análise de Crédito</h2>
+  <form method="post">
+    <label>Renda mensal (R$)</label>
+    <input type="number" name="renda" step="0.01" min="0" required>
+    <label>Valor solicitado (R$)</label>
+    <input type="number" name="valor" step="0.01" min="0" required>
+    <button type="submit">Analisar</button>
+  </form>
+  {% if resultado %}
+    <h3>Resultado</h3>
+    <p><strong>Situação:</strong> {{ resultado.situacao.value }}</p>
+    <p>Score: {{ resultado.score }} · Limite: R$ {{ "%.2f"|format(resultado.limite) }} · Motivo: {{ resultado.motivo }}</p>
+  {% endif %}
+</div>
+{% endblock %}

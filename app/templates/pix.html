@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titulo %}PIX{% endblock %}
+{% block conteudo %}
+<div class="cartao">
+  <h2>Transferência PIX</h2>
+  <form method="post">
+    <label>Chave</label>
+    <input name="chave" required>
+    <label>Tipo de chave</label>
+    <select name="tipo">
+      <option value="cpf">CPF</option>
+      <option value="email">E-mail</option>
+      <option value="telefone">Telefone</option>
+      <option value="aleatoria">Aleatória</option>
+    </select>
+    <label>Valor (R$)</label>
+    <input type="number" name="valor" step="0.01" min="0.01" required>
+    <button type="submit">Transferir</button>
+  </form>
+</div>
+{% endblock %}

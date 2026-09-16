@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titulo %}Registro{% endblock %}
+{% block conteudo %}
+<div class="cartao" style="max-width:400px;margin:auto;">
+  <h2>Criar conta</h2>
+  <form method="post">
+    <label>Nome</label>
+    <input type="text" name="nome" required>
+    <label>E-mail</label>
+    <input type="email" name="email" required>
+    <label>Senha</label>
+    <input type="password" name="senha" required>
+    <button type="submit">Cadastrar</button>
+  </form>
+  <p style="margin-top:16px;">Já tem conta? <a href="{{ url_for('auth.login') }}">Entrar</a></p>
+</div>
+{% endblock %}
