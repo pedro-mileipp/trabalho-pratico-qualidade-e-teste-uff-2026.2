@@ -80,6 +80,7 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 | `app/repositorios/` | Persistência (SQLite + memória) com interface injetável |
 | `app/servicos/` | Orquestração (auth, transações) |
 | `app/web/` | Rotas e telas (login, dashboard, PIX, empréstimo, tarifas, crédito) |
+| `tests/unit/` | Testes unitários (1 arquivo por classe de domínio) |
 | `docs/descricao_trabalho.md` | Enunciado do trabalho |
 | `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
 | `docs/aplicacao.md` | Documentação completa da aplicação e sua arquitetura |
