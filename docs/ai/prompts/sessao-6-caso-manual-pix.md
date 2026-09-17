@@ -40,3 +40,4 @@ A issue #8 pedia projetar e executar caso(s) de teste manual do PIX, com pré-co
 - **Artefato principal:** `docs/casos_manuais/caso_pix.md` — 12 casos (11 PASS, 1 FAIL), defeito #16 confirmado e documentado.
 - **Evidências:** 14 imagens em `docs/casos_manuais/evidencias/`.
 - **Issue #8:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/8
+- **PR #18:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/pull/18
