@@ -6,7 +6,7 @@
 | Data | 16/09/2026 |
 | Ferramenta | opencode (modelo `opencode-go/deepseek-v4-flash`) |
 | Atividade | Projetar e executar caso(s) de teste manual da funcionalidade PIX em `/pix` e documentar |
-| Artefatos | `docs/casos_manuais/caso_pix.md` + `docs/casos_manuais/evidencias/` (14 screenshots); link no `README.md`; issue #8 |
+| Artefatos | `docs/casos_manuais/caso_pix.md` + `docs/casos_manuais/evidencias/` (14 screenshots); link no `README.md`; PR #18 (fecha a issue #8) |
 
 ## Contexto
 
@@ -16,28 +16,82 @@ A issue #8 pedia projetar e executar caso(s) de teste manual do PIX, com pré-co
 
 > "Agora eu quero resolver a issue do teste manual atribuido a mim, planeje os passos que preciso realizar no teste manual e pense em um template de documento pra documentar o teste realizado por mim manualmente na interface."
 
-**Resposta da IA:** planejou o fluxo de preparação (subir a app com `DATABASE=/tmp/pix_teste.db`, criar conta, ajustar saldo via `sqlite3` — não há depósito pela UI e a conta nasce com saldo 0) e desenhou 14 casos de teste com partição de equivalência e valor-limite. Depois, com a aprovação do usuário, executou os casos via Selenium (Chrome headless) e documentou.
+## Resposta da IA — execução completa (passo a passo)
 
-## Decisões e execução
+A IA executou o fluxo inteiro de ponta a ponta, desde a análise do código até a abertura do PR:
 
-1. **Preparação:** app rodando com `DATABASE=/tmp/pix_teste.db`; conta `pix@teste.com` criada em `/registro`; saldo ajustado via `sqlite3` (R$ 10.000,00 e R$ 100,00 conforme o caso).
-2. **Execução (Selenium + Chrome headless):** 12 casos efetivamente executados na interface (TC-01 a TC-12), com 14 screenshots salvos em `docs/casos_manuais/evidencias/`. Resultado: **11 PASS e 1 FAIL**.
-3. **Falha (TC-12):** chave e-mail `a@b@c.com` (dois `@`) foi aceita e o valor debitado — confirma o defeito **#16** (e-mail com dois `@` aceito como válido). Documentada no caso manual com vínculo à issue.
-4. **Limitações registradas no documento:**
-   - Valor ≤ 0 é barrado pelo HTML5 (`min="0.01"`) antes do backend (TC-05).
-   - Limite: execução às 22h (período noturno, R$ 1.000,00) → TC-06 retornou "Operação fora do horário permitido."; o cenário diurno (> R$ 5.000,00) precisa ser executado entre 06h e 20h.
-   - Chave bloqueada não é alcançável pela UI na configuração padrão (lista vazia) — coberta por teste unitário.
-5. **Documentação:** `docs/casos_manuais/caso_pix.md` preenchido e link adicionado ao `README.md`.
+### 1. Análise da issue e do código
+
+1. Consultou a issue **#8** com `gh issue view 8` e identificou os critérios de aceite.
+2. Leu o `README.md`, `docs/plano_de_teste*.md`, `docs/defeitos_conhecidos.md` (documento interno de defeitos, gitignored) e os arquivos da funcionalidade: `app/dominio/pix.py` (regras), `app/web/routes/pix.py` (rota `/pix`), `app/templates/pix.html` (formulário), `app/servicos/transacoes.py` (serviço) e `app/db.py`/`app/config.py` (banco).
+3. Mapeou as regras de negócio relevantes ao teste manual: validação de chave por tipo (CPF com dígito verificador, e-mail, telefone 10/11 dígitos, aleatória de 32 chars), limites diurno R$ 5.000,00 (06h–20h) e noturno R$ 1.000,00 (20h–06h), checagem de saldo e o defeito conhecido **#16** (e-mail com dois `@` aceito).
+
+### 2. Planejamento dos casos de teste
+
+1. Identificou que a conta nasce com **saldo 0** e que **não há depósito pela UI** — logo, o saldo precisa ser ajustado diretamente no SQLite.
+2. Validou os dados de teste via script Python (geração/verificação de CPF válido): `529.982.247-25` (válido) e `123.456.789-00` (inválido).
+3. Desenhou **14 casos** (TC-01 a TC-14) com partição de equivalência e análise de valor-limite, cobrindo: PIX válido por cada tipo de chave, fronteira valor = saldo, chave inválida (CPF e tamanho de chave aleatória), valor ≤ 0, limite por horário, saldo insuficiente, acesso sem login e o cenário do defeito #16 (e-mail `a@b@c.com`).
+4. Apresentou o plano ao usuário e esclareceu duas decisões com perguntas objetivas: **quem executa** o teste (usuário escolheu "eu executo agora") e **como registrar evidências** (usuário escolheu "screenshots no repo").
+
+### 3. Preparação do ambiente (executada pela IA)
+
+1. Rodou `uv sync --all-extras` (auditou os 50 pacotes do `uv.lock`).
+2. Iniciou o servidor Flask em background com banco fora do workspace: `DATABASE=/tmp/pix_teste.db uv run flask --app app:create_app run`; confirmou o HTTP **200** em `/registro`.
+3. Criou a conta de teste **na interface** (via Selenium): nome `Teste PIX`, e-mail `pix@teste.com`, senha `senha123` em `/registro`.
+4. Ajustou o saldo via `sqlite3` (R$ 10.000,00 por padrão; R$ 100,00 nos casos de fronteira) e confirmou o saldo no dashboard (`Saldo: R$ 10000.00`).
+
+### 4. Execução dos casos na interface (via Selenium + Chrome headless)
+
+A IA escreveu um script Selenium que navega até `/pix`, preenche o formulário (chave, tipo, valor), submete e captura o corpo HTML da resposta + screenshot para cada caso. Executou os 12 casos efetivamente possíveis pela UI:
+
+| ID | Ação executada pela IA | Resultado obtido (capturado) | Status |
+|---|---|---|---|
+| TC-01 | PIX com CPF válido, valor R$ 100,00 | Redireciona ao dashboard, "Transferência realizada com sucesso.", saldo R$ 9.900,00, extrato `PIX cpf R$ -100,00` | PASS |
+| TC-02 | PIX com valor = saldo (R$ 100,00) | Sucesso, saldo final R$ 0,00 | PASS |
+| TC-03 | Chave CPF inválida (`123.456.789-00`) | "Chave PIX inválida.", saldo intacto | PASS |
+| TC-04 | Chave aleatória de 31 chars | "Chave PIX inválida.", saldo intacto | PASS |
+| TC-05 | Valor `0` (limite HTML5) | Formulário não submetido; mensagem de validação nativa do navegador (`min="0.01"`) | PASS |
+| TC-06 | Valor R$ 1.500,00 (executado às 22h, limite noturno R$ 1.000,00) | "Operação fora do horário permitido.", saldo intacto | PASS |
+| TC-07 | Saldo R$ 100,00, valor R$ 500,00 | "Saldo insuficiente.", saldo intacto | PASS |
+| TC-08 | Acesso a `/pix` sem sessão | Redirecionado para `/login` | PASS |
+| TC-09 | Chave e-mail válida, valor R$ 50,00 | Sucesso, saldo R$ 9.950,00 | PASS |
+| TC-10 | Chave telefone `(21) 99999-9999`, valor R$ 30,00 | Sucesso, saldo R$ 9.970,00 | PASS |
+| TC-11 | Chave aleatória de 32 chars, valor R$ 20,00 | Sucesso, saldo R$ 9.980,00 | PASS |
+| TC-12 | Chave e-mail `a@b@c.com` (dois `@`), valor R$ 25,00 | **Aceita indevidamente**: sucesso, saldo R$ 9.975,00 → confirma o defeito **#16** | **FAIL** |
+
+### 5. Evidências
+
+Salvou **14 screenshots** em `docs/casos_manuais/evidencias/` (1 do setup + 13 por caso), cada um nomeado por caso (ex.: `tc12-email-dois-arroba-DEFEITO16.png`).
+
+### 6. Documentação
+
+1. Escreveu `docs/casos_manuais/caso_pix.md` preenchido: identificação, pré-condições e preparação, dados de teste, tabela com os 12 casos (passos, entrada, esperado, obtido, status, evidência), defeitos encontrados (vínculo à issue #16), observações e conclusão.
+2. Adicionou o link do caso manual na tabela de estrutura do `README.md`.
+3. Registrou esta sessão no `docs/ai/AI-LOG.md` e criou este arquivo de sessão em `docs/ai/prompts/`.
+
+### 7. Entrega (git/GitHub)
+
+1. Criou a branch `docs/caso-manual-pix`.
+2. Commit `docs: caso de teste manual — PIX (issue #8)` (18 arquivos).
+3. `git push -u origin docs/caso-manual-pix`.
+4. Abriu o **PR #18** contra `main` via `gh pr create`, com corpo resumindo o trabalho e marcando os dois critérios de aceite da issue (checkboxes) e "Closes #8", atribuído a `alexandrelimaxs`.
+5. Registrou o link do PR no AI-LOG em commit separado contendo somente `docs/ai/` e atualizou o PR.
+
+## Limitações registradas no documento
+
+- Valor ≤ 0 é barrado pelo HTML5 (`min="0.01"`) antes de chegar ao backend (TC-05); o caminho do backend ("Valor inválido.") só é alcançado contornando a validação do navegador.
+- Limite: a execução ocorreu às 22h (período noturno, R$ 1.000,00) → TC-06 retornou "Operação fora do horário permitido."; o cenário diurno (> R$ 5.000,00) precisa ser executado entre 06h e 20h.
+- Chave bloqueada (TC-14) não é alcançável pela UI na configuração padrão (lista `chaves_bloqueadas` vazia, sem configuração via web) — coberta por teste unitário.
 
 ## Validação
 
-- Leituras do corpo HTML das páginas durante a execução confirmaram cada resultado obtido (mensagens flash, saldo e extrato).
-- `gh issue view 8` e conferência dos critérios de aceite (caso projetado/executado, arquivo criado, link no README).
-- Screenshots em `docs/casos_manuais/evidencias/` conferidos como evidência (presença e tamanho dos arquivos).
+- Cada resultado foi confirmado pelo **corpo HTML** da resposta (mensagens flash, saldo e extrato) capturado durante a execução do Selenium.
+- Screenshots conferidos como evidência (presença e tamanho dos arquivos em `docs/casos_manuais/evidencias/`).
+- Critérios de aceite da issue #8 conferidos com `gh issue view 8`; PR #18 confirmado com `gh pr view 18` (estado OPEN, branch `docs/caso-manual-pix`).
 
 ## Resultado
 
-- **Artefato principal:** `docs/casos_manuais/caso_pix.md` — 12 casos (11 PASS, 1 FAIL), defeito #16 confirmado e documentado.
+- **Artefato principal:** `docs/casos_manuais/caso_pix.md` — 12 casos executados na interface (**11 PASS, 1 FAIL**), defeito #16 confirmado e documentado.
 - **Evidências:** 14 imagens em `docs/casos_manuais/evidencias/`.
 - **Issue #8:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/8
 - **PR #18:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/pull/18
