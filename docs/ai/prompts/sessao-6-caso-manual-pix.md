@@ -79,6 +79,13 @@ Salvou **14 screenshots** durante a execução (1 do setup + 13 por caso) em `te
 4. Abriu o **PR #18** contra `main` via `gh pr create`, com corpo resumindo o trabalho e marcando os dois critérios de aceite da issue (checkboxes) e "Closes #8", atribuído a `alexandrelimaxs`.
 5. Registrou o link do PR no AI-LOG em commit separado contendo somente `docs/ai/` e atualizou o PR.
 
+### 8. Ajustes pós-abertura e merge (a pedido do usuário)
+
+1. **Reorganização:** moveu os artefatos de `docs/casos_manuais/` para `tests/testes_manuais/` (subpasta por teste → `tests/testes_manuais/pix/`) via `git mv` (histórico preservado) e atualizou as referências (README, `docs/plano_projeto.md`, AI-LOG e esta sessão).
+2. **Redução de escopo:** reduziu o caso a **4 casos representativos** (renumerados TC-01 a TC-04), removendo as evidências dos casos descartados.
+3. **Descrição do PR:** atualizou a descrição do **PR #18** com os 4 casos em tabela e **anexou as imagens de evidência** (URLs raw do branch `docs/caso-manual-pix`, conferidas na branch remota via `gh api`).
+4. **Merge:** registrou a atualização do AI-LOG em commit separado (`docs/ai/`) e **mergeou o PR #18** contra `main` (fecha a issue #8).
+
 ## Limitações registradas no documento
 
 - Valor ≤ 0 é barrado pelo HTML5 (`min="0.01"`) antes de chegar ao backend (TC-05); o caminho do backend ("Valor inválido.") só é alcançado contornando a validação do navegador.
@@ -94,6 +101,6 @@ Salvou **14 screenshots** durante a execução (1 do setup + 13 por caso) em `te
 ## Resultado
 
 - **Artefato principal:** `tests/testes_manuais/pix/caso_pix.md` — 12 cenários executados na interface, dos quais **4 casos representativos** documentados (**3 PASS, 1 FAIL**), defeito #16 confirmado e documentado.
-- **Evidências:** 6 imagens em `tests/testes_manuais/pix/evidencias/`.
-- **Issue #8:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/8
-- **PR #18:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/pull/18
+- **Evidências:** 6 imagens em `tests/testes_manuais/pix/evidencias/` (anexadas à descrição do PR #18).
+- **Issue #8:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/8 (fechada)
+- **PR #18:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/pull/18 (mergeado contra `main`)
