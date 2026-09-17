@@ -65,6 +65,7 @@ tests/                        # (a ser implementado nas entregas)
 docs/
 ├── descricao_trabalho.md     # enunciado
 ├── plano_projeto.md          # plano do projeto
+├── plano_de_teste.md         # plano de teste (Entrega 1)
 └── aplicacao.md              # este documento
 pyproject.toml                # dependências + config de ferramentas (ruff)
 .python-version               # versão do Python (3.12)

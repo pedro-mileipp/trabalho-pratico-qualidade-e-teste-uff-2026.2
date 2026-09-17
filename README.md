@@ -7,7 +7,7 @@ Repositório do trabalho prático da disciplina **Qualidade e Teste** (UFF 2026.
 O grupo aplica os conceitos aprendidos na disciplina Qualidade e Teste sobre um software livre desenvolvido por nós — o **Banco Digital**. O objetivo é exercitar as técnicas de teste de software em um sistema real, com duas entregas:
 
 ### Entrega 1 (peso 3)
-- Descrição do escopo no **Plano de Teste**
+- Descrição do escopo no **[Plano de Teste](docs/plano_de_teste.md)**
 - Testes unitários de pelo menos uma classe não-CRUD por integrante
 - Casos de teste manuais (uma funcionalidade por integrante)
 - Gestão de casos com TestLink (ao menos um cenário)
@@ -83,6 +83,8 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 | `docs/descricao_trabalho.md` | Enunciado do trabalho |
 | `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
 | `docs/aplicacao.md` | Documentação completa da aplicação e sua arquitetura |
+| `docs/plano_de_teste.md` | Plano de Teste da Entrega 1 (escopo, ferramentas, artefatos, responsabilidades) |
+| `docs/plano_de_teste_exemplo.md` | Exemplo preenchido de Plano de Teste (referência para preenchimento) |
 | `docs/ai/AI-LOG.md` | Registro de uso de IA (a preencher nas entregas) |
 | `pyproject.toml` | Dependências e configuração de ferramentas |
 | `.python-version` | Versão do Python gerenciada pelo uv |
