@@ -59,12 +59,12 @@ Construir um sistema web de **banco digital** e aplicar, sobre ele, as técnicas
 ├── tests/
 │   ├── unit/                  # 1 arquivo por classe de domínio
 │   ├── integration/           # domínio ↔ repositório e fluxos web (test_client)
-│   └── system/                # Selenium (requisitos funcionais)
+│   ├── system/                # Selenium (requisitos funcionais)
+│   └── testes_manuais/        # casos de teste manuais (Entrega 1), 1 subpasta por teste
 ├── docs/
 │   ├── descricao_trabalho.md
 │   ├── plano_projeto.md       # este documento
 │   ├── plano_de_teste.md      # Entrega 1
-│   ├── casos_manuais/         # planilha/documento de casos manuais (Entrega 1)
 │   ├── relatorios/            # cobertura, mutação, ISO 25010, inspeção Sonar (Entrega 2)
 │   └── ai/
 │       └── AI-LOG.md          # registro de uso de IA
@@ -126,7 +126,7 @@ Jobs encadeados:
 | 1 | Setup do repositório, estrutura e CI mínimo | código + `.github/workflows/ci.yml` |
 | 2 | Implementação dos 5 módulos de domínio | `app/dominio/*.py` |
 | 3 | Testes unitários (1 classe por membro) | `tests/unit/*` |
-| 4 | Casos de teste manuais (1 funcionalidade por membro) | `docs/casos_manuais/` |
+| 4 | Casos de teste manuais (1 funcionalidade por membro) | `tests/testes_manuais/` |
 | 5 | Gestão de casos no TestLink (≥ 1 cenário) | capturas de tela + links |
 | 6 | Plano de Teste (escopo, ferramentas, artefatos) | `docs/plano_de_teste.md` |
 | 7 | Reporte de bugs | GitHub Issues |

@@ -6,11 +6,11 @@
 | Data | 16/09/2026 |
 | Ferramenta | opencode (modelo `opencode-go/deepseek-v4-flash`) |
 | Atividade | Projetar e executar caso(s) de teste manual da funcionalidade PIX em `/pix` e documentar |
-| Artefatos | `docs/casos_manuais/caso_pix.md` + `docs/casos_manuais/evidencias/` (14 screenshots); link no `README.md`; PR #18 (fecha a issue #8) |
+| Artefatos | `tests/testes_manuais/pix/caso_pix.md` + `tests/testes_manuais/pix/evidencias/` (14 screenshots); link no `README.md`; PR #18 (fecha a issue #8) |
 
 ## Contexto
 
-A issue #8 pedia projetar e executar caso(s) de teste manual do PIX, com pré-condições, passos, dados de entrada, resultado esperado, resultado obtido e evidência, cobrindo cenários válidos e inválidos (chave inválida, valor inválido, saldo insuficiente etc.), arquivo em `docs/casos_manuais/` e link no README.
+A issue #8 pedia projetar e executar caso(s) de teste manual do PIX, com pré-condições, passos, dados de entrada, resultado esperado, resultado obtido e evidência, cobrindo cenários válidos e inválidos (chave inválida, valor inválido, saldo insuficiente etc.), arquivo em `docs/casos_manuais/` e link no README. Os artefatos foram posteriormente movidos para `tests/testes_manuais/` (1 subpasta por teste), onde ficam hoje.
 
 ## Prompt utilizado
 
@@ -61,11 +61,11 @@ A IA escreveu um script Selenium que navega até `/pix`, preenche o formulário 
 
 ### 5. Evidências
 
-Salvou **14 screenshots** em `docs/casos_manuais/evidencias/` (1 do setup + 13 por caso), cada um nomeado por caso (ex.: `tc12-email-dois-arroba-DEFEITO16.png`).
+Salvou **14 screenshots** em `tests/testes_manuais/pix/evidencias/` (1 do setup + 13 por caso), cada um nomeado por caso (ex.: `tc12-email-dois-arroba-DEFEITO16.png`).
 
 ### 6. Documentação
 
-1. Escreveu `docs/casos_manuais/caso_pix.md` preenchido: identificação, pré-condições e preparação, dados de teste, tabela com os 12 casos (passos, entrada, esperado, obtido, status, evidência), defeitos encontrados (vínculo à issue #16), observações e conclusão.
+1. Escreveu `tests/testes_manuais/pix/caso_pix.md` preenchido: identificação, pré-condições e preparação, dados de teste, tabela com os 12 casos (passos, entrada, esperado, obtido, status, evidência), defeitos encontrados (vínculo à issue #16), observações e conclusão.
 2. Adicionou o link do caso manual na tabela de estrutura do `README.md`.
 3. Registrou esta sessão no `docs/ai/AI-LOG.md` e criou este arquivo de sessão em `docs/ai/prompts/`.
 
@@ -86,12 +86,12 @@ Salvou **14 screenshots** em `docs/casos_manuais/evidencias/` (1 do setup + 13 p
 ## Validação
 
 - Cada resultado foi confirmado pelo **corpo HTML** da resposta (mensagens flash, saldo e extrato) capturado durante a execução do Selenium.
-- Screenshots conferidos como evidência (presença e tamanho dos arquivos em `docs/casos_manuais/evidencias/`).
+- Screenshots conferidos como evidência (presença e tamanho dos arquivos em `tests/testes_manuais/pix/evidencias/`).
 - Critérios de aceite da issue #8 conferidos com `gh issue view 8`; PR #18 confirmado com `gh pr view 18` (estado OPEN, branch `docs/caso-manual-pix`).
 
 ## Resultado
 
-- **Artefato principal:** `docs/casos_manuais/caso_pix.md` — 12 casos executados na interface (**11 PASS, 1 FAIL**), defeito #16 confirmado e documentado.
-- **Evidências:** 14 imagens em `docs/casos_manuais/evidencias/`.
+- **Artefato principal:** `tests/testes_manuais/pix/caso_pix.md` — 12 casos executados na interface (**11 PASS, 1 FAIL**), defeito #16 confirmado e documentado.
+- **Evidências:** 14 imagens em `tests/testes_manuais/pix/evidencias/`.
 - **Issue #8:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/8
 - **PR #18:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/pull/18
