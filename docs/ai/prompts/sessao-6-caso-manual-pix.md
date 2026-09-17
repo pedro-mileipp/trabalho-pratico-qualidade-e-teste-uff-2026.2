@@ -6,7 +6,7 @@
 | Data | 16/09/2026 |
 | Ferramenta | opencode (modelo `opencode-go/deepseek-v4-flash`) |
 | Atividade | Projetar e executar caso(s) de teste manual da funcionalidade PIX em `/pix` e documentar |
-| Artefatos | `tests/testes_manuais/pix/caso_pix.md` + `tests/testes_manuais/pix/evidencias/` (14 screenshots); link no `README.md`; PR #18 (fecha a issue #8) |
+| Artefatos | `tests/testes_manuais/pix/caso_pix.md` (4 casos representativos) + `tests/testes_manuais/pix/evidencias/` (6 screenshots); link no `README.md`; PR #18 (fecha a issue #8) |
 
 ## Contexto
 
@@ -59,13 +59,15 @@ A IA escreveu um script Selenium que navega até `/pix`, preenche o formulário 
 | TC-11 | Chave aleatória de 32 chars, valor R$ 20,00 | Sucesso, saldo R$ 9.980,00 | PASS |
 | TC-12 | Chave e-mail `a@b@c.com` (dois `@`), valor R$ 25,00 | **Aceita indevidamente**: sucesso, saldo R$ 9.975,00 → confirma o defeito **#16** | **FAIL** |
 
+> **Redução de escopo (a pedido do usuário):** após a execução, o usuário solicitou diminuir a quantidade de casos manuais para ~4. A IA selecionou os **4 casos representativos** (fluxo válido, chave inválida, saldo insuficiente e o defeito #16), renumerando-os como TC-01 a TC-04 no documento final e removendo as evidências dos casos descartados.
+
 ### 5. Evidências
 
-Salvou **14 screenshots** em `tests/testes_manuais/pix/evidencias/` (1 do setup + 13 por caso), cada um nomeado por caso (ex.: `tc12-email-dois-arroba-DEFEITO16.png`).
+Salvou **14 screenshots** durante a execução (1 do setup + 13 por caso) em `tests/testes_manuais/pix/evidencias/`; após a redução de escopo, manteve as **6 evidências** dos 4 casos documentados (renomeadas para `tc01` a `tc04`, ex.: `tc04-email-dois-arroba-DEFEITO16.png`).
 
 ### 6. Documentação
 
-1. Escreveu `tests/testes_manuais/pix/caso_pix.md` preenchido: identificação, pré-condições e preparação, dados de teste, tabela com os 12 casos (passos, entrada, esperado, obtido, status, evidência), defeitos encontrados (vínculo à issue #16), observações e conclusão.
+1. Escreveu `tests/testes_manuais/pix/caso_pix.md` preenchido: identificação, pré-condições e preparação, dados de teste, tabela com os 4 casos representativos (passos, entrada, esperado, obtido, status, evidência), defeitos encontrados (vínculo à issue #16), observações e conclusão.
 2. Adicionou o link do caso manual na tabela de estrutura do `README.md`.
 3. Registrou esta sessão no `docs/ai/AI-LOG.md` e criou este arquivo de sessão em `docs/ai/prompts/`.
 
@@ -91,7 +93,7 @@ Salvou **14 screenshots** em `tests/testes_manuais/pix/evidencias/` (1 do setup 
 
 ## Resultado
 
-- **Artefato principal:** `tests/testes_manuais/pix/caso_pix.md` — 12 casos executados na interface (**11 PASS, 1 FAIL**), defeito #16 confirmado e documentado.
-- **Evidências:** 14 imagens em `tests/testes_manuais/pix/evidencias/`.
+- **Artefato principal:** `tests/testes_manuais/pix/caso_pix.md` — 12 cenários executados na interface, dos quais **4 casos representativos** documentados (**3 PASS, 1 FAIL**), defeito #16 confirmado e documentado.
+- **Evidências:** 6 imagens em `tests/testes_manuais/pix/evidencias/`.
 - **Issue #8:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/8
 - **PR #18:** https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/pull/18
