@@ -87,6 +87,7 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 | `docs/plano_de_teste.md` | Plano de Teste da Entrega 1 (escopo, ferramentas, artefatos, responsabilidades) |
 | `docs/plano_de_teste_exemplo.md` | Exemplo preenchido de Plano de Teste (referência para preenchimento) |
 | `tests/testes_manuais/` | Casos de teste manuais (Entrega 1) — PIX em [`tests/testes_manuais/pix/caso_pix.md`](tests/testes_manuais/pix/caso_pix.md) com evidências em `evidencias/` |
+| `tests/testes_manuais/auth/` | Casos de teste manuais (Entrega 1) — Auth em [`tests/testes_manuais/auth/caso_auth.md`](tests/testes_manuais/auth/caso_auth.md) com evidências em `evidencias/` |
 | `docs/ai/AI-LOG.md` | Registro de uso de IA (a preencher nas entregas) |
 | `pyproject.toml` | Dependências e configuração de ferramentas |
 | `.python-version` | Versão do Python gerenciada pelo uv |
@@ -95,3 +96,4 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 
 - [alexandrelimaxs](https://github.com/alexandrelimaxs)
 - [pedro-mileipp](https://github.com/pedro-mileipp)
+- [n2Gabrielle](https://github.com/n2Gabrielle)
