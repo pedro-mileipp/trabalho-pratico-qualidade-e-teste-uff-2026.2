@@ -97,3 +97,4 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 - [alexandrelimaxs](https://github.com/alexandrelimaxs)
 - [pedro-mileipp](https://github.com/pedro-mileipp)
 - [n2Gabrielle](https://github.com/n2Gabrielle)
+- [ViniciusFelinto](https://github.com/ViniciusFelinto)

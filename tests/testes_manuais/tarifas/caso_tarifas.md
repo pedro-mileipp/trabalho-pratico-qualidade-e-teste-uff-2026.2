@@ -81,6 +81,7 @@ Os 15 casos abaixo foram selecionados para maximizar a cobertura dos ramos acess
 |---|---|---|
 | Antiguidade não exposta | O campo `antiguidade_meses` existe no domínio (desconto de 50% com pacote para ≥24 meses e de 20% sem pacote para ≥36 meses), mas **não é exposto** no formulário web. A rota sempre envia `0`. | Ramos de desconto por antiguidade não são testáveis via interface |
 | Saldo negativo bloqueado | O formulário tem `min="0"`, mas o domínio cobra taxa adicional de R$ 6,00 para saldo negativo | Ramo de saldo negativo não é testável via interface |
+| Limpeza de formulario | o formulario é limpo a cada preenchimento, sem nenhum aviso para o usuario|
 
 > **Nota:** os cenários de antiguidade e saldo negativo devem ser cobertos por testes unitários diretamente na classe `TarifaBancaria`, não por testes manuais pela interface.
 
