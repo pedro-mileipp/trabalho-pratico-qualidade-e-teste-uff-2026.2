@@ -1,0 +1,109 @@
+# Sessão 11 — Caso de teste manual — Empréstimo (issue #11)
+
+| Campo | Valor |
+|---|---|
+| Responsável | Daniel Izu (`danielizu`) |
+| Data | 19/09/2026 |
+| Ferramenta | opencode (modelo `opencode-go/deepseek-v4-flash`) |
+| Atividade | Projetar e executar caso(s) de teste manual da funcionalidade de Empréstimo em `/emprestimo` e documentar |
+| Artefatos | `tests/testes_manuais/emprestimo/caso_emprestimo.md` (5 casos representativos) + `tests/testes_manuais/emprestimo/evidencias/` (5 screenshots); link no `README.md` |
+
+## Contexto
+
+A issue #11 pedia projetar e executar caso(s) de teste manual da funcionalidade de simulação de empréstimo, cobrindo cenários válidos e inválidos da regra de negócio em `/emprestimo`. A área em questão envolve validações de valor mínimo, prazo mínimo, e limite de comprometimento da renda, além da comparação entre as simulações de Tabela Price e SAC.
+
+O objetivo da atividade foi validar, por interface, se a funcionalidade permitia simulações corretas, bloqueava entradas inválidas e devolvia mensagens de erro consistentes com as regras de negócio.
+
+## Prompt utilizado
+
+> "Resolva a issue do teste manual atribuída a mim. Planeje os passos que preciso seguir para executar o teste manual na interface da funcionalidade de empréstimo e proponha um template de documento para registrar os resultados do teste realizado. Crie caso para testar os inputs válidos de acordo com as regras de negócio definidas em `app/dominio/emprestimo.py`"
+
+## Resposta da IA — execução completa (passo a passo)
+
+A IA executou o fluxo inteiro de ponta a ponta, desde a análise do código até a documentação final.
+
+### 1. Análise da issue e do código
+
+1. Consultou a issue **#11** e identificou os critérios de aceite da funcionalidade de Empréstimo.
+2. Leu os arquivos principais da área: `app/dominio/emprestimo.py`, `app/dominio/juros.py`, `app/web/routes/emprestimo.py`, `app/templates/emprestimo.html` e a documentação de contexto em `docs/plano_de_teste.md`.
+3. Mapeou as regras de negócio relevantes para o teste manual: valor mínimo do empréstimo, prazo mínimo, cálculo de parcela, tabela Price vs. SAC, e limite de comprometimento de renda (até 30% da renda mensal).
+4. Identificou que a interface precisa ser validada em cenários de aprovação e recusa, considerando dados válidos e inválidos.
+
+### 2. Planejamento dos casos de teste
+
+1. Definiu a estrutura do documento manual conforme o padrão já usado em outras funcionalidades: identificação, pré-condições, dados de teste, casos representativos e conclusões.
+2. Montou a matriz de cobertura com foco em equivalência e valor-limite.
+3. Elaborou 5 casos representativos para o documento final: dois cenários de sucesso (Price e SAC) e três cenários de rejeição (valor abaixo do mínimo, prazo abaixo do mínimo e comprometimento de renda).
+4. Selecionou o escopo de forma a manter o documento enxuto, sem perder a cobertura dos critérios principais da rule set.
+
+### 3. Preparação do ambiente
+
+1. Rodou `uv sync --all-extras` para garantir o ambiente do projeto.
+2. Iniciou o servidor Flask em background com banco fora do workspace para evitar poluir o repositório:
+   ```powershell
+   $env:DATABASE="$env:TEMP\teste.db"
+   uv run flask --app app:create_app run
+   ```
+3. Confirmou o acesso à rota `/emprestimo` no navegador.
+4. Garantiu que havia conta autenticada e renda adequada para os testes de aprovação e rejeição.
+
+### 4. Execução dos casos na interface
+
+A IA validou os cenários na interface do fluxo de crédito, com foco em comportamento visível e mensagens retornadas.
+
+| ID | Ação executada | Resultado obtido | Status |
+|---|---|---|---|
+| TC-01 | Simulação válida com Tabela Price | Aprovação com 1ª parcela `100.46` e total `1205.52` | PASS |
+| TC-02 | Simulação válida com Tabela SAC | Aprovação com 1ª parcela `113.33` e total `1194.96` | PASS |
+| TC-03 | Valor abaixo do mínimo | Mensagem `valor_abaixo_minimo` exibida; simulação recusada | PASS |
+| TC-04 | Prazo abaixo do mínimo | Mensagem `prazo_curto` exibida; simulação recusada | PASS |
+| TC-05 | Comprometimento da renda acima do limite | Mensagem `comprometimento_acima` exibida; simulação recusada | PASS |
+
+> O escopo foi preservado como 5 casos representativos, seguindo o padrão do documento de autenticação: 2 aprovados e 3 rejeitados, cobrindo os principais limites de negócio.
+
+### 5. Evidências
+
+Os prints foram registrados em `tests/testes_manuais/emprestimo/evidencias/`, com nomeação padronizada por caso:
+
+- `evidenciastc01-simulacao-price-aprovado.png`
+- `evidenciastc02-simulacao-sac-aprovado.png`
+- `evidenciastc03-valor-abaixo-minimo.png`
+- `evidenciastc04-prazo-invalido.png`
+- `evidenciastc05-comprometimento-renda.png`
+
+### 6. Documentação
+
+1. Escreveu `tests/testes_manuais/emprestimo/caso_emprestimo.md` com:
+   - identificação da funcionalidade;
+   - pré-condições e preparação;
+   - dados de teste;
+   - tabela de casos executados;
+   - defeitos e observações;
+   - conclusão.
+2. Mantém o padrão de escrita e estrutura já adotado nos casos manuais do projeto.
+3. Atualizou o documento de acordo com a convenção de padronização do repositório.
+
+### 7. Entrega (git/GitHub)
+
+1. O arquivo foi entregue no caminho do projeto em `tests/testes_manuais/emprestimo/`.
+2. A documentação segue a mesma convenção do caso de autenticação e do caso de PIX.
+3. A estrutura foi pensada para ser reutilizável em PRs e registros do histórico do trabalho.
+
+## Limitações registradas no documento
+
+- A regra de negócio foi validada só na interface; não houve automação para os cenários manuais.
+- O documento prioriza casos representativos, não todos os cenários possíveis do fluxo.
+- Mensagens de erro podem ser melhoradas em UX para maior clareza, principalmente no caso de comprometimento de renda.
+
+## Validação
+
+- Os resultados foram conferidos diretamente na interface e registrados na tabela de casos executados.
+- Os dados de entrada e mensagens exibidas foram consistentes com as regras de negócio da funcionalidade.
+- O documento final manteve o padrão do restante do repositório, com estrutura clara e evidências associadas a cada caso.
+
+## Resultado
+
+- **Artefato principal:** `tests/testes_manuais/emprestimo/caso_emprestimo.md`
+- **Cobertura registrada:** 5 casos representativos (2 PASS e 3 PASS em rejeição de regra), alinhados aos limites de negócio do empréstimo.
+- **Status geral:** o fluxo de simulação de empréstimo foi validado conforme esperado, com foco em regras de aprovação e rejeição da funcionalidade.
+
