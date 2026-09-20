@@ -91,7 +91,8 @@ A pedido do testador, a IA explicou como a PE está presente nos casos:
 
 - **Antiguidade não exposta:** o campo `antiguidade_meses` existe no domínio (desconto de 50% com pacote para ≥ 24 meses e de 20% sem pacote para ≥ 36 meses), mas a rota web sempre envia `0`. Ramos de antiguidade não são testáveis via interface.
 - **Saldo negativo bloqueado:** o formulário tem `min="0"`, mas o domínio cobra taxa adicional de R$ 6,00 para saldo negativo. Ramo não testável via interface.
-- Ambos os cenários devem ser cobertos por testes unitários diretamente na classe `TarifaBancaria`.
+- **Limpeza de formulario:** O formulario é limpo sem nenhum aviso para o usuario.
+- Todos os cenários devem ser cobertos por testes unitários diretamente na classe `TarifaBancaria`.
 
 ## Resultado
 
