@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Responsável | Administrador |
+| Responsável | Vinicius Sales Felinto |
 | Data | 19/09/2026 |
 | Ferramenta | Gemini (modelo `Gemini 3.1 Pro`) |
 | Atividade | Projetar e executar casos de testes unitários da classe `SimuladorEmprestimo` |
@@ -39,3 +39,4 @@ Exigência do enunciado: preservar a solução inicial, a final e descrever as a
 ## Resultado
 
 - **40 testes passam**, abrangendo as lógicas de negócio do `SimuladorEmprestimo`.
+

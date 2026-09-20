@@ -1,5 +1,7 @@
 import pytest
+
 from app.dominio.emprestimo import SimuladorEmprestimo, SistemaAmortizacao
+
 
 @pytest.fixture
 def simulador():
