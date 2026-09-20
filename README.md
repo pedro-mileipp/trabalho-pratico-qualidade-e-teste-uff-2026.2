@@ -89,6 +89,7 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 | `tests/testes_manuais/` | Casos de teste manuais (Entrega 1) — PIX em [`tests/testes_manuais/pix/caso_pix.md`](tests/testes_manuais/pix/caso_pix.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/auth/` | Casos de teste manuais (Entrega 1) — Auth em [`tests/testes_manuais/auth/caso_auth.md`](tests/testes_manuais/auth/caso_auth.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/tarifas/` | Casos de teste manuais (Entrega 1) — Tarifas em [`tests/testes_manuais/tarifas/caso_tarifas.md`](tests/testes_manuais/tarifas/caso_tarifas.md) com evidências em `evidencias/` |
+| `tests/testes_manuais/emprestimo/` | Casos de teste manuais (Entrega 1) — Empréstimo em [`tests/testes_manuais/emprestimo/caso_emprestimo.md`](tests/testes_manuais/emprestimo/caso_emprestimo.md) com evidências em `evidencias/` |
 | `docs/ai/AI-LOG.md` | Registro de uso de IA (a preencher nas entregas) |
 | `docs/ai/prompts/sessao-11-caso-manual-tarifas.md` | [Sessão 11](docs/ai/prompts/sessao-11-caso-manual-tarifas.md) — Caso de teste manual de Tarifas |
 | `pyproject.toml` | Dependências e configuração de ferramentas |
@@ -97,6 +98,7 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 ## Contribuidores
 
 - [alexandrelimaxs](https://github.com/alexandrelimaxs)
+- [danielizu](https://github.com/danielizu)
 - [pedro-mileipp](https://github.com/pedro-mileipp)
 - [n2Gabrielle](https://github.com/n2Gabrielle)
 - [ViniciusFelinto](https://github.com/ViniciusFelinto)
