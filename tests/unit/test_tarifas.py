@@ -25,20 +25,17 @@ def test_tarifa_mensal_sem_pacote(tipo: TipoConta, saldo: float, esperado: float
 
 
 @pytest.mark.parametrize(
-    ("tipo", "saldo", "quantidade_transacoes", "antiguidade_meses", "esperado"),
+    ("tipo", "saldo", "quantidade_transacoes", "esperado"),
     [
-        pytest.param(TipoConta.CORRENTE, 3000.0, 15, 0, 42.5, id="corrente_com_transacoes_extras"),
-        pytest.param(TipoConta.CORRENTE, 1000.0, 0, 40, 24.0, id="corrente_por_antiguidade_40_meses"),
-        pytest.param(TipoConta.CORRENTE, -100.0, 0, 0, 36.0, id="corrente_saldo_negativo"),
-        pytest.param(TipoConta.PREMIUM, 40000.0, 0, 40, 40.0, id="premium_por_antiguidade"),
-        pytest.param(TipoConta.PREMIUM, 30000.0, 15, 0, 62.5, id="premium_transacoes_extras"),
+        pytest.param(TipoConta.CORRENTE, 3000.0, 15, 42.5, id="corrente_com_transacoes_extras"),
+        pytest.param(TipoConta.CORRENTE, -100.0, 0, 36.0, id="corrente_saldo_negativo"),
+        pytest.param(TipoConta.PREMIUM, 30000.0, 15, 62.5, id="premium_transacoes_extras"),
     ],
 )
 def test_tarifa_mensal_regras_de_negocio(
     tipo: TipoConta,
     saldo: float,
     quantidade_transacoes: int,
-    antiguidade_meses: int,
     esperado: float,
     tarifa: TarifaBancaria,
 ):
@@ -47,30 +44,27 @@ def test_tarifa_mensal_regras_de_negocio(
             tipo,
             saldo,
             quantidade_transacoes=quantidade_transacoes,
-            antiguidade_meses=antiguidade_meses,
         )
         == esperado
     )
 
 
 @pytest.mark.parametrize(
-    ("tipo", "saldo", "antiguidade_meses", "esperado"),
+    ("tipo", "saldo", "esperado"),
     [
-        pytest.param(TipoConta.CORRENTE, 6000.0, 0, 15.0, id="corrente_pacote_saldo_alto"),
-        pytest.param(TipoConta.CORRENTE, 3000.0, 0, 30.0, id="corrente_pacote_sem_isencao"),
-        pytest.param(TipoConta.PREMIUM, 60000.0, 0, 0.0, id="premium_pacote_isento"),
-        pytest.param(TipoConta.PREMIUM, 4000.0, 0, 35.0, id="premium_pacote_sem_isencao"),
-        pytest.param(TipoConta.CORRENTE, 4000.0, 24, 15.0, id="corrente_pacote_antiguidade_24"),
+        pytest.param(TipoConta.CORRENTE, 6000.0, 15.0, id="corrente_pacote_saldo_alto"),
+        pytest.param(TipoConta.CORRENTE, 3000.0, 30.0, id="corrente_pacote_sem_isencao"),
+        pytest.param(TipoConta.PREMIUM, 60000.0, 0.0, id="premium_pacote_isento"),
+        pytest.param(TipoConta.PREMIUM, 4000.0, 35.0, id="premium_pacote_sem_isencao"),
     ],
 )
 def test_tarifa_mensal_com_pacote(
     tipo: TipoConta,
     saldo: float,
-    antiguidade_meses: int,
     esperado: float,
     tarifa: TarifaBancaria,
 ):
-    assert tarifa.tarifa_mensal(tipo, saldo, tem_pacote=True, antiguidade_meses=antiguidade_meses) == esperado
+    assert tarifa.tarifa_mensal(tipo, saldo, tem_pacote=True) == esperado
 
 
 @pytest.mark.parametrize(
@@ -160,12 +154,11 @@ def test_instancia_personalizada_usa_base_recebida():
 
 
 @pytest.mark.parametrize(
-    ("tipo", "saldo", "tem_pacote", "quantidade_transacoes", "antiguidade_meses", "esperado"),
+    ("tipo", "saldo", "tem_pacote", "quantidade_transacoes", "esperado"),
     [
-        pytest.param(TipoConta.CORRENTE, 6000.0, True, 0, 0, 15.0, id="corrente_pacote_alto_saldo"),
-        pytest.param(TipoConta.CORRENTE, 7000.0, True, 25, 0, 15.0, id="corrente_pacote_ignora_transacoes_extra"),
-        pytest.param(TipoConta.PREMIUM, 50000.0, True, 0, 0, 0.0, id="premium_pacote_isencao_5x5"),
-        pytest.param(TipoConta.CORRENTE, 3000.0, False, 0, 40, 24.0, id="corrente_antiguidade_e_sem_pacote"),
+        pytest.param(TipoConta.CORRENTE, 6000.0, True, 0, 15.0, id="corrente_pacote_alto_saldo"),
+        pytest.param(TipoConta.CORRENTE, 7000.0, True, 25, 15.0, id="corrente_pacote_ignora_transacoes_extra"),
+        pytest.param(TipoConta.PREMIUM, 50000.0, True, 0, 0.0, id="premium_pacote_isencao_5x5"),
     ],
 )
 def test_tarifa_mensal_cenarios_combinados(
@@ -173,7 +166,6 @@ def test_tarifa_mensal_cenarios_combinados(
     saldo: float,
     tem_pacote: bool,
     quantidade_transacoes: int,
-    antiguidade_meses: int,
     esperado: float,
     tarifa: TarifaBancaria,
 ):
@@ -183,7 +175,6 @@ def test_tarifa_mensal_cenarios_combinados(
             saldo,
             tem_pacote=tem_pacote,
             quantidade_transacoes=quantidade_transacoes,
-            antiguidade_meses=antiguidade_meses,
         )
         == esperado
     )
