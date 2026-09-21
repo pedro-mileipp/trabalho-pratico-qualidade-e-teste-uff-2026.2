@@ -127,7 +127,7 @@ No projeto foram conduzidas as seguintes fases de teste na Entrega 1:
 
 - **Teste de Unidade:** classes puras de `app/dominio/` testadas com **pytest**, aplicando partição de equivalência, análise de valor-limite, tabela de decisão e teste de laços. Suíte em `tests/unit/` (1 arquivo por classe).
 - **Teste de Sistema (manual):** casos executados na interface do Flask em `tests/testes_manuais/` (PIX, Auth, Tarifas, Empréstimo e Crédito), com evidências por caso.
-- **Gestão de casos:** casos manuais registrados no TestLink, com relatório do caso Auth exportado em PDF.
+- **Gestão de casos:** casos manuais registrados no TestLink, com relatório do caso Auth exportado em PDF ([Auth — Relatório TestLink](https://drive.google.com/file/d/14yShZiduI8gixsV5wCQqA70DH2TV4SN4/view?usp=sharing)).
 
 ---
 
@@ -184,7 +184,7 @@ Os entregáveis de teste são fornecidos conforme abaixo.
 
 - Casos manuais preenchidos em `tests/testes_manuais/`.
 - Testes unitários em `tests/unit/`.
-- Relatório do TestLink (PDF — caso Auth).
+- Relatório do TestLink (PDF — caso Auth): [Auth — Relatório TestLink](https://drive.google.com/file/d/14yShZiduI8gixsV5wCQqA70DH2TV4SN4/view?usp=sharing).
 - Issues de defeitos (#16, #17 e #20).
 
 ---
