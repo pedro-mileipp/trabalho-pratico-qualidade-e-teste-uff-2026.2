@@ -33,7 +33,7 @@ Para isso, foram adotadas abordagens de **testes unitários** e **testes manuais
 | Consulta de Tarifas | Cliente | O Cliente pode consultar a tarifa mensal por tipo de conta, saldo, transações e pacote de serviços |
 | Simulação de Empréstimo | Cliente | O Cliente pode simular empréstimo com amortização Price ou SAC |
 | Análise de Crédito | Cliente | O Cliente pode consultar a análise de crédito (aprovação, negação ou aprovação parcial) |
-| Cálculo de Juros | Cliente | Regras de juros compostos, mora e aportes, testadas no nível de unidade |
+| Cálculo de Juros | — | Regras de juros compostos, mora e aportes — domínio puro, sem interface web, testado no nível de unidade |
 
 ### Requisitos Funcionais no Escopo
 
@@ -69,7 +69,7 @@ Esses recursos não foram testados porque não estão expostos na interface ou n
 | Requisito | Justificativa |
 |----------|----------------|
 | Chargeback de PIX pela interface | Não exposto na UI na Entrega 1 (regra de domínio, coberta por testes unitários) |
-| Antiguidade e saldo negativo de tarifas | Campos não expostos no formulário web (cobertos por testes unitários) |
+| Antiguidade e saldo negativo de tarifas | Campos não expostos no formulário web; saldo negativo coberto por testes unitários, antiguidade a cobrir na Entrega 2 |
 | Integrações com sistemas externos | Não fazem parte da versão atual |
 
 ### Requisitos Não Funcionais Fora do Escopo

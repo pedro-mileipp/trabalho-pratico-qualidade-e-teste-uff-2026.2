@@ -90,7 +90,7 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 | `tests/testes_manuais/auth/` | Casos de teste manuais (Entrega 1) — Auth em [`tests/testes_manuais/auth/caso_auth.md`](tests/testes_manuais/auth/caso_auth.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/tarifas/` | Casos de teste manuais (Entrega 1) — Tarifas em [`tests/testes_manuais/tarifas/caso_tarifas.md`](tests/testes_manuais/tarifas/caso_tarifas.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/emprestimo/` | Casos de teste manuais (Entrega 1) — Empréstimo em [`tests/testes_manuais/emprestimo/caso_emprestimo.md`](tests/testes_manuais/emprestimo/caso_emprestimo.md) com evidências em `evidencias/` |
-| `tests/testes_manuais/credito/` | Casos de teste manuais (Entrega 1) — Crédito em [`tests/testes_manuais/emprestimo/caso_emprestimo.md`](tests/testes_manuais/emprestimo/caso_credito.md) com evidências em `evidencias/` |
+| `tests/testes_manuais/credito/` | Casos de teste manuais (Entrega 1) — Crédito em [`tests/testes_manuais/credito/caso_credito.md`](tests/testes_manuais/credito/caso_credito.md) com evidências em `evidencias/` |
 | `docs/ai/AI-LOG.md` | Registro de uso de IA (a preencher nas entregas) |
 | `docs/ai/prompts/sessao-11-caso-manual-tarifas.md` | [Sessão 11](docs/ai/prompts/sessao-11-caso-manual-tarifas.md) — Caso de teste manual de Tarifas |
 | `pyproject.toml` | Dependências e configuração de ferramentas |
