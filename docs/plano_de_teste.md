@@ -105,15 +105,27 @@ Além disso, os testes visam garantir a integridade dos dados, o tratamento de e
 | Organização do GitHub (milestones e issues) | Alexandre Colmenero |
 | Slides da apresentação | Daniel Izu |
 
-### Entrega 1 — Classe sob teste e caso de teste manual por integrante
+### Testes da Entrega 1 — responsáveis por issue
 
-| Integrante | Classe (teste unitário) | Caso de teste manual |
-|------------|-------------------------|----------------------|
-| Alexandre Colmenero | `TransacaoPix` (`tests/unit/test_pix.py`) | PIX (`tests/testes_manuais/pix/`) |
-| Gabrielle Rosa | `CalculadoraJuros` (`tests/unit/test_juros.py`) | Auth (`tests/testes_manuais/auth/`) |
-| Pedro Mileipp | `DecisorCredito` (`tests/unit/test_credito.py`) | Crédito (`tests/testes_manuais/credito/`) |
-| Vinicius Sales Felinto | `SimuladorEmprestimo` (`tests/unit/test_emprestimo.py`) | Tarifas (`tests/testes_manuais/tarifas/`) |
-| Daniel Izu | `TarifaBancaria` (`tests/unit/test_tarifas.py`) | Empréstimo (`tests/testes_manuais/emprestimo/`) |
+#### Testes unitários
+
+| Teste unitário | Classe | Issue | Responsável |
+|----------------|--------|-------|-------------|
+| `tests/unit/test_pix.py` | `TransacaoPix` | [#3](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/3) | Alexandre Colmenero |
+| `tests/unit/test_juros.py` | `CalculadoraJuros` | [#4](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/4) | Gabrielle Rosa |
+| `tests/unit/test_tarifas.py` | `TarifaBancaria` | [#5](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/5) | Daniel Izu |
+| `tests/unit/test_emprestimo.py` | `SimuladorEmprestimo` | [#6](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/6) | Vinicius Sales Felinto |
+| `tests/unit/test_credito.py` | `DecisorCredito` | [#7](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/7) | Pedro Mileipp |
+
+#### Casos de teste manuais
+
+| Caso manual | Funcionalidade | Issue | Responsável |
+|-------------|----------------|-------|-------------|
+| `tests/testes_manuais/pix/` | PIX | [#8](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/8) | Alexandre Colmenero |
+| `tests/testes_manuais/auth/` | Auth | [#9](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/9) | Gabrielle Rosa |
+| `tests/testes_manuais/tarifas/` | Tarifas | [#10](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/10) | Vinicius Sales Felinto |
+| `tests/testes_manuais/emprestimo/` | Empréstimo | [#11](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/11) | Daniel Izu |
+| `tests/testes_manuais/credito/` | Crédito | [#12](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/12) | Pedro Mileipp |
 
 > Issues do projeto: [GitHub Issues](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues).
 
