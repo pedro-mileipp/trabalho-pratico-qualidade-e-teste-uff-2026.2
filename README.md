@@ -96,6 +96,12 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 | `pyproject.toml` | Dependências e configuração de ferramentas |
 | `.python-version` | Versão do Python gerenciada pelo uv |
 
+## Relatórios de TestLink
+
+Os casos de teste manuais documentados no TestLink possuem relatórios em PDF exportados. O relatório do caso **Auth** (funcionalidade de autenticação) está disponível em:
+
+📄 [Auth - Relatório TestLink (PDF)](https://drive.google.com/file/d/14yShZiduI8gixsV5wCQqA70DH2TV4SN4/view?usp=sharing)
+
 ## Contribuidores
 
 - [alexandrelimaxs](https://github.com/alexandrelimaxs)
