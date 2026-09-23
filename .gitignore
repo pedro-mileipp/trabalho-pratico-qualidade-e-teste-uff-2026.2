@@ -55,6 +55,10 @@ junit.xml
 
 # Documento interno de defeitos (não deve ser versionado)
 docs/defeitos_conhecidos.md
+docs/defeitos_conhecidos.pdf
+
+# Exemplo de Plano de Teste (referência externa, não deve ser versionado)
+docs/plano_de_teste_exemplo.md
 
 # Selenium / browsers
 .geckodriver.log
