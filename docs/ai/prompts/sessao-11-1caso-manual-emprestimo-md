@@ -57,7 +57,7 @@ A IA validou os cenários na interface do fluxo de crédito, com foco em comport
 | TC-02 | Simulação válida com Tabela SAC | Aprovação com 1ª parcela `113.33` e total `1194.96` | PASS |
 | TC-03 | Valor abaixo do mínimo | Mensagem `valor_abaixo_minimo` exibida; simulação recusada | PASS |
 | TC-04 | Prazo abaixo do mínimo | Mensagem `prazo_curto` exibida; simulação recusada | PASS |
-| TC-05 | Comprometimento da renda acima do limite | Mensagem `comprometimento_acima` exibida; simulação recusada | PASS |
+| TC-05 | Comprometimento da renda acima do limite | Mensagem `acima_teto` exibida; simulação recusada | PASS |
 
 > O escopo foi preservado como 5 casos representativos, seguindo o padrão do documento de autenticação: 2 aprovados e 3 rejeitados, cobrindo os principais limites de negócio.
 
