@@ -225,7 +225,11 @@ Os entregáveis de teste são fornecidos conforme abaixo.
 - Casos manuais preenchidos em `tests/testes_manuais/`.
 - Testes unitários em `tests/unit/`.
 - Relatório do TestLink (PDF — caso Auth): [Auth — Relatório TestLink](https://drive.google.com/file/d/14yShZiduI8gixsV5wCQqA70DH2TV4SN4/view?usp=sharing).
-- Issues de defeito abertas no GitHub.
+- Issues de defeito abertas no GitHub (bugs encontrados pelos testes):
+  - [#16](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/16) — e-mail com dois `@` aceito como válido (PIX)
+  - [#17](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/17) — chave bloqueada ignora regra de valor no chargeback (PIX)
+  - [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) — desconto de IR não aplicado no mês 12 (Juros)
+  - [#35](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/35) — limite máximo não aplicado para score ≥ 850 (Crédito)
 
 ---
 
