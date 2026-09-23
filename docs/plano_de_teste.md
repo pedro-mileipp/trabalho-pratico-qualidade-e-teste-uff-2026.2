@@ -9,6 +9,7 @@
 | Versão | Data | Autor | Descrição |
 |------|--------|----------|--------|
 | 1.0 | 21/09/2026 | Alexandre Colmenero | Criação do Plano de Teste com base nos testes executados na Entrega 1 |
+| 1.1 | 23/09/2026 | Alexandre Colmenero | Atualização para refletir o estado atual dos testes (fix do `test_credito`, tarifas manual preenchida, resultados da suíte) |
 
 ---
 
@@ -56,7 +57,7 @@ Para isso, foram adotadas abordagens de **testes unitários** e **testes manuais
 | RNF03 – Integridade dos dados | Validar consistência de saldo e extrato após transferências |
 | RNF04 – Manutenibilidade | Validar o código por meio de testes unitários e medição de complexidade ciclomática (radon) |
 | RNF05 – Compatibilidade | Testes em Python 3.12 gerenciado por uv |
-| RNF06 – Segurança (autenticação) | Bloqueio de acesso às rotas sem sessão (`login_required`) |
+| RNF06 – Segurança (autenticação) | Bloqueio de acesso às rotas sem sessão (`login_required`); sem caso de teste dedicado na Entrega 1 |
 
 ---
 
@@ -90,7 +91,7 @@ Os testes têm como objetivo garantir que as principais funcionalidades do siste
 
 Nos testes funcionais (manuais), buscou-se validar operações como **autenticação de usuários**, **transferência PIX**, **consulta de tarifas**, **simulação de empréstimo** e **análise de crédito**.
 
-Nos testes unitários, o foco foi verificar o funcionamento correto das classes de domínio, incluindo a **validação de chaves PIX**, o **cálculo de juros**, a **tarifa bancária**, a **simulação de empréstimo** e a **decisão de crédito**, além de revelar os defeitos naturais presentes no código (#16, #17, #20, BUG-1 e BUG-2).
+Nos testes unitários, o foco foi verificar o funcionamento correto das classes de domínio, incluindo a **validação de chaves PIX**, o **cálculo de juros**, a **tarifa bancária**, a **simulação de empréstimo** e a **decisão de crédito**, além de revelar defeitos presentes no código, reportados como issues.
 
 Além disso, os testes visam garantir a integridade dos dados, o tratamento de entradas inválidas e a estabilidade do sistema durante sua execução.
 
@@ -131,6 +132,33 @@ Além disso, os testes visam garantir a integridade dos dados, o tratamento de e
 
 ---
 
+### 📊 1.4. Estado Atual dos Testes (23/09/2026)
+
+#### Testes unitários
+
+| Teste unitário | Classe | Casos | Resultado |
+|----------------|--------|-------|-----------|
+| `tests/unit/test_pix.py` | `TransacaoPix` | 68 | 66 pass · 2 fail |
+| `tests/unit/test_credito.py` | `DecisorCredito` | 60 | 55 pass · 5 fail |
+| `tests/unit/test_juros.py` | `CalculadoraJuros` | 36 | 35 pass · 1 fail |
+| `tests/unit/test_emprestimo.py` | `SimuladorEmprestimo` | 40 | 40 pass |
+| `tests/unit/test_tarifas.py` | `TarifaBancaria` | 44 | 44 pass |
+| **Total** | | **248** | **240 pass · 8 fail** |
+
+> As falhas identificadas são registradas e tratadas como issues de defeito no GitHub.
+
+#### Casos de teste manuais
+
+| Funcionalidade | Casos | Resultado |
+|----------------|-------|-----------|
+| PIX | 4 | 3 aprovados · 1 falha |
+| Auth | 10 | 10 aprovados |
+| Tarifas | 15 | 15 aprovados |
+| Empréstimo | 5 | 5 aprovados |
+| Crédito | 10 | 10 aprovados |
+
+---
+
 ## 🔬 2. Metodologia de Teste
 
 ### 🔄 2.1 Fases de Teste
@@ -167,11 +195,11 @@ Os testes foram considerados concluídos quando:
 | Atividade | Início | Fim |
 |----------|--------|------|
 | Planejamento dos testes | 15/09/2026 | 16/09/2026 |
-| Testes unitários por integrante | 16/09/2026 | 20/09/2026 |
+| Testes unitários por integrante | 16/09/2026 | 21/09/2026 |
 | Casos de teste manuais | 16/09/2026 | 20/09/2026 |
 | Gestão de casos no TestLink | 20/09/2026 | 20/09/2026 |
-| Plano de Teste | 21/09/2026 | 21/09/2026 |
-| Consolidação dos resultados e entrega | 21/09/2026 | 21/09/2026 |
+| Plano de Teste | 21/09/2026 | 23/09/2026 |
+| Consolidação dos resultados e entrega | 23/09/2026 | 23/09/2026 |
 
 ---
 
@@ -197,7 +225,7 @@ Os entregáveis de teste são fornecidos conforme abaixo.
 - Casos manuais preenchidos em `tests/testes_manuais/`.
 - Testes unitários em `tests/unit/`.
 - Relatório do TestLink (PDF — caso Auth): [Auth — Relatório TestLink](https://drive.google.com/file/d/14yShZiduI8gixsV5wCQqA70DH2TV4SN4/view?usp=sharing).
-- Issues de defeitos (#16, #17 e #20).
+- Issues de defeito abertas no GitHub.
 
 ---
 
