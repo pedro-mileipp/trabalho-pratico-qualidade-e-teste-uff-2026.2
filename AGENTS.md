@@ -13,7 +13,6 @@ Banco Digital — trabalho prático de Qualidade e Teste (UFF 2026.2). App Flask
 
 - **Não há testes nem CI ainda** (sem `tests/`, `pytest.ini`, workflows). As dev deps (pytest, pytest-mock, pytest-cov, selenium, webdriver-manager, mutmut, radon) já estão declaradas em `pyproject.toml`.
 - A implementação de testes é o trabalho dos integrantes. **Não crie arquivos de teste** a menos que explicitamente solicitado.
-- O código de domínio contém **defeitos naturais propositais** para os testes revelarem. `docs/defeitos_conhecidos.md` lista os defeitos conhecidos, **é gitignored e nunca deve ser commitado**.
 
 ## Arquitetura
 
