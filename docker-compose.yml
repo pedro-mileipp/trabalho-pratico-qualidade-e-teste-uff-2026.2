@@ -1,0 +1,24 @@
+services:
+  sonarqube:
+    image: sonarqube:26.11.0.134175-community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+
+volumes:
+  # Nomes explícitos para preservar o histórico entre `docker compose up/down`.
+  sonarqube_data:
+    name: sonarqube_data
+  sonarqube_extensions:
+    name: sonarqube_extensions
+  sonarqube_logs:
+    name: sonarqube_logs

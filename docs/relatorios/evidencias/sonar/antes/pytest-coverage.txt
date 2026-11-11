@@ -1,0 +1,253 @@
+.........................................FF....FF...F................... [ 29%]
+..............................................................F......... [ 58%]
+......F..............................F.................................. [ 87%]
+................................                                         [100%]
+=================================== FAILURES ===================================
+__________ TestLimitePorScore.test_limite_por_score_faixas[score_850] __________
+
+self = <test_credito.TestLimitePorScore object at 0x10b597560>
+decisor = <app.dominio.credito.DecisorCredito object at 0x10b692480>
+score = 850, renda = 3000, esperado = 5000.0
+
+    @pytest.mark.parametrize(
+        ("score", "renda", "esperado"),
+        [
+            pytest.param(0, 3000, 0.0, id="score_0"),
+            pytest.param(100, 3000, 0.0, id="score_100"),
+            pytest.param(299, 3000, 0.0, id="score_299"),
+            pytest.param(300, 3000, 1500.0, id="score_300"),
+            pytest.param(499, 3000, 1500.0, id="score_499"),
+            pytest.param(500, 3000, 3000.0, id="score_500"),
+            pytest.param(699, 3000, 3000.0, id="score_699"),
+            pytest.param(700, 3000, 4500.0, id="score_700"),
+            pytest.param(849, 3000, 4500.0, id="score_849"),
+            pytest.param(850, 3000, 5000.0, id="score_850"),
+            pytest.param(1000, 3000, 5000.0, id="score_1000"),
+        ],
+    )
+    def test_limite_por_score_faixas(self, decisor: DecisorCredito, score: int, renda: float, esperado: float):
+>       assert decisor.limite_por_score(score, renda) == esperado
+E       assert 6000.0 == 5000.0
+E        +  where 6000.0 = limite_por_score(850, 3000)
+E        +    where limite_por_score = <app.dominio.credito.DecisorCredito object at 0x10b692480>.limite_por_score
+
+tests/unit/test_credito.py:158: AssertionError
+_________ TestLimitePorScore.test_limite_por_score_faixas[score_1000] __________
+
+self = <test_credito.TestLimitePorScore object at 0x10b597530>
+decisor = <app.dominio.credito.DecisorCredito object at 0x10b6913d0>
+score = 1000, renda = 3000, esperado = 5000.0
+
+    @pytest.mark.parametrize(
+        ("score", "renda", "esperado"),
+        [
+            pytest.param(0, 3000, 0.0, id="score_0"),
+            pytest.param(100, 3000, 0.0, id="score_100"),
+            pytest.param(299, 3000, 0.0, id="score_299"),
+            pytest.param(300, 3000, 1500.0, id="score_300"),
+            pytest.param(499, 3000, 1500.0, id="score_499"),
+            pytest.param(500, 3000, 3000.0, id="score_500"),
+            pytest.param(699, 3000, 3000.0, id="score_699"),
+            pytest.param(700, 3000, 4500.0, id="score_700"),
+            pytest.param(849, 3000, 4500.0, id="score_849"),
+            pytest.param(850, 3000, 5000.0, id="score_850"),
+            pytest.param(1000, 3000, 5000.0, id="score_1000"),
+        ],
+    )
+    def test_limite_por_score_faixas(self, decisor: DecisorCredito, score: int, renda: float, esperado: float):
+>       assert decisor.limite_por_score(score, renda) == esperado
+E       assert 6000.0 == 5000.0
+E        +  where 6000.0 = limite_por_score(1000, 3000)
+E        +    where limite_por_score = <app.dominio.credito.DecisorCredito object at 0x10b6913d0>.limite_por_score
+
+tests/unit/test_credito.py:158: AssertionError
+_ TestLimitePorScore.test_limite_por_score_tetos[score_alto_renda_alta_teto_limite_max] _
+
+self = <test_credito.TestLimitePorScore object at 0x10b5d01d0>
+decisor = <app.dominio.credito.DecisorCredito object at 0x10b691400>
+score = 850, renda = 20000, esperado = 30000.0
+
+    @pytest.mark.parametrize(
+        ("score", "renda", "esperado"),
+        [
+            pytest.param(500, 500, 500.0, id="renda_500"),
+            pytest.param(500, 10000, 10000.0, id="renda_10000_teto_base"),
+            pytest.param(850, 20000, 30000.0, id="score_alto_renda_alta_teto_limite_max"),
+            pytest.param(850, 50000, 30000.0, id="score_alto_renda_muito_alta_teto_limite_max"),
+        ],
+    )
+    def test_limite_por_score_tetos(self, decisor: DecisorCredito, score: int, renda: float, esperado: float):
+>       assert decisor.limite_por_score(score, renda) == esperado
+E       assert 40000.0 == 30000.0
+E        +  where 40000.0 = limite_por_score(850, 20000)
+E        +    where limite_por_score = <app.dominio.credito.DecisorCredito object at 0x10b691400>.limite_por_score
+
+tests/unit/test_credito.py:180: AssertionError
+_ TestLimitePorScore.test_limite_por_score_tetos[score_alto_renda_muito_alta_teto_limite_max] _
+
+self = <test_credito.TestLimitePorScore object at 0x10b5d0140>
+decisor = <app.dominio.credito.DecisorCredito object at 0x10b693530>
+score = 850, renda = 50000, esperado = 30000.0
+
+    @pytest.mark.parametrize(
+        ("score", "renda", "esperado"),
+        [
+            pytest.param(500, 500, 500.0, id="renda_500"),
+            pytest.param(500, 10000, 10000.0, id="renda_10000_teto_base"),
+            pytest.param(850, 20000, 30000.0, id="score_alto_renda_alta_teto_limite_max"),
+            pytest.param(850, 50000, 30000.0, id="score_alto_renda_muito_alta_teto_limite_max"),
+        ],
+    )
+    def test_limite_por_score_tetos(self, decisor: DecisorCredito, score: int, renda: float, esperado: float):
+>       assert decisor.limite_por_score(score, renda) == esperado
+E       assert 50000.0 == 30000.0
+E        +  where 50000.0 = limite_por_score(850, 50000)
+E        +    where limite_por_score = <app.dominio.credito.DecisorCredito object at 0x10b693530>.limite_por_score
+
+tests/unit/test_credito.py:180: AssertionError
+__________ TestLimitePorScore.test_limite_por_score_fronteira_849_850 __________
+
+self = <test_credito.TestLimitePorScore object at 0x10b5d1e50>
+decisor = <app.dominio.credito.DecisorCredito object at 0x10b7393a0>
+
+    def test_limite_por_score_fronteira_849_850(self, decisor: DecisorCredito):
+        assert decisor.limite_por_score(849, 3000) == 4500.0
+>       assert decisor.limite_por_score(850, 3000) == 5000.0
+E       assert 6000.0 == 5000.0
+E        +  where 6000.0 = limite_por_score(850, 3000)
+E        +    where limite_por_score = <app.dominio.credito.DecisorCredito object at 0x10b7393a0>.limite_por_score
+
+tests/unit/test_credito.py:196: AssertionError
+_______________ test_montante_com_aportes_desconto_ir_no_mes_12 ________________
+
+calc = <app.dominio.juros.CalculadoraJuros object at 0x10b739ac0>
+
+    def test_montante_com_aportes_desconto_ir_no_mes_12(calc: CalculadoraJuros):
+        com_ir = calc.montante_com_aportes(1000, 100, 12, 0.10, aliquota_ir=0.15)
+        sem_ir = calc.montante_com_aportes(1000, 100, 12, 0.10, aliquota_ir=0.0)
+>       assert com_ir < sem_ir
+E       assert 2364.05 < 2364.05
+
+tests/unit/test_juros.py:125: AssertionError
+____________________ test_validar_chave[email_dois_arroba] _____________________
+
+pix = <app.dominio.pix.TransacaoPix object at 0x10b73ac60>, chave = 'a@b@c.com'
+tipo = <ChaveTipo.EMAIL: 'email'>, esperado = False
+
+    @pytest.mark.parametrize(
+        ("chave", "tipo", "esperado"),
+        [
+            pytest.param("52998224725", ChaveTipo.CPF, True, id="cpf_valido"),
+            pytest.param("11111111111", ChaveTipo.CPF, False, id="cpf_todos_digitos_iguais"),
+            pytest.param("12345678901", ChaveTipo.CPF, False, id="cpf_dv_invalido"),
+            pytest.param("123", ChaveTipo.CPF, False, id="cpf_poucos_digitos"),
+            pytest.param("529982247250", ChaveTipo.CPF, False, id="cpf_digitos_demais"),
+            pytest.param("abc", ChaveTipo.CPF, False, id="cpf_sem_digitos"),
+            pytest.param("user@example.com", ChaveTipo.EMAIL, True, id="email_valido"),
+            pytest.param("usuario.com", ChaveTipo.EMAIL, False, id="email_sem_arroba"),
+            pytest.param("@example.com", ChaveTipo.EMAIL, False, id="email_local_vazio"),
+            pytest.param(".user@example.com", ChaveTipo.EMAIL, False, id="email_local_ponto_inicio"),
+            pytest.param("user.@example.com", ChaveTipo.EMAIL, False, id="email_local_ponto_fim"),
+            pytest.param("user@example", ChaveTipo.EMAIL, False, id="email_dominio_sem_ponto"),
+            pytest.param("user@.example.com", ChaveTipo.EMAIL, False, id="email_dominio_ponto_inicio"),
+            pytest.param("user@example.com.", ChaveTipo.EMAIL, False, id="email_dominio_ponto_fim"),
+            pytest.param("a@b@c.com", ChaveTipo.EMAIL, False, id="email_dois_arroba"),
+            pytest.param("  user@example.com  ", ChaveTipo.EMAIL, True, id="email_com_espacos"),
+            pytest.param(None, ChaveTipo.EMAIL, False, id="email_none"),
+            pytest.param("2122223333", ChaveTipo.TELEFONE, True, id="telefone_10_digitos"),
+            pytest.param("21988887777", ChaveTipo.TELEFONE, True, id="telefone_11_digitos"),
+            pytest.param("212223333", ChaveTipo.TELEFONE, False, id="telefone_9_digitos"),
+            pytest.param("212222333344", ChaveTipo.TELEFONE, False, id="telefone_12_digitos"),
+            pytest.param("(21) 2222-3333", ChaveTipo.TELEFONE, True, id="telefone_formatado"),
+            pytest.param("a" * 32, ChaveTipo.ALEATORIA, True, id="aleatoria_32_chars"),
+            pytest.param("a" * 31, ChaveTipo.ALEATORIA, False, id="aleatoria_31_chars"),
+            pytest.param("a" * 33, ChaveTipo.ALEATORIA, False, id="aleatoria_33_chars"),
+            pytest.param("", ChaveTipo.EMAIL, False, id="chave_vazia"),
+            pytest.param("x", None, False, id="tipo_invalido"),
+        ],
+    )
+    def test_validar_chave(pix, chave, tipo, esperado):
+>       assert pix.validar_chave(chave, tipo) is esperado
+E       AssertionError: assert True is False
+E        +  where True = validar_chave('a@b@c.com', <ChaveTipo.EMAIL: 'email'>)
+E        +    where validar_chave = <app.dominio.pix.TransacaoPix object at 0x10b73ac60>.validar_chave
+
+tests/unit/test_pix.py:50: AssertionError
+______ test_solicitar_chargeback[chargeback_bloqueada_dias_30_valor_alto] ______
+
+chave = 'bloq@x.com', valor = 999999, dias = 30, motivo = None
+bloqueadas = ['bloq@x.com'], esperado = False
+
+    @pytest.mark.parametrize(
+        ("chave", "valor", "dias", "motivo", "bloqueadas", "esperado"),
+        [
+            pytest.param(VALID_EMAIL, 100, -1, None, [], False, id="chargeback_dias_negativo"),
+            pytest.param(VALID_EMAIL, 100, 91, None, [], False, id="chargeback_dias_91"),
+            pytest.param(VALID_EMAIL, 100, 90, None, [], False, id="chargeback_dias_90"),
+            pytest.param(VALID_EMAIL, 0, 30, None, [], False, id="chargeback_valor_zero"),
+            pytest.param(VALID_EMAIL, -5, 30, None, [], False, id="chargeback_valor_negativo"),
+            pytest.param("bloq@x.com", 999999, 30, None, BLOQUEADAS, False, id="chargeback_bloqueada_dias_30_valor_alto"),
+            pytest.param(VALID_EMAIL, 100, 60, "golpe", [], True, id="chargeback_motivo_golpe"),
+            pytest.param(VALID_EMAIL, 100, 60, "FRAUDE", [], True, id="chargeback_motivo_fraude_maiusculo"),
+            pytest.param(VALID_EMAIL, 100, 60, "", [], False, id="chargeback_motivo_vazio"),
+            pytest.param(VALID_EMAIL, 100, 0, None, [], True, id="chargeback_dias_zero"),
+            pytest.param(VALID_EMAIL, 100, 7, None, [], True, id="chargeback_dias_7"),
+            pytest.param(VALID_EMAIL, 100, 8, None, [], True, id="chargeback_dias_8_valor_baixo"),
+            pytest.param(VALID_EMAIL, 6000, 8, None, [], False, id="chargeback_dias_8_valor_alto"),
+            pytest.param(VALID_EMAIL, 5000, 30, None, [], True, id="chargeback_dias_30_valor_exato"),
+            pytest.param(VALID_EMAIL, 5000.01, 30, None, [], False, id="chargeback_dias_30_valor_alto"),
+            pytest.param(VALID_EMAIL, 100, 31, None, [], False, id="chargeback_dias_31"),
+        ],
+    )
+    def test_solicitar_chargeback(chave, valor, dias, motivo, bloqueadas, esperado):
+        pix = TransacaoPix(ConfiguracaoPix(chaves_bloqueadas=bloqueadas))
+>       assert pix.solicitar_chargeback(chave, valor, dias, motivo) is esperado
+E       AssertionError: assert True is False
+E        +  where True = solicitar_chargeback('bloq@x.com', 999999, 30, None)
+E        +    where solicitar_chargeback = <app.dominio.pix.TransacaoPix object at 0x10b76e840>.solicitar_chargeback
+
+tests/unit/test_pix.py:99: AssertionError
+================================ tests coverage ================================
+______________ coverage: platform darwin, python 3.12.12-final-0 _______________
+
+Name                                      Stmts   Miss Branch BrPart  Cover   Missing
+-------------------------------------------------------------------------------------
+app/__init__.py                              21     16      0      0    24%   10-29
+app/config.py                                 6      0      0      0   100%
+app/db.py                                    18     11      4      0    32%   30-33, 37-39, 43-46
+app/dominio/__init__.py                       0      0      0      0   100%
+app/dominio/credito.py                       71      4     40      2    93%   85, 92-94
+app/dominio/emprestimo.py                    82      0     38      0   100%
+app/dominio/juros.py                         67      1     36      1    98%   96
+app/dominio/pix.py                          101      0     50      0   100%
+app/dominio/tarifas.py                       54      1     24      1    97%   49
+app/modelos.py                               18     18      0      0     0%   1-23
+app/repositorios/__init__.py                  0      0      0      0   100%
+app/repositorios/memoria_repositorio.py      35     35      4      0     0%   1-58
+app/repositorios/repositorio.py               4      4      0      0     0%   1-8
+app/repositorios/sqlite_repositorio.py       47     47      2      0     0%   1-72
+app/servicos/__init__.py                      0      0      0      0   100%
+app/servicos/auth.py                         27     27      8      0     0%   1-39
+app/servicos/transacoes.py                   23     23      4      0     0%   1-41
+app/web/__init__.py                           0      0      0      0   100%
+app/web/helpers.py                           10     10      2      0     0%   1-15
+app/web/routes/__init__.py                    0      0      0      0   100%
+app/web/routes/auth.py                       37     37      4      0     0%   1-55
+app/web/routes/credito.py                    17     17      2      0     0%   1-23
+app/web/routes/dashboard.py                  13     13      0      0     0%   1-18
+app/web/routes/emprestimo.py                 22     22      2      0     0%   1-28
+app/web/routes/pix.py                        30     30      2      0     0%   1-48
+app/web/routes/tarifas.py                    25     25      2      0     0%   1-30
+-------------------------------------------------------------------------------------
+TOTAL                                       728    341    224      4    60%
+Coverage XML written to file coverage.xml
+=========================== short test summary info ============================
+FAILED tests/unit/test_credito.py::TestLimitePorScore::test_limite_por_score_faixas[score_850]
+FAILED tests/unit/test_credito.py::TestLimitePorScore::test_limite_por_score_faixas[score_1000]
+FAILED tests/unit/test_credito.py::TestLimitePorScore::test_limite_por_score_tetos[score_alto_renda_alta_teto_limite_max]
+FAILED tests/unit/test_credito.py::TestLimitePorScore::test_limite_por_score_tetos[score_alto_renda_muito_alta_teto_limite_max]
+FAILED tests/unit/test_credito.py::TestLimitePorScore::test_limite_por_score_fronteira_849_850
+FAILED tests/unit/test_juros.py::test_montante_com_aportes_desconto_ir_no_mes_12
+FAILED tests/unit/test_pix.py::test_validar_chave[email_dois_arroba] - Assert...
+FAILED tests/unit/test_pix.py::test_solicitar_chargeback[chargeback_bloqueada_dias_30_valor_alto]
+8 failed, 240 passed in 0.52s

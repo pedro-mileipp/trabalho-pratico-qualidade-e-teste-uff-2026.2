@@ -75,11 +75,12 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 
 ```bash
 uv run pytest                                             # toda a suíte
+uv run pytest --cov --cov-branch --cov-report=term-missing # cobertura de arestas das 5 classes de domínio
 uv run pytest tests/unit/test_credito.py --cov=app.dominio.credito --cov-branch --cov-report=term-missing
                                                           # cobertura de arestas de uma classe (ex.: DecisorCredito)
 ```
 
-Resultados por classe em [`docs/relatorios/cobertura_mutacao.md`](docs/relatorios/cobertura_mutacao.md).
+O relatório de cobertura do domínio lista as 5 classes; `skip_empty = True` ignora apenas arquivos sem código. Resultados por classe em [`docs/relatorios/cobertura_mutacao.md`](docs/relatorios/cobertura_mutacao.md).
 
 ### Testes de sistema (Selenium)
 
@@ -103,6 +104,47 @@ Cada requisito não funcional tem a sua pasta em `tests/rnf/` (ex.: `tests/rnf/s
 
 Resultados e riscos identificados em [`docs/relatorios/rnf_seguranca.md`](docs/relatorios/rnf_seguranca.md). Detalhes na seção 6.3 do [Plano de Teste](docs/plano_de_teste.md).
 
+## Inspeção com SonarQube local
+
+O projeto usa o [SonarQube Community Build](https://www.sonarsource.com/products/sonarqube/) em Docker para a inspeção estática da Entrega 2. A análise inicial (“antes”) está documentada em [`docs/relatorios/inspecao_sonar.md`](docs/relatorios/inspecao_sonar.md), com prints e JSON em [`docs/relatorios/evidencias/sonar/antes/`](docs/relatorios/evidencias/sonar/antes/).
+
+### Pré-requisitos
+
+- Docker com Docker Compose;
+- [uv](https://docs.astral.sh/uv/) para rodar a suíte e gerar o `coverage.xml`;
+- `curl` e `jq`;
+- `sonar-scanner` (opcional; se não estiver instalado, o script usa a imagem oficial `sonarsource/sonar-scanner-cli:latest` via Docker — a versão do scanner pode variar).
+
+### Subir e analisar
+
+```bash
+# Sobe o SonarQube e aguarda o status UP
+./scripts/sonar_local.sh up
+
+# Gera o token local e associa o projeto ao perfil Python "Sonar way comprehensive"
+./scripts/sonar_local.sh bootstrap
+
+# Gera coverage.xml e envia a análise
+./scripts/sonar_local.sh scan
+```
+
+O comando `scan` envia a análise mesmo que o `pytest` termine com falhas; o código de saída do pytest é preservado para não mascarar problemas. Na primeira execução, acesse `http://localhost:9000` com `admin` / `admin` e troque a senha. O token fica em `.sonar/token` (ignorado pelo Git) e não deve ser commitado. Se a senha do admin já tiver sido alterada, informe-a ao script:
+
+```bash
+SONAR_ADMIN_PASSWORD='sua-senha-local' ./scripts/sonar_local.sh bootstrap
+```
+
+### Comandos auxiliares
+
+```bash
+./scripts/sonar_local.sh status   # verifica se o SonarQube está UP
+./scripts/sonar_local.sh token    # imprime o token atual
+./scripts/sonar_local.sh down     # para o container, preservando os volumes
+./scripts/sonar_local.sh reset    # remove container e volumes (apaga o histórico)
+```
+
+O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes nomeados (`sonarqube_data`, `sonarqube_extensions`, `sonarqube_logs`). A porta `9000` é publicada apenas para uso local; não exponha esse serviço na internet. O `sonar-project.properties` contém apenas configuração do projeto (sem token).
+
 ## Estrutura do Repositório
 
 | Caminho | Descrição |
@@ -118,11 +160,15 @@ Resultados e riscos identificados em [`docs/relatorios/rnf_seguranca.md`](docs/r
 | [`tests/rnf/`](tests/rnf/) | Entrega 2 — testes de requisitos não funcionais: fixtures compartilhadas em `conftest.py` e uma pasta por requisito |
 | [`tests/rnf/seguranca/`](tests/rnf/seguranca/) | Segurança da autenticação (RNF06): [`test_seguranca_autenticacao.py`](tests/rnf/seguranca/test_seguranca_autenticacao.py) |
 | [`docs/relatorios/rnf_seguranca.md`](docs/relatorios/rnf_seguranca.md) | Entrega 2 — relatório do RNF de segurança: verificações, riscos identificados e avaliação ISO 25010 (Segurança) |
+| `docker-compose.yml` | SonarQube local com versão fixada e volumes persistentes |
+| `scripts/sonar_local.sh` | Sobe o SonarQube, gera token e executa a análise |
+| `sonar-project.properties` | Configuração do projeto para o SonarQube |
+| `docs/relatorios/inspecao_sonar.md` | Relatório de inspeção com seções “antes” e “depois” |
+| `docs/relatorios/evidencias/sonar/` | Prints e JSON das análises do SonarQube |
 | `docs/descricao_trabalho.md` | Enunciado do trabalho |
 | `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
 | `docs/aplicacao.md` | Documentação completa da aplicação e sua arquitetura |
-| `docs/plano_de_teste.md` | Plano de Teste (Entrega 1: escopo, ferramentas, artefatos, responsabilidades; Entrega 2: resultados por classe na seção 6) |
-| [`docs/relatorios/cobertura_mutacao.md`](docs/relatorios/cobertura_mutacao.md) | Entrega 2 — cobertura estrutural (todas-arestas) e mutação por classe de domínio |
+| `docs/plano_de_teste.md` | Plano de Teste da Entrega 1 (escopo, ferramentas, artefatos, responsabilidades) |
 | `tests/testes_manuais/` | Casos de teste manuais (Entrega 1) — PIX em [`tests/testes_manuais/pix/caso_pix.md`](tests/testes_manuais/pix/caso_pix.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/auth/` | Casos de teste manuais (Entrega 1) — Auth em [`tests/testes_manuais/auth/caso_auth.md`](tests/testes_manuais/auth/caso_auth.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/tarifas/` | Casos de teste manuais (Entrega 1) — Tarifas em [`tests/testes_manuais/tarifas/caso_tarifas.md`](tests/testes_manuais/tarifas/caso_tarifas.md) com evidências em `evidencias/` |
@@ -131,6 +177,7 @@ Resultados e riscos identificados em [`docs/relatorios/rnf_seguranca.md`](docs/r
 | `docs/ai/AI-LOG.md` | Registro de uso de IA (a preencher nas entregas) |
 | `docs/ai/prompts/sessao-11-caso-manual-tarifas.md` | [Sessão 11](docs/ai/prompts/sessao-11-caso-manual-tarifas.md) — Caso de teste manual de Tarifas |
 | `pyproject.toml` | Dependências e configuração de ferramentas |
+| `.coveragerc` | Cobertura de arestas, caminhos relativos e gate de 80% |
 | `.python-version` | Versão do Python gerenciada pelo uv |
 
 ## Relatórios de TestLink
