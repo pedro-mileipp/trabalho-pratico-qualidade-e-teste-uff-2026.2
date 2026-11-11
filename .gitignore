@@ -62,6 +62,7 @@ docs/plano_de_teste_exemplo.md
 
 # Selenium / browsers
 .geckodriver.log
+tests/system/**/falhas/
 
 # IDE / OS
 .idea/
