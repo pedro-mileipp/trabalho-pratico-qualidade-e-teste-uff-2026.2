@@ -10,6 +10,7 @@
 |------|--------|----------|--------|
 | 1.0 | 21/09/2026 | Alexandre Colmenero | Criação do Plano de Teste com base nos testes executados na Entrega 1 |
 | 1.1 | 23/09/2026 | Alexandre Colmenero | Atualização para refletir o estado atual dos testes (fix do `test_credito`, tarifas manual preenchida, resultados da suíte) |
+| 1.2 | 11/11/2026 | Pedro Mileipp | Entrega 2: seção 6 com o `DecisorCredito` (técnicas funcionais e cobertura estrutural, issue #42); #35 reclassificado como erro de teste |
 
 ---
 
@@ -229,7 +230,7 @@ Os entregáveis de teste são fornecidos conforme abaixo.
   - [#16](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/16) — e-mail com dois `@` aceito como válido (PIX)
   - [#17](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/17) — chave bloqueada ignora regra de valor no chargeback (PIX)
   - [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) — desconto de IR não aplicado no mês 12 (Juros)
-  - [#35](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/35) — limite máximo não aplicado para score ≥ 850 (Crédito)
+  - [#35](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/35) — limite máximo não aplicado para score ≥ 850 (Crédito). **Fechada na Entrega 2:** o defeito estava nas expectativas dos testes, não no código; corrigido na issue [#42](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/42)
 
 ---
 
@@ -274,5 +275,32 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 | pytest | Framework para testes unitários em Python |
 | TestLink | Ferramenta de gestão de casos de teste |
 | Flask | Microframework web do projeto |
+| TD | Tabela de Decisão |
+
+---
+
+## 🚀 6. Entrega 2 — Resultados por classe
+
+> Seção em construção: cada integrante adiciona a subseção da sua classe ao concluir as issues da Entrega 2. O detalhamento (comandos, saídas e casos) fica em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
+
+### 6.1 `DecisorCredito` — Pedro Mileipp
+
+| Item | Issue | Situação | Resultado |
+|---|---|---|---|
+| Unitários + cobertura estrutural (todas-arestas) | [#42](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/42) | Concluído | 90 casos, todos passando; **100%** de cobertura de arestas (antes: 93%) |
+| Mutação (escore ≥ 80%) | [#47](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/47) | Pendente | — |
+| Correções do Sonar | [#52](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/52) | Pendente | — |
+
+**Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_credito.py`):
+
+- **Partição de equivalência (`pe_`)**: um caso por tipo de evento do histórico, faixas de score e renda inválida.
+- **Análise de valor-limite (`vl_`)**: piso e teto do score (0 e 1000), fronteiras entre faixas (299/300, 499/500, 699/700, 849/850) e teto de limite de cada faixa (logo abaixo, no teto e logo acima).
+- **Tabela de decisão (`td_`)**: as 6 regras de `decidir` e as combinações em que mais de uma regra se aplica.
+- **Teste de laços (`laco_`)**: 0, 1, 2, 3 e 100 iterações sobre o histórico, incluindo o clamp aplicado no meio do laço.
+
+**Defeitos e decisões:**
+
+- [#35](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/35) fechado: as 5 falhas eram expectativas erradas nos testes, corrigidas na #42.
+- **Decisão de projeto:** a tabela de decisão mostrou que, quando mais de uma regra se aplica (ex.: score baixo e valor inválido), `decidir()` informa o motivo da regra avaliada primeiro (score → limite → valor). Como a especificação não define essa precedência, a ordem atual foi mantida e documentada. Os casos `td_r1_precedencia_*` e `td_r2_precedencia_*` fixam esse comportamento.
 
 ---

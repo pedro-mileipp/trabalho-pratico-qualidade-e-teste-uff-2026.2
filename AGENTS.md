@@ -11,7 +11,8 @@ Banco Digital — trabalho prático de Qualidade e Teste (UFF 2026.2). App Flask
 
 ## Estado do projeto
 
-- **Não há testes nem CI ainda** (sem `tests/`, `pytest.ini`, workflows). As dev deps (pytest, pytest-mock, pytest-cov, selenium, webdriver-manager, mutmut, radon) já estão declaradas em `pyproject.toml`.
+- Testes unitários em `tests/unit/` (1 arquivo por classe de domínio) e casos manuais em `tests/testes_manuais/`. Config do pytest em `pyproject.toml` (`[tool.pytest.ini_options]`). **Ainda não há CI** (sem `.github/workflows/`). As dev deps (pytest, pytest-mock, pytest-cov, selenium, webdriver-manager, mutmut, radon) estão em `pyproject.toml`.
+- Resultados de cobertura/mutação por classe: `docs/relatorios/cobertura_mutacao.md`.
 - A implementação de testes é o trabalho dos integrantes. **Não crie arquivos de teste** a menos que explicitamente solicitado.
 
 ## Arquitetura
