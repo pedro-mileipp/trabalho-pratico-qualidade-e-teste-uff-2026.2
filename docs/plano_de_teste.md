@@ -12,6 +12,7 @@
 | 1.1 | 23/09/2026 | Alexandre Colmenero | Atualização para refletir o estado atual dos testes (fix do `test_credito`, tarifas manual preenchida, resultados da suíte) |
 | 1.2 | 11/11/2026 | Pedro Mileipp | Entrega 2: seção 6 com o `DecisorCredito` (técnicas funcionais e cobertura estrutural, issue #42); #35 reclassificado como erro de teste |
 | 1.3 | 11/11/2026 | Pedro Mileipp | Entrega 2: testes de sistema com Selenium — Crédito/RF06 (issue #60) e base compartilhada dos testes de sistema (seção 6.2) |
+| 1.4 | 11/11/2026 | Pedro Mileipp | Entrega 2: requisito não funcional de segurança da autenticação — RNF06 (issue #61, seção 6.3) |
 
 ---
 
@@ -59,7 +60,7 @@ Para isso, foram adotadas abordagens de **testes unitários** e **testes manuais
 | RNF03 – Integridade dos dados | Validar consistência de saldo e extrato após transferências |
 | RNF04 – Manutenibilidade | Validar o código por meio de testes unitários e medição de complexidade ciclomática (radon) |
 | RNF05 – Compatibilidade | Testes em Python 3.12 gerenciado por uv |
-| RNF06 – Segurança (autenticação) | Bloqueio de acesso às rotas sem sessão (`login_required`); sem caso de teste dedicado na Entrega 1 |
+| RNF06 – Segurança (autenticação) | Bloqueio de acesso às rotas sem sessão (`login_required`), logout, armazenamento da senha e mensagens de erro do login. Sem caso de teste dedicado na Entrega 1; testes automatizados na Entrega 2 (seção 6.3) |
 
 ---
 
@@ -290,6 +291,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 |---|---|---|---|
 | Unitários + cobertura estrutural (todas-arestas) | [#42](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/42) | Concluído | 90 casos, todos passando; **100%** de cobertura de arestas (antes: 93%) |
 | Teste de sistema (Selenium) — Crédito, RF06 | [#60](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/60) | Concluído | 13 cenários automatizados, todos passando (ver seção 6.2) |
+| Requisito não funcional — segurança da autenticação, RNF06 | [#61](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/61) | Concluído | 22 testes, todos passando; 5 riscos documentados (ver seção 6.3) |
 | Mutação (escore ≥ 80%) | [#47](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/47) | Pendente | — |
 | Correções do Sonar | [#52](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/52) | Pendente | — |
 
@@ -341,5 +343,23 @@ Pasta: `tests/system/credito/` (testes em `test_credito_sistema.py`, page object
 | — | Acesso à tela sem login | — | redireciona para `/login` |
 
 **Resultado (11/11/2026):** 13 cenários, todos passando (`uv run pytest tests/system -v`), em execuções seguidas com o mesmo resultado. Evidências em `tests/system/credito/evidencias/`: para cada cenário, um print do formulário preenchido antes do envio (`__1_formulario_preenchido`) e um da tela final com o resultado (`__2_final`).
+
+### 6.3 Requisito não funcional — segurança da autenticação (RNF06)
+
+Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/61). Relatório completo em [`docs/relatorios/rnf_seguranca.md`](relatorios/rnf_seguranca.md).
+
+**Ferramenta:** cliente de testes do Flask (`app.test_client()`) com pytest: requisições HTTP reais às rotas, sem navegador, e banco SQLite temporário por teste (fixtures em `tests/rnf/conftest.py`). Arquivo: `tests/rnf/seguranca/test_seguranca_autenticacao.py`.
+
+| Verificação | Casos | Resultado |
+|---|---|---|
+| Rotas protegidas exigem login (GET e POST), sem gravar nada no banco | 11 | ✅ |
+| Depois do logout, as rotas protegidas não mostram dados do cliente | 6 | ✅ |
+| Senha gravada como hash `pbkdf2:sha256`, com salt por cliente | 2 | ✅ |
+| Mensagem de erro do login não revela se o e-mail existe | 2 | ✅ |
+| Cookie de sessão `HttpOnly` | 1 | ✅ |
+
+**Resultado (11/11/2026):** 22 testes, todos passando (`uv run pytest tests/rnf/seguranca -v`).
+
+**Riscos identificados** (fora dos critérios da issue; detalhes e recomendações no relatório): R1 — o botão Voltar após o logout mostra o painel do cache do navegador; R2 — um cookie de sessão copiado antes do logout continua válido; R3 — `SECRET_KEY` com valor padrão fixo no código; R4 — o cadastro revela se o e-mail já existe; R5 — cookie de sessão sem `Secure`/`SameSite`. O relatório também traz a avaliação da característica Segurança da ISO/IEC 25010:2023 para a issue #62.
 
 ---

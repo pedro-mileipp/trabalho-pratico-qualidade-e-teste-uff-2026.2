@@ -92,6 +92,17 @@ EVIDENCIAS=1 uv run pytest tests/system       # salva prints de cada etapa em <f
 
 Cada funcionalidade tem a sua pasta em `tests/system/` (ex.: `tests/system/credito/`), com os testes, o page object e as evidências. As fixtures compartilhadas (servidor Flask com banco temporário, navegador e cliente logado) estão em [`tests/system/conftest.py`](tests/system/conftest.py). Detalhes na seção 6.2 do [Plano de Teste](docs/plano_de_teste.md).
 
+### Requisitos não funcionais
+
+```bash
+uv run pytest tests/rnf -v                    # todos os requisitos não funcionais, sem navegador
+uv run pytest tests/rnf/seguranca -v          # só a segurança da autenticação (RNF06)
+```
+
+Cada requisito não funcional tem a sua pasta em `tests/rnf/` (ex.: `tests/rnf/seguranca/`). As fixtures compartilhadas (aplicação com banco temporário, cliente HTTP e cliente cadastrado) estão em [`tests/rnf/conftest.py`](tests/rnf/conftest.py).
+
+Resultados e riscos identificados em [`docs/relatorios/rnf_seguranca.md`](docs/relatorios/rnf_seguranca.md). Detalhes na seção 6.3 do [Plano de Teste](docs/plano_de_teste.md).
+
 ## Estrutura do Repositório
 
 | Caminho | Descrição |
@@ -104,6 +115,9 @@ Cada funcionalidade tem a sua pasta em `tests/system/` (ex.: `tests/system/credi
 | `tests/unit/` | Testes unitários (1 arquivo por classe de domínio) |
 | [`tests/system/`](tests/system/) | Entrega 2 — testes de sistema com Selenium: fixtures compartilhadas em `conftest.py` e uma pasta por funcionalidade |
 | [`tests/system/credito/`](tests/system/credito/) | Testes de sistema — Crédito (RF06): [`test_credito_sistema.py`](tests/system/credito/test_credito_sistema.py), page object [`pagina_credito.py`](tests/system/credito/pagina_credito.py) e evidências em [`evidencias/`](tests/system/credito/evidencias/) |
+| [`tests/rnf/`](tests/rnf/) | Entrega 2 — testes de requisitos não funcionais: fixtures compartilhadas em `conftest.py` e uma pasta por requisito |
+| [`tests/rnf/seguranca/`](tests/rnf/seguranca/) | Segurança da autenticação (RNF06): [`test_seguranca_autenticacao.py`](tests/rnf/seguranca/test_seguranca_autenticacao.py) |
+| [`docs/relatorios/rnf_seguranca.md`](docs/relatorios/rnf_seguranca.md) | Entrega 2 — relatório do RNF de segurança: verificações, riscos identificados e avaliação ISO 25010 (Segurança) |
 | `docs/descricao_trabalho.md` | Enunciado do trabalho |
 | `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
 | `docs/aplicacao.md` | Documentação completa da aplicação e sua arquitetura |
