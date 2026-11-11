@@ -45,6 +45,8 @@ banco.db
 .coverage.*
 htmlcov/
 .mutmut-cache/
+.mutmut/
+mutants/
 .ruff_cache/
 .coverage.xml
 coverage.xml
@@ -52,6 +54,7 @@ junit.xml
 
 # Ferramentas
 .sonar/
+.scannerwork/
 
 # Documento interno de defeitos (não deve ser versionado)
 docs/defeitos_conhecidos.md
