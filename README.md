@@ -87,7 +87,7 @@ Pré-requisito: Google Chrome instalado (o driver é baixado automaticamente pel
 
 ```bash
 uv run pytest tests/system -v                 # roda os testes de sistema (Chrome headless)
-EVIDENCIAS=1 uv run pytest tests/system       # salva um screenshot por teste em <funcionalidade>/evidencias/
+EVIDENCIAS=1 uv run pytest tests/system       # salva prints de cada etapa em <funcionalidade>/evidencias/
 ```
 
 Cada funcionalidade tem a sua pasta em `tests/system/` (ex.: `tests/system/credito/`), com os testes, o page object e as evidências. As fixtures compartilhadas (servidor Flask com banco temporário, navegador e cliente logado) estão em [`tests/system/conftest.py`](tests/system/conftest.py). Detalhes na seção 6.2 do [Plano de Teste](docs/plano_de_teste.md).

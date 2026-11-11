@@ -46,9 +46,11 @@ class PaginaCredito:
         )
         return self
 
-    def analisar(self, renda: float | str, valor: float | str) -> None:
+    def preencher(self, renda: float | str, valor: float | str) -> None:
         self._preencher(self.CAMPO_RENDA, renda)
         self._preencher(self.CAMPO_VALOR, valor)
+
+    def enviar(self) -> None:
         self._navegador.find_element(*self.BOTAO_ANALISAR).click()
 
     def resultado(self) -> ResultadoCreditoTela:

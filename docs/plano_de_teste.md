@@ -316,8 +316,9 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 | `servidor` | Sobe a aplicação Flask real numa thread, em porta livre, com banco SQLite temporário criado do zero a cada execução |
 | `navegador` | Chrome headless reaproveitado na sessão, com cookies apagados antes de cada teste; salva screenshot e HTML em `<funcionalidade>/falhas/` quando um teste falha |
 | `cliente_logado` | Cadastra um cliente com e-mail único pela tela `/registro` (que já abre a sessão), deixando cada teste independente dos demais |
+| `evidencia` | Registra o screenshot de uma etapa do teste (ex.: formulário preenchido antes do envio) quando `EVIDENCIAS=1` |
 
-Cada funcionalidade tem a sua pasta em `tests/system/` (ex.: `tests/system/credito/`), com o arquivo de testes, o page object e as evidências. O page object concentra os seletores da tela: se ela mudar, só ele é ajustado. Com `EVIDENCIAS=1`, o screenshot de cada teste é salvo em `<funcionalidade>/evidencias/`.
+Cada funcionalidade tem a sua pasta em `tests/system/` (ex.: `tests/system/credito/`), com o arquivo de testes, o page object e as evidências. O page object concentra os seletores da tela: se ela mudar, só ele é ajustado. Com `EVIDENCIAS=1`, os screenshots das etapas registradas e da tela final de cada teste são salvos em `<funcionalidade>/evidencias/`, numerados na ordem em que acontecem.
 
 #### Crédito (RF06) — Pedro Mileipp, issue [#60](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/60)
 
@@ -339,6 +340,6 @@ Pasta: `tests/system/credito/` (testes em `test_credito_sistema.py`, page object
 | CT-12 (novo) | Limite no teto da faixa de score 500 | 20000 / 10000 | aprovado · limite R$ 10000.00 |
 | — | Acesso à tela sem login | — | redireciona para `/login` |
 
-**Resultado (11/11/2026):** 13 cenários, todos passando (`uv run pytest tests/system -v`), em execuções seguidas com o mesmo resultado. Evidências em `tests/system/credito/evidencias/`.
+**Resultado (11/11/2026):** 13 cenários, todos passando (`uv run pytest tests/system -v`), em execuções seguidas com o mesmo resultado. Evidências em `tests/system/credito/evidencias/`: para cada cenário, um print do formulário preenchido antes do envio (`__1_formulario_preenchido`) e um da tela final com o resultado (`__2_final`).
 
 ---

@@ -11,9 +11,14 @@ evidências. Estas fixtures valem para todas as pastas.
 - ``cliente_logado``: cadastra um cliente novo (e-mail único) pela tela ``/registro``, que já
   deixa a sessão aberta. Cada teste usa o seu próprio cliente, então os testes são independentes.
 
+- ``evidencia``: função para registrar o screenshot de uma etapa do teste, ex.:
+  ``evidencia("formulario_preenchido")``. Só grava com ``EVIDENCIAS=1``.
+
 Evidências, sempre dentro da pasta da funcionalidade:
 - em caso de falha, screenshot e HTML vão para ``<funcionalidade>/falhas/`` (fora do git);
-- com ``EVIDENCIAS=1``, o screenshot de cada teste vai para ``<funcionalidade>/evidencias/``.
+- com ``EVIDENCIAS=1``, as etapas registradas e a tela final de cada teste vão para
+  ``<funcionalidade>/evidencias/``, numeradas na ordem (``<teste>__1_<etapa>.png``,
+  ``<teste>__2_final.png``...).
 """
 
 from __future__ import annotations
@@ -45,6 +50,23 @@ def pytest_runtest_makereport(item, call):
     resultado = yield
     relatorio = resultado.get_result()
     setattr(item, f"relatorio_{relatorio.when}", relatorio)
+
+
+def _evidencias_ligadas() -> bool:
+    return os.environ.get("EVIDENCIAS") == "1"
+
+
+def _nome_do_teste(item) -> str:
+    return re.sub(r"[^\w.-]+", "_", item.name).strip("_")
+
+
+def _salvar_evidencia(driver, item, etapa: str) -> None:
+    """Salva o screenshot de uma etapa, numerado na ordem em que as etapas acontecem."""
+    item.evidencias_salvas = getattr(item, "evidencias_salvas", 0) + 1
+    pasta = Path(item.path).parent / "evidencias"
+    pasta.mkdir(exist_ok=True)
+    arquivo = f"{_nome_do_teste(item)}__{item.evidencias_salvas}_{etapa}.png"
+    driver.save_screenshot(str(pasta / arquivo))
 
 
 @pytest.fixture(scope="session")
@@ -87,18 +109,26 @@ def navegador(_navegador_da_sessao, servidor, request):
     driver.get(servidor + "/login")
     driver.delete_all_cookies()
     yield driver
-    nome = re.sub(r"[^\w.-]+", "_", request.node.name).strip("_")
-    pasta_funcionalidade = Path(request.path).parent
     relatorio = getattr(request.node, "relatorio_call", None)
     if relatorio is not None and relatorio.failed:
-        pasta = pasta_funcionalidade / "falhas"
+        nome = _nome_do_teste(request.node)
+        pasta = Path(request.node.path).parent / "falhas"
         pasta.mkdir(exist_ok=True)
         driver.save_screenshot(str(pasta / f"{nome}.png"))
         (pasta / f"{nome}.html").write_text(driver.page_source, encoding="utf-8")
-    elif os.environ.get("EVIDENCIAS") == "1":
-        pasta = pasta_funcionalidade / "evidencias"
-        pasta.mkdir(exist_ok=True)
-        driver.save_screenshot(str(pasta / f"{nome}.png"))
+    elif _evidencias_ligadas():
+        _salvar_evidencia(driver, request.node, "final")
+
+
+@pytest.fixture
+def evidencia(navegador, request):
+    """Retorna uma função que registra o screenshot de uma etapa (só com EVIDENCIAS=1)."""
+
+    def registrar(etapa: str) -> None:
+        if _evidencias_ligadas():
+            _salvar_evidencia(navegador, request.node, etapa)
+
+    return registrar
 
 
 @pytest.fixture

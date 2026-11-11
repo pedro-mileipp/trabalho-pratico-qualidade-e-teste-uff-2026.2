@@ -30,10 +30,14 @@ SCORE_SEM_HISTORICO = 500
         pytest.param(20000, 10000, "aprovado", 10000.0, "aprovado", id="ct12_limite_no_teto_da_faixa"),
     ],
 )
-def test_analise_de_credito(navegador, servidor, cliente_logado, renda, valor, situacao, limite, motivo):
+def test_analise_de_credito(
+    navegador, servidor, cliente_logado, evidencia, renda, valor, situacao, limite, motivo
+):
     pagina = PaginaCredito(navegador, servidor).abrir()
+    pagina.preencher(renda, valor)
+    evidencia("formulario_preenchido")
 
-    pagina.analisar(renda, valor)
+    pagina.enviar()
 
     assert pagina.resultado() == ResultadoCreditoTela(situacao, SCORE_SEM_HISTORICO, limite, motivo)
 
@@ -45,10 +49,14 @@ def test_analise_de_credito(navegador, servidor, cliente_logado, renda, valor, s
         pytest.param("renda", -1000, 5000, id="ct08_renda_negativa_bloqueada"),
     ],
 )
-def test_valor_negativo_e_barrado_pelo_formulario(navegador, servidor, cliente_logado, campo, renda, valor):
+def test_valor_negativo_e_barrado_pelo_formulario(
+    navegador, servidor, cliente_logado, evidencia, campo, renda, valor
+):
     pagina = PaginaCredito(navegador, servidor).abrir()
+    pagina.preencher(renda, valor)
+    evidencia("formulario_preenchido")
 
-    pagina.analisar(renda, valor)
+    pagina.enviar()
 
     assert pagina.campo_abaixo_do_minimo(campo)
     assert not pagina.tem_resultado()
