@@ -71,6 +71,16 @@ uv run ruff check app/             # lint estático
 uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por módulo)
 ```
 
+## Testes e cobertura
+
+```bash
+uv run pytest                                             # toda a suíte
+uv run pytest tests/unit/test_credito.py --cov=app.dominio.credito --cov-branch --cov-report=term-missing
+                                                          # cobertura de arestas de uma classe (ex.: DecisorCredito)
+```
+
+Resultados por classe em [`docs/relatorios/cobertura_mutacao.md`](docs/relatorios/cobertura_mutacao.md).
+
 ## Estrutura do Repositório
 
 | Caminho | Descrição |
@@ -84,7 +94,8 @@ uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por m�
 | `docs/descricao_trabalho.md` | Enunciado do trabalho |
 | `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
 | `docs/aplicacao.md` | Documentação completa da aplicação e sua arquitetura |
-| `docs/plano_de_teste.md` | Plano de Teste da Entrega 1 (escopo, ferramentas, artefatos, responsabilidades) |
+| `docs/plano_de_teste.md` | Plano de Teste (Entrega 1: escopo, ferramentas, artefatos, responsabilidades; Entrega 2: resultados por classe na seção 6) |
+| [`docs/relatorios/cobertura_mutacao.md`](docs/relatorios/cobertura_mutacao.md) | Entrega 2 — cobertura estrutural (todas-arestas) e mutação por classe de domínio |
 | `tests/testes_manuais/` | Casos de teste manuais (Entrega 1) — PIX em [`tests/testes_manuais/pix/caso_pix.md`](tests/testes_manuais/pix/caso_pix.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/auth/` | Casos de teste manuais (Entrega 1) — Auth em [`tests/testes_manuais/auth/caso_auth.md`](tests/testes_manuais/auth/caso_auth.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/tarifas/` | Casos de teste manuais (Entrega 1) — Tarifas em [`tests/testes_manuais/tarifas/caso_tarifas.md`](tests/testes_manuais/tarifas/caso_tarifas.md) com evidências em `evidencias/` |
