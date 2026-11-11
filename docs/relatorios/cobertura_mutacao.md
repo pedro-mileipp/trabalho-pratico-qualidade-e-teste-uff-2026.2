@@ -4,6 +4,53 @@ Resultados das técnicas **estrutural** (critério todas-arestas, meta ≥ 80%) 
 
 > As seções das demais classes são adicionadas pelos responsáveis de cada issue. A configuração padrão de cobertura e do mutmut é tratada na issue #36.
 
+## Configuração do mutmut — #36
+
+| Campo | Valor |
+|---|---|
+| Ferramenta | `mutmut` 3.8 (dev dependency) |
+| Fonte mutada | `app/dominio` |
+| Testes usados | `tests/unit` |
+| Cache | `mutants/` (ignorado pelo Git) |
+| Configuração | `[tool.mutmut]` em `pyproject.toml` |
+
+```toml
+[tool.mutmut]
+source_paths = ["app/dominio"]
+pytest_add_cli_args = ["-q"]
+pytest_add_cli_args_test_selection = ["tests/unit"]
+```
+
+### Comandos
+
+```bash
+uv run mutmut run --max-children 8
+uv run mutmut results
+uv run mutmut show <id>
+```
+
+O `source_paths` explícito corrige o `FileNotFoundError` que o mutmut 3.8 apresentava sem configuração. A suíte unitária precisa estar 100% verde antes do run completo; as falhas abertas de PIX (#16/#17) e juros (#20) bloqueiam temporariamente o run geral.
+
+Para mutar uma classe isolada, acrescente `only_mutate = ["app/dominio/<arquivo>.py"]` e restrinja `pytest_add_cli_args_test_selection` ao teste correspondente. Remova as duas restrições para o run completo de todas as classes.
+
+### Validação piloto — `TarifaBancaria`
+
+Para validar a configuração sem depender da suíte completa, foi executado um run piloto isolado em `app/dominio/tarifas.py` com `tests/unit/test_tarifas.py` (44 testes verdes), em um worktree temporário com `only_mutate` restrito à classe:
+
+```text
+106 mutantes gerados
+74 mortos
+32 sobreviventes
+0 timeouts
+0 suspeitos
+
+Escore: 74 / 106 = 69,8%
+```
+
+**Resultado:** a configuração foi validada. O escore ainda está abaixo de 80%; a issue #45 (mutação de `TarifaBancaria`) deve adicionar testes para matar os 32 sobreviventes. A lista completa está em [`docs/relatorios/evidencias/mutacao/piloto-tarifas-resultados.txt`](evidencias/mutacao/piloto-tarifas-resultados.txt) e o resumo em [`piloto-tarifas.txt`](evidencias/mutacao/piloto-tarifas.txt).
+
+> O run completo de todas as classes continua bloqueado pelas 3 falhas atuais da suíte (#16, #17 e #20).
+
 ---
 
 ## `DecisorCredito` — `app/dominio/credito.py`

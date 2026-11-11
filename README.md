@@ -81,6 +81,20 @@ uv run pytest tests/unit/test_credito.py --cov=app.dominio.credito --cov-branch 
 
 Resultados por classe em [`docs/relatorios/cobertura_mutacao.md`](docs/relatorios/cobertura_mutacao.md).
 
+### Mutação (mutmut)
+
+A configuração fica em `[tool.mutmut]` no `pyproject.toml` (`source_paths = ["app/dominio"]`, testes unitários em `tests/unit`). O mutmut exige a suíte unitária verde antes de iniciar.
+
+```bash
+uv run mutmut run --max-children 8
+uv run mutmut results
+uv run mutmut show <id>
+```
+
+O cache fica em `mutants/` (ignorado pelo Git). Resultados e mutantes sobreviventes por classe em [`docs/relatorios/cobertura_mutacao.md`](docs/relatorios/cobertura_mutacao.md). A configuração foi validada na classe piloto `TarifaBancaria`; evidência em [`docs/relatorios/evidencias/mutacao/`](docs/relatorios/evidencias/mutacao/).
+
+Para mutar uma classe isolada, acrescente `only_mutate = ["app/dominio/<arquivo>.py"]` e restrinja `pytest_add_cli_args_test_selection` ao teste correspondente; remova as duas restrições para o run completo.
+
 ### Testes de sistema (Selenium)
 
 Pré-requisito: Google Chrome instalado (o driver é baixado automaticamente pelo Selenium Manager). Sem o Chrome, esses testes são pulados.
