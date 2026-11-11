@@ -13,6 +13,7 @@ Banco Digital — trabalho prático de Qualidade e Teste (UFF 2026.2). App Flask
 
 - Testes unitários em `tests/unit/` (1 arquivo por classe de domínio) e casos manuais em `tests/testes_manuais/`. Config do pytest em `pyproject.toml` (`[tool.pytest.ini_options]`). **Ainda não há CI** (sem `.github/workflows/`). As dev deps (pytest, pytest-mock, pytest-cov, selenium, webdriver-manager, mutmut, radon) estão em `pyproject.toml`.
 - Resultados de cobertura/mutação por classe: `docs/relatorios/cobertura_mutacao.md`.
+- Testes de sistema (Selenium, Chrome headless) em `tests/system/`, **uma pasta por funcionalidade** (ex.: `tests/system/credito/`) com `test_<funcionalidade>_sistema.py` e o page object `pagina_<funcionalidade>.py`. Reutilize as fixtures `servidor`, `navegador` e `cliente_logado` de `tests/system/conftest.py`. Os nomes de arquivo não podem se repetir entre pastas (não há `__init__.py`), por isso o sufixo `_sistema` e o prefixo `pagina_`. `EVIDENCIAS=1` salva screenshots em `<funcionalidade>/evidencias/`; falhas vão para `<funcionalidade>/falhas/` (fora do git).
 - A implementação de testes é o trabalho dos integrantes. **Não crie arquivos de teste** a menos que explicitamente solicitado.
 
 ## Arquitetura

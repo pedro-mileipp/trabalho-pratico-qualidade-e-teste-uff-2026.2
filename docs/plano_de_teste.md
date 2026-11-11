@@ -11,6 +11,7 @@
 | 1.0 | 21/09/2026 | Alexandre Colmenero | Criação do Plano de Teste com base nos testes executados na Entrega 1 |
 | 1.1 | 23/09/2026 | Alexandre Colmenero | Atualização para refletir o estado atual dos testes (fix do `test_credito`, tarifas manual preenchida, resultados da suíte) |
 | 1.2 | 11/11/2026 | Pedro Mileipp | Entrega 2: seção 6 com o `DecisorCredito` (técnicas funcionais e cobertura estrutural, issue #42); #35 reclassificado como erro de teste |
+| 1.3 | 11/11/2026 | Pedro Mileipp | Entrega 2: testes de sistema com Selenium — Crédito/RF06 (issue #60) e base compartilhada dos testes de sistema (seção 6.2) |
 
 ---
 
@@ -279,7 +280,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 
 ---
 
-## 🚀 6. Entrega 2 — Resultados por classe
+## 🚀 6. Entrega 2 — Resultados
 
 > Seção em construção: cada integrante adiciona a subseção da sua classe ao concluir as issues da Entrega 2. O detalhamento (comandos, saídas e casos) fica em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
 
@@ -288,6 +289,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 | Item | Issue | Situação | Resultado |
 |---|---|---|---|
 | Unitários + cobertura estrutural (todas-arestas) | [#42](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/42) | Concluído | 90 casos, todos passando; **100%** de cobertura de arestas (antes: 93%) |
+| Teste de sistema (Selenium) — Crédito, RF06 | [#60](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/60) | Concluído | 13 cenários automatizados, todos passando (ver seção 6.2) |
 | Mutação (escore ≥ 80%) | [#47](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/47) | Pendente | — |
 | Correções do Sonar | [#52](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/52) | Pendente | — |
 
@@ -302,5 +304,41 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 
 - [#35](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/35) fechado: as 5 falhas eram expectativas erradas nos testes, corrigidas na #42.
 - **Decisão de projeto:** a tabela de decisão mostrou que, quando mais de uma regra se aplica (ex.: score baixo e valor inválido), `decidir()` informa o motivo da regra avaliada primeiro (score → limite → valor). Como a especificação não define essa precedência, a ordem atual foi mantida e documentada. Os casos `td_r1_precedencia_*` e `td_r2_precedencia_*` fixam esse comportamento.
+
+### 6.2 Testes de sistema (Selenium)
+
+**Ferramentas:** Selenium WebDriver 4 com Google Chrome em modo headless (driver resolvido pelo Selenium Manager) e pytest.
+
+**Base compartilhada** (`tests/system/conftest.py`), para todos os testes de sistema:
+
+| Fixture | O que faz |
+|---|---|
+| `servidor` | Sobe a aplicação Flask real numa thread, em porta livre, com banco SQLite temporário criado do zero a cada execução |
+| `navegador` | Chrome headless reaproveitado na sessão, com cookies apagados antes de cada teste; salva screenshot e HTML em `<funcionalidade>/falhas/` quando um teste falha |
+| `cliente_logado` | Cadastra um cliente com e-mail único pela tela `/registro` (que já abre a sessão), deixando cada teste independente dos demais |
+
+Cada funcionalidade tem a sua pasta em `tests/system/` (ex.: `tests/system/credito/`), com o arquivo de testes, o page object e as evidências. O page object concentra os seletores da tela: se ela mudar, só ele é ajustado. Com `EVIDENCIAS=1`, o screenshot de cada teste é salvo em `<funcionalidade>/evidencias/`.
+
+#### Crédito (RF06) — Pedro Mileipp, issue [#60](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/60)
+
+Pasta: `tests/system/credito/` (testes em `test_credito_sistema.py`, page object em `pagina_credito.py`). Os cenários automatizam o caso manual da Entrega 1 (`tests/testes_manuais/credito/caso_credito.md`) com os mesmos ids, e acrescentam duas fronteiras. Sem histórico na tela, o score é sempre 500 e o limite é `min(renda, 10000)`.
+
+| Id | Cenário | Entrada (renda / valor) | Resultado esperado |
+|---|---|---|---|
+| CT-01 | Aprovado dentro do limite | 10000 / 5000 | aprovado · limite R$ 10000.00 |
+| CT-02 | Aprovado exatamente no limite | 10000 / 10000 | aprovado |
+| CT-03 | Parcial entre o limite e 1,5× | 10000 / 12000 | parcial |
+| CT-04 | Negado acima de 1,5× | 10000 / 20000 | negado · `acima_limite` |
+| CT-05 | Negado com valor zero | 10000 / 0 | negado · `valor_invalido` |
+| CT-06 | Valor negativo barrado pelo formulário | 10000 / -500 | validação HTML5 impede o envio |
+| CT-07 | Negado com renda zero | 0 / 5000 | negado · `sem_limite` · limite R$ 0.00 |
+| CT-08 | Renda negativa barrada pelo formulário | -1000 / 5000 | validação HTML5 impede o envio |
+| CT-09 | Parcial exatamente em 1,5× | 10000 / 15000 | parcial |
+| CT-10 | Parcial logo abaixo de 1,5× | 10000 / 14999.99 | parcial |
+| CT-11 (novo) | Negado logo acima de 1,5× | 10000 / 15000.01 | negado · `acima_limite` |
+| CT-12 (novo) | Limite no teto da faixa de score 500 | 20000 / 10000 | aprovado · limite R$ 10000.00 |
+| — | Acesso à tela sem login | — | redireciona para `/login` |
+
+**Resultado (11/11/2026):** 13 cenários, todos passando (`uv run pytest tests/system -v`), em execuções seguidas com o mesmo resultado. Evidências em `tests/system/credito/evidencias/`.
 
 ---

@@ -81,6 +81,17 @@ uv run pytest tests/unit/test_credito.py --cov=app.dominio.credito --cov-branch 
 
 Resultados por classe em [`docs/relatorios/cobertura_mutacao.md`](docs/relatorios/cobertura_mutacao.md).
 
+### Testes de sistema (Selenium)
+
+Pré-requisito: Google Chrome instalado (o driver é baixado automaticamente pelo Selenium Manager). Sem o Chrome, esses testes são pulados.
+
+```bash
+uv run pytest tests/system -v                 # roda os testes de sistema (Chrome headless)
+EVIDENCIAS=1 uv run pytest tests/system       # salva um screenshot por teste em <funcionalidade>/evidencias/
+```
+
+Cada funcionalidade tem a sua pasta em `tests/system/` (ex.: `tests/system/credito/`), com os testes, o page object e as evidências. As fixtures compartilhadas (servidor Flask com banco temporário, navegador e cliente logado) estão em [`tests/system/conftest.py`](tests/system/conftest.py). Detalhes na seção 6.2 do [Plano de Teste](docs/plano_de_teste.md).
+
 ## Estrutura do Repositório
 
 | Caminho | Descrição |
@@ -91,6 +102,8 @@ Resultados por classe em [`docs/relatorios/cobertura_mutacao.md`](docs/relatorio
 | `app/servicos/` | Orquestração (auth, transações) |
 | `app/web/` | Rotas e telas (login, dashboard, PIX, empréstimo, tarifas, crédito) |
 | `tests/unit/` | Testes unitários (1 arquivo por classe de domínio) |
+| [`tests/system/`](tests/system/) | Entrega 2 — testes de sistema com Selenium: fixtures compartilhadas em `conftest.py` e uma pasta por funcionalidade |
+| [`tests/system/credito/`](tests/system/credito/) | Testes de sistema — Crédito (RF06): [`test_credito_sistema.py`](tests/system/credito/test_credito_sistema.py), page object [`pagina_credito.py`](tests/system/credito/pagina_credito.py) e evidências em [`evidencias/`](tests/system/credito/evidencias/) |
 | `docs/descricao_trabalho.md` | Enunciado do trabalho |
 | `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
 | `docs/aplicacao.md` | Documentação completa da aplicação e sua arquitetura |
