@@ -129,6 +129,23 @@ class TestCalcularScore:
     def test_calcular_score_teto_mil(self, decisor: DecisorCredito, peso: int, esperado: int):
         assert decisor.calcular_score([RegistroHistorico("adiantamento", peso=peso)]) == esperado
 
+    # VL com passo 1 (issue #47): "adiantamento" e "atraso" andam de 2 em 2 e nunca param em
+    # 1001 nem em -1. "pagamento_em_dia" e "consulta" andam de 1 em 1 e testam os valores
+    # exatamente vizinhos ao piso e ao teto. O caso de 1001 mata o mutante "score > 1001".
+    @pytest.mark.parametrize(
+        ("registro", "esperado"),
+        [
+            pytest.param(RegistroHistorico("pagamento_em_dia", peso=499), 999, id="vl_score_999_passo_1"),
+            pytest.param(RegistroHistorico("pagamento_em_dia", peso=500), 1000, id="vl_score_1000_passo_1"),
+            pytest.param(RegistroHistorico("pagamento_em_dia", peso=501), 1000, id="vl_score_1001_vira_1000"),
+            pytest.param(RegistroHistorico("consulta", peso=499), 1, id="vl_score_1_passo_1"),
+            pytest.param(RegistroHistorico("consulta", peso=500), 0, id="vl_score_0_passo_1"),
+            pytest.param(RegistroHistorico("consulta", peso=501), 0, id="vl_score_menos_1_vira_0"),
+        ],
+    )
+    def test_calcular_score_piso_e_teto_passo_1(self, decisor: DecisorCredito, registro, esperado: int):
+        assert decisor.calcular_score([registro]) == esperado
+
     # Laço + VL: o clamp é aplicado a cada iteração, então a ordem dos eventos muda o resultado.
     @pytest.mark.parametrize(
         ("registros", "esperado"),
