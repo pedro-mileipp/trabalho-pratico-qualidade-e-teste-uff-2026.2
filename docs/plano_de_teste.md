@@ -13,6 +13,7 @@
 | 1.2 | 11/11/2026 | Pedro Mileipp | Entrega 2: seção 6 com o `DecisorCredito` (técnicas funcionais e cobertura estrutural, issue #42); #35 reclassificado como erro de teste |
 | 1.3 | 11/11/2026 | Pedro Mileipp | Entrega 2: testes de sistema com Selenium — Crédito/RF06 (issue #60) e base compartilhada dos testes de sistema (seção 6.2) |
 | 1.4 | 11/11/2026 | Pedro Mileipp | Entrega 2: requisito não funcional de segurança da autenticação — RNF06 (issue #61, seção 6.3) |
+| 1.5 | 12/11/2026 | Pedro Mileipp | Entrega 2: mutação do `DecisorCredito` (issue #47) na seção 6.1 |
 
 ---
 
@@ -292,7 +293,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 | Unitários + cobertura estrutural (todas-arestas) | [#42](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/42) | Concluído | 90 casos, todos passando; **100%** de cobertura de arestas (antes: 93%) |
 | Teste de sistema (Selenium) — Crédito, RF06 | [#60](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/60) | Concluído | 13 cenários automatizados, todos passando (ver seção 6.2) |
 | Requisito não funcional — segurança da autenticação, RNF06 | [#61](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/61) | Concluído | 22 testes, todos passando; 5 riscos documentados (ver seção 6.3) |
-| Mutação (escore ≥ 80%) | [#47](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/47) | Pendente | — |
+| Mutação (escore ≥ 80%) | [#47](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/47) | Concluído | 184 mutantes, 179 mortos: **97,3%** (100% descontando 5 equivalentes justificados); +6 casos de valor-limite (96 no total) |
 | Correções do Sonar | [#52](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/52) | Pendente | — |
 
 **Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_credito.py`):
@@ -301,6 +302,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 - **Análise de valor-limite (`vl_`)**: piso e teto do score (0 e 1000), fronteiras entre faixas (299/300, 499/500, 699/700, 849/850) e teto de limite de cada faixa (logo abaixo, no teto e logo acima).
 - **Tabela de decisão (`td_`)**: as 6 regras de `decidir` e as combinações em que mais de uma regra se aplica.
 - **Teste de laços (`laco_`)**: 0, 1, 2, 3 e 100 iterações sobre o histórico, incluindo o clamp aplicado no meio do laço.
+- **Baseada em defeitos (mutação, mutmut)**: dos 6 mutantes sobreviventes da primeira execução, 5 são equivalentes (justificados no relatório) e 1 revelou uma fronteira não testada (score exatamente 1001), coberta por novos casos `vl_` com passo 1. Detalhes e evidências em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
 
 **Defeitos e decisões:**
 
