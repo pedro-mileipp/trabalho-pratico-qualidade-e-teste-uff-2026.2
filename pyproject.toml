@@ -27,6 +27,13 @@ package = false
 pythonpath = ["."]
 testpaths = ["tests"]
 
+[tool.mutmut]
+# O mutmut 3 exige source_paths explícito; sem isso ele falha com FileNotFoundError.
+source_paths = ["app/dominio"]
+# A suíte inteira precisa estar verde antes de iniciar a mutação.
+pytest_add_cli_args = ["-q"]
+pytest_add_cli_args_test_selection = ["tests/unit"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"

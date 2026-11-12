@@ -1,0 +1,34 @@
+Piloto mutmut — TarifaBancaria
+================================
+
+Data: 11/11/2026
+Ferramenta: mutmut 3.8.0
+Ambiente: Python 3.12, macOS arm64 (Apple Silicon), Docker não envolvido
+
+Configuração usada no worktree temporário:
+  source_paths = ["app/dominio"]
+  only_mutate = ["app/dominio/tarifas.py"]
+  pytest_add_cli_args = ["-q"]
+  pytest_add_cli_args_test_selection = ["tests/unit/test_tarifas.py"]
+
+Testes da classe: 44 passed
+
+Comando:
+  .venv/bin/mutmut run --max-children 4
+
+Resultado:
+  106 mutantes gerados
+  74 mortos
+  32 sobreviventes
+  0 timeouts
+  0 suspeitos
+
+Escore de mutação: 74 / 106 = 69,8%
+
+Observações:
+- O piloto valida a configuração do mutmut (source_paths, only_mutate e seleção de testes).
+- O escore ainda está abaixo da meta de 80%; a issue #45 (C3 — TarifaBancaria)
+  deve adicionar testes para matar os sobreviventes listados em
+  piloto-tarifas-resultados.txt.
+- O run completo de todas as classes está bloqueado pelas 3 falhas atuais da
+  suíte: #16 e #17 (PIX) e #20 (juros).
