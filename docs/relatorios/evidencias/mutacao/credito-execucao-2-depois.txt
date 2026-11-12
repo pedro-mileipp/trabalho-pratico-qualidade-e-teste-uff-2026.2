@@ -1,0 +1,241 @@
+Mutação — DecisorCredito — 2ª execução (depois da #47)
+================================================================
+
+Data: 12/11/2026 17:42
+Ferramenta: mutmut, version 3.8.0
+Ambiente: Python 3.12.14, Linux x86_64
+Commit base: 11c7529 (Merge pull request #68 from pedro-mileipp/chore/entrega-2-infra-qualidade)
+Suíte: tests/unit/test_credito.py com os 6 casos vl_ de passo 1 — 96 casos, todos passando
+
+Configuração ([tool.mutmut] da issue #36 + restrição de classe isolada, não versionada):
+  [tool.mutmut]
+  # O mutmut 3 exige source_paths explícito; sem isso ele falha com FileNotFoundError.
+  source_paths = ["app/dominio"]
+  # A suíte inteira precisa estar verde antes de iniciar a mutação.
+  pytest_add_cli_args = ["-q"]
+  only_mutate = ["app/dominio/credito.py"]
+  pytest_add_cli_args_test_selection = ["tests/unit/test_credito.py"]
+  
+Comando:
+  uv run mutmut run --max-children 4
+
+Resultado:
+  184 mutantes gerados
+  179 mortos
+  5 sobreviventes
+  0 outros (timeout/suspeito/sem teste)
+
+Escore de mutação: 179 / 184 = 97,3%
+
+Sobreviventes (diff de cada mutante):
+
+--- app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_50
+  @@ -17,7 +17,7 @@
+  -        if score < 0:
+  +        if score <= 0:
+
+--- app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_51
+  @@ -17,7 +17,7 @@
+  -        if score < 0:
+  +        if score < 1:
+
+--- app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_54
+  @@ -19,6 +19,6 @@
+  -        if score > 1000:
+  +        if score >= 1000:
+
+--- app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_1
+  @@ -1,5 +1,5 @@
+  -    if renda <= 0:
+  +    if renda < 0:
+
+--- app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_23
+  @@ -6,7 +6,7 @@
+  -        return min(renda * 1.0, self._base_limite * 10)
+  +        return min(renda / 1.0, self._base_limite * 10)
+
+Lista completa (mutmut results --all true):
+    app.dominio.credito.xǁDecisorCreditoǁ__init____mutmut_1: killed
+    app.dominio.credito.xǁDecisorCreditoǁ__init____mutmut_2: killed
+    app.dominio.credito.xǁDecisorCreditoǁ__init____mutmut_3: killed
+    app.dominio.credito.xǁDecisorCreditoǁ__init____mutmut_4: killed
+    app.dominio.credito.xǁDecisorCreditoǁ__init____mutmut_5: killed
+    app.dominio.credito.xǁDecisorCreditoǁ__init____mutmut_6: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_1: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_2: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_3: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_4: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_5: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_6: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_7: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_8: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_9: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_10: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_11: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_12: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_13: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_14: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_15: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_16: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_17: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_18: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_19: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_20: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_21: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_22: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_23: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_24: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_25: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_26: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_27: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_28: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_29: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_30: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_31: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_32: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_33: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_34: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_35: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_36: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_37: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_38: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_39: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_40: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_41: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_42: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_43: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_44: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_45: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_46: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_47: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_48: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_49: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_50: survived
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_51: survived
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_52: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_53: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_54: survived
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_55: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_56: killed
+    app.dominio.credito.xǁDecisorCreditoǁcalcular_score__mutmut_57: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_1: survived
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_2: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_3: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_4: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_5: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_6: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_7: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_8: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_9: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_10: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_11: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_12: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_13: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_14: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_15: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_16: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_17: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_18: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_19: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_20: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_21: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_22: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_23: survived
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_24: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_25: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_26: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_27: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_28: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_29: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_30: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_31: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_32: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_33: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_34: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_35: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_36: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_37: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_38: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_39: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_40: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_41: killed
+    app.dominio.credito.xǁDecisorCreditoǁlimite_por_score__mutmut_42: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_1: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_2: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_3: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_4: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_5: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_6: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_7: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_8: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_9: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_10: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_11: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_12: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_13: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_14: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_15: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_16: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_17: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_18: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_19: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_20: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_21: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_22: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_23: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_24: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_25: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_26: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_27: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_28: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_29: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_30: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_31: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_32: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_33: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_34: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_35: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_36: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_37: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_38: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_39: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_40: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_41: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_42: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_43: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_44: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_45: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_46: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_47: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_48: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_49: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_50: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_51: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_52: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_53: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_54: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_55: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_56: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_57: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_58: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_59: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_60: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_61: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_62: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_63: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_64: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_65: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_66: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_67: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_68: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_69: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_70: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_71: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_72: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_73: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_74: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_75: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_76: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_77: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_78: killed
+    app.dominio.credito.xǁDecisorCreditoǁdecidir__mutmut_79: killed
