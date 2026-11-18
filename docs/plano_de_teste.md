@@ -14,6 +14,7 @@
 | 1.3 | 11/11/2026 | Pedro Mileipp | Entrega 2: testes de sistema com Selenium — Crédito/RF06 (issue #60) e base compartilhada dos testes de sistema (seção 6.2) |
 | 1.4 | 11/11/2026 | Pedro Mileipp | Entrega 2: requisito não funcional de segurança da autenticação — RNF06 (issue #61, seção 6.3) |
 | 1.5 | 12/11/2026 | Pedro Mileipp | Entrega 2: mutação do `DecisorCredito` (issue #47) na seção 6.1 |
+| 1.6 | 18/11/2026 | Pedro Mileipp | Entrega 2: correções do Sonar na funcionalidade de crédito (issue #52) na seção 6.1 |
 
 ---
 
@@ -294,7 +295,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 | Teste de sistema (Selenium) — Crédito, RF06 | [#60](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/60) | Concluído | 13 cenários automatizados, todos passando (ver seção 6.2) |
 | Requisito não funcional — segurança da autenticação, RNF06 | [#61](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/61) | Concluído | 22 testes, todos passando; 5 riscos documentados (ver seção 6.3) |
 | Mutação (escore ≥ 80%) | [#47](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/47) | Concluído | 184 mutantes, 179 mortos: **97,3%** (100% descontando 5 equivalentes justificados); +6 casos de valor-limite (96 no total) |
-| Correções do Sonar | [#52](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/52) | Pendente | — |
+| Correções do Sonar | [#52](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/52) | Concluído | `DecisorCredito` sem apontamentos (0 → 0); os 4 apontamentos da tela de crédito (`credito.html`) foram corrigidos (4 → 0). Projeto: 40 → 36 apontamentos. Detalhes na seção 6.1 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md) |
 
 **Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_credito.py`):
 
