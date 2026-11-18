@@ -134,7 +134,7 @@ A cobertura acima é a do projeto inteiro usada pelo Sonar. A cobertura estrutur
 3. Os 34 apontamentos em templates são principalmente de acessibilidade e não fazem parte do escopo individual das classes de domínio; ficam registrados para a consolidação da issue #63.
 4. A cobertura de 59,8% é a do projeto inteiro e reflete a ausência de testes de integração/sistema no momento da análise. No escopo das classes de domínio, a cobertura de arestas é de **99,3%** (5 classes medidas; apenas 1 arquivo vazio ignorado).
 
-## 6. Seção “depois” (a preencher)
+## 6. Seção “depois”
 
 Após as correções das issues de Sonar de cada classe (#48–#52), repetir a análise com o mesmo perfil e registrar:
 
@@ -143,3 +143,55 @@ Após as correções das issues de Sonar de cada classe (#48–#52), repetir a a
 - comparação dos apontamentos (resolvidos × justificados);
 - commit analisado e data;
 - resultado da suíte e da cobertura.
+
+### 6.1 `DecisorCredito` e funcionalidade de crédito — Pedro Mileipp (#52)
+
+**Ambiente:** a mesma imagem do SonarQube (`26.11.0.134175-community`, via `docker-compose.yml` do projeto), numa instância local nova, com o perfil Python **Sonar way comprehensive** (407 regras) e o perfil Web padrão, como no “antes”. Data: 18/11/2026.
+
+**Reprodução do “antes” na mesma instância.** Antes de aplicar a correção, o código da `main` (commit `6a1f9eb`) foi analisado de novo: **40 apontamentos** (17 bugs, 22 code smells, 1 vulnerabilidade), com a mesma distribuição por arquivo da seção 2. Isso confirma que o ambiente reproduz o “antes” original e que a comparação abaixo usa a mesma base. A cobertura do projeto ficou em 60,6% (no original, 59,8%), porque a suíte unitária cresceu nas issues #42 e #47.
+
+**Apontamentos da classe e da funcionalidade**
+
+| Arquivo | Antes | Depois | Situação |
+|---|---:|---:|---|
+| `app/dominio/credito.py` (`DecisorCredito`) | 0 | 0 | Classe sem apontamentos estáticos no perfil comprehensive; nada a corrigir |
+| `app/web/routes/credito.py` | 0 | 0 | Sem apontamentos |
+| `app/templates/credito.html` | **4** | **0** | 4 corrigidos (status `CLOSED` / `FIXED` no SonarQube) |
+
+Como a classe `DecisorCredito` não tem apontamentos, a correção foi feita nos apontamentos da mesma funcionalidade (a tela de crédito):
+
+| Linha | Regra | Tipo / severidade | Apontamento | Correção |
+|---|---|---|---|---|
+| 7 | `Web:S6853` | Code smell / maior | Rótulo “Renda mensal” sem associação com o campo | `<label for="renda">` |
+| 8 | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `renda` sem `id` | `id="renda"` |
+| 9 | `Web:S6853` | Code smell / maior | Rótulo “Valor solicitado” sem associação com o campo | `<label for="valor">` |
+| 10 | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `valor` sem `id` | `id="valor"` |
+
+Além de resolver os apontamentos, a correção melhora a acessibilidade (leitores de tela passam a anunciar o rótulo de cada campo, e clicar no rótulo foca o campo) e deu `id`s estáveis aos campos: o page object do Selenium (`tests/system/credito/pagina_credito.py`) passou a localizá-los por `id`.
+
+**Projeto inteiro**
+
+| Métrica | Antes (reprodução) | Depois |
+|---|---:|---:|
+| Apontamentos abertos | 40 | **36** |
+| Bugs (tipo) | 17 | 15 |
+| Code smells (tipo) | 22 | 20 |
+| Vulnerabilidades (tipo) | 1 | 1 |
+| Security (impacto) | 1 | 1 |
+| Reliability (impacto) | 34 | **30** |
+| Maintainability (impacto) | 5 | 5 |
+| Cobertura | 60,6% | 60,6% |
+
+O dashboard “Overall Code” (print `dashboard-depois.png`) mostra a visão por impacto: Security 1, Reliability 30 e Maintainability 5. Os 4 apontamentos corrigidos eram todos de Reliability.
+
+**Verificação:** os 131 testes de crédito continuam passando (96 unitários, 13 de sistema com Selenium e 22 de segurança). A complexidade ciclomática do `DecisorCredito` não mudou (soma dos métodos: 24), porque o domínio não foi alterado.
+
+**Evidências** em `docs/relatorios/evidencias/sonar/depois/credito/`:
+
+- `issues-credito-antes.json` — os 4 apontamentos abertos antes da correção;
+- `issues-credito-depois.json` — 0 apontamentos abertos nos arquivos de crédito;
+- `issues-credito-resolvidos.json` — os 4 apontamentos com status `CLOSED` / `FIXED`;
+- `issues-credito-resolvidos.png` — print da lista de issues filtrada por `app/templates/credito.html`, com os 4 corrigidos;
+- `dashboard-depois.png` — print do dashboard “Overall Code” depois da correção.
+
+**Observação para a reprodução:** numa instância nova, o comando `bootstrap` do `scripts/sonar_local.sh` não consegue associar o perfil comprehensive, porque o projeto ainda não existe no SonarQube antes do primeiro scan (a API devolve HTTP 404, “Project not found”). Aqui, o projeto foi criado antes pela API (`api/projects/create`) e só então o perfil foi associado.
