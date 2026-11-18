@@ -1,8 +1,8 @@
 """Page object da tela de Análise de Crédito (``/credito``).
 
 Os seletores ficam concentrados aqui: se a tela mudar, só o page object precisa ser ajustado.
-Os templates não têm ``id`` nos elementos, então os campos são localizados pelo ``name`` e o
-resultado pela estrutura do cartão (``.cartao h3`` / parágrafos seguintes).
+Os campos são localizados pelo ``id`` (incluído na issue #52, junto com o ``for`` dos rótulos) e
+o resultado pela estrutura do cartão (``.cartao h3`` / parágrafos seguintes).
 """
 
 from __future__ import annotations
@@ -28,8 +28,8 @@ class ResultadoCreditoTela:
 
 class PaginaCredito:
     CAMINHO = "/credito"
-    CAMPO_RENDA = (By.NAME, "renda")
-    CAMPO_VALOR = (By.NAME, "valor")
+    CAMPO_RENDA = (By.ID, "renda")
+    CAMPO_VALOR = (By.ID, "valor")
     BOTAO_ANALISAR = (By.CSS_SELECTOR, "form button[type='submit']")
     TITULO_RESULTADO = (By.CSS_SELECTOR, ".cartao h3")
     PARAGRAFOS_RESULTADO = (By.CSS_SELECTOR, ".cartao h3 ~ p")
@@ -74,7 +74,7 @@ class PaginaCredito:
 
     def campo_abaixo_do_minimo(self, nome_campo: str) -> bool:
         """True se o navegador barrou o campo pela validação HTML5 ``min`` (rangeUnderflow)."""
-        campo = self._navegador.find_element(By.NAME, nome_campo)
+        campo = self._navegador.find_element(By.ID, nome_campo)
         return self._navegador.execute_script("return arguments[0].validity.rangeUnderflow;", campo)
 
     def _preencher(self, localizador: tuple[str, str], valor: float | str) -> None:
