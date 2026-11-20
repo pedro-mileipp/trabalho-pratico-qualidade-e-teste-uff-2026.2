@@ -1,0 +1,37 @@
+Mutantes sobreviventes e resumo — CalculadoraJuros (#44)
+Gerado em 20/11/2026 com mutmut (via .venv/bin/mutmut)
+Alvo: app/dominio/juros.py | Suite: tests/unit/test_juros.py (68 testes)
+
+Comandos executados:
+.venv/bin/mutmut run --max-children 4
+.venv/bin/mutmut results
+
+Resumo:
+149 mutantes gerados
+130 mortos
+19 sobreviventes
+0 timeouts
+0 suspeitos
+0 skipped
+Escore: 130 / 149 = 87,25% (meta >= 80%)
+
+Sobreviventes (19):
+    app.dominio.juros.xǁCalculadoraJurosǁ__init____mutmut_12: survived
+    app.dominio.juros.xǁCalculadoraJurosǁtaxa_mensal__mutmut_1: survived
+    app.dominio.juros.xǁCalculadoraJurosǁcalcular_montante__mutmut_1: survived
+    app.dominio.juros.xǁCalculadoraJurosǁcalcular_montante__mutmut_2: survived
+    app.dominio.juros.xǁCalculadoraJurosǁcalcular_montante__mutmut_4: survived
+    app.dominio.juros.xǁCalculadoraJurosǁjuros_de_mora__mutmut_1: survived
+    app.dominio.juros.xǁCalculadoraJurosǁjuros_de_mora__mutmut_2: survived
+    app.dominio.juros.xǁCalculadoraJurosǁtotal_a_pagar__mutmut_1: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_1: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_2: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_4: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_6: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_12: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_39: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_45: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_46: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_47: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_51: survived
+    app.dominio.juros.xǁCalculadoraJurosǁmontante_com_aportes__mutmut_52: survived

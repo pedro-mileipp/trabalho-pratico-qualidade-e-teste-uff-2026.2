@@ -261,3 +261,76 @@ As 16 falhas iniciais nos novos casos vieram de expectativas ou parâmetros inco
 - `taxa_anual=0.12` para exercitar a trava de R$ 1.000.000,00 no laço.
 
 Esses problemas não eram defeitos no código de produção. Após o ajuste das expectativas e parâmetros, todos os 68 casos passaram, mantendo 100.00% de cobertura estrutural, sem alterar `app/dominio/juros.py`.
+
+
+### Mutação (baseada em defeitos) — #44
+
+**Ferramenta:** `.venv/bin/mutmut`, com configuração isolada temporária em `[tool.mutmut]`:
+
+```toml
+only_mutate = ["app/dominio/juros.py"]
+pytest_add_cli_args_test_selection = ["tests/unit/test_juros.py"]
+```
+
+A configuração temporária foi revertida após a medição.
+
+**Comandos**
+
+```bash
+.venv/bin/mutmut run --max-children 4
+.venv/bin/mutmut results
+```
+
+**Resultado (20/11/2026)**
+
+| Métrica | Valor |
+|---|---:|
+| Mutantes gerados | 149 |
+| Mutantes mortos | 130 |
+| Mutantes sobreviventes | 19 |
+| Timeout / suspeitos / ignorados | 0 |
+| Escore (mortos / gerados) | **87,25%** |
+
+**Meta da disciplina:** ≥ 80%. ✅
+
+**Evidência:** [`juros-mutacao.txt`](evidencias/mutacao/juros-mutacao.txt)
+
+### Lista dos sobreviventes
+
+| Mutante | Classificação |
+|---|---|
+| `CalculadoraJuros.__init__.__mutmut_12` | Equivalente |
+| `CalculadoraJuros.taxa_mensal__mutmut_1` | Equivalente |
+| `CalculadoraJuros.calcular_montante__mutmut_1` | Equivalente |
+| `CalculadoraJuros.calcular_montante__mutmut_2` | Sem novo caso nesta etapa |
+| `CalculadoraJuros.calcular_montante__mutmut_4` | Equivalente |
+| `CalculadoraJuros.juros_de_mora__mutmut_1` | Equivalente |
+| `CalculadoraJuros.juros_de_mora__mutmut_2` | Sem novo caso nesta etapa |
+| `CalculadoraJuros.total_a_pagar__mutmut_1` | Sem novo caso nesta etapa |
+| `CalculadoraJuros.montante_com_aportes__mutmut_1` | Sem novo caso nesta etapa |
+| `CalculadoraJuros.montante_com_aportes__mutmut_2` | Sem novo caso nesta etapa |
+| `CalculadoraJuros.montante_com_aportes__mutmut_4` | Sem novo caso nesta etapa |
+| `CalculadoraJuros.montante_com_aportes__mutmut_6` | Equivalente |
+| `CalculadoraJuros.montante_com_aportes__mutmut_12` | Equivalente |
+| `CalculadoraJuros.montante_com_aportes__mutmut_39` | Equivalente |
+| `CalculadoraJuros.montante_com_aportes__mutmut_45` | Equivalente |
+| `CalculadoraJuros.montante_com_aportes__mutmut_46` | Equivalente |
+| `CalculadoraJuros.montante_com_aportes__mutmut_47` | Equivalente |
+| `CalculadoraJuros.montante_com_aportes__mutmut_51` | Sem novo caso nesta etapa |
+| `CalculadoraJuros.montante_com_aportes__mutmut_52` | Sem novo caso nesta etapa |
+
+### Justificativa dos equivalentes
+
+- `__init__.__mutmut_12`: a faixa final `(37, 0.30)` mantém o comportamento padrão para valores acima do limite.
+- `taxa_mensal__mutmut_1`: a mutação troca `taxa_anual < 0` por `taxa_anual <= 0`; com `taxa_anual == 0.0`, o resultado continua sendo `0.0`.
+- `calcular_montante__mutmut_1`: a mutação troca `principal < 0` por `principal <= 0`; com `principal == 0`, o resultado permanece `0.0`.
+- `calcular_montante__mutmut_4` e `montante_com_aportes__mutmut_6`: a mutação troca `meses < 0` por `meses <= 0`; com `meses == 0`, o laço não executa e o resultado continua sendo o principal arredondado.
+- `juros_de_mora__mutmut_1`: a mutação troca `valor < 0` por `valor <= 0`; com `valor == 0`, multa e juros continuam sendo `0.0`.
+- `montante_com_aportes__mutmut_12`: a mutação troca `taxa_anual < 0` por `taxa_anual <= 0`; com taxa zero, o laço soma o aporte mensal sem IR ou trava, mantendo o mesmo resultado.
+- `montante_com_aportes__mutmut_39`: a mutação troca `aliquota_ir >= 0` por `aliquota_ir > 0`; com alíquota zero, subtrair `0.0` não altera o resultado.
+- `montante_com_aportes__mutmut_45` e `montante_com_aportes__mutmut_46`: os limites alterados (`mes >= 0` e `mes > 1` em vez de `mes > 0`) não mudam o resultado dentro de `range(1, meses + 1)`, incluindo o desconto no mês 12.
+- `montante_com_aportes__mutmut_47`: nos cenários atuais, com `aliquota_ir = 0.15`, a comparação continua satisfeita tanto pela subtração do IR quanto pela atribuição direta.
+
+### Decisão
+
+Como a suíte alcançou **87,25% de mutação**, acima da meta de 80%, e **100% de cobertura estrutural**, optou-se por não adicionar novos casos de teste nesta etapa. Os oito sobreviventes não classificados como equivalentes permaneceram documentados na evidência para análise futura.

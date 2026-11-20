@@ -18,6 +18,7 @@
 | 1.7 | 20/11/2026 | Gabrielle Rosa | Entrega 2: correção do bug de desconto de IR no mês 12 em `CalculadoraJuros` (issue #20) na seção 6.4 |
 | 1.8 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes unitários com mock do repositório para `AuthService` e `TransacaoService` (issue #53) na seção 6.5 |
 | 1.9 | 20/11/2026 | Gabrielle Rosa | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `CalculadoraJuros` (issue #39) na seção 6.4 |
+| 1.10 | 20/11/2026 | Gabrielle Rosa | Entrega 2: teste de mutação de `CalculadoraJuros` com `mutmut` (escore 87,25%, issue #44) na seção 6.4 |
 ---
 
 ## 📖 1. Introdução
@@ -374,6 +375,7 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 |---|---|---|---|
 | Correção de defeito (desconto de IR no mês 12) | [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) | Concluído | Laço ajustado para `range(1, meses + 1)` em `montante_com_aportes`; 36 casos passando em `tests/unit/test_juros.py` em 20/11/2026 (evidências antes/depois em `docs/relatorios/evidencias/bug/`) |
 | Unitários ampliados + cobertura estrutural (todas-arestas) | [#39](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/39) | Concluído | 68 casos passando em 20/11/2026 (`0.40s`); **100.00%** de cobertura de linhas e ramos (`67` statements, `0` missed, `36` branches, `0` partial) com `pe_`, `vl_`, `td_` e `laco_`[cite: 7] |
+| Mutação (escore ≥ 80%) | [#44](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/44) | Concluído | 149 mutantes gerados, 130 mortos e 19 sobreviventes em 20/11/2026: **87,25%** de escore (meta ≥ 80% atingida); evidência em [`docs/relatorios/evidencias/mutacao/juros-mutacao.txt`](relatorios/evidencias/mutacao/juros-mutacao.txt) |
 
 
 **Defeitos e decisões:**
@@ -381,6 +383,8 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 - [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) corrigida (20/11/2026): em `CalculadoraJuros.montante_com_aportes` (`app/dominio/juros.py`), o laço `for mes in range(meses)` percorria índices de `0` a `11`, impedindo o desconto de IR no 12º mês. A iteração foi ajustada para `range(1, meses + 1)`.
 
 - **Ampliação (#39, 20/11/2026):** suíte expandida para 68 casos cobrindo partição de equivalência (`pe_`), análise de valor-limite (`vl_`), tabela de decisão (`td_`) e teste de laços (`laco_`), mantendo **100.00%** de cobertura de linhas e ramos sem alterações em `app/dominio/juros.py`[cite: 7].
+
+- **Mutação (#44, 20/11/2026):** execução isolada com `mutmut` sobre `app/dominio/juros.py` (`tests/unit/test_juros.py`) atingiu **87,25%** (`130/149` mortos, `19` sobreviventes), com os 19 sobreviventes triados e justificados em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md) e [`docs/relatorios/evidencias/mutacao/juros-mutacao.txt`](relatorios/evidencias/mutacao/juros-mutacao.txt).
 
 
 ### 6.5 Serviços (`AuthService` e `TransacaoService`) — Gabrielle Rosa
