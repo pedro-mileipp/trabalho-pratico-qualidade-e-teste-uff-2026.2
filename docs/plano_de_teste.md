@@ -19,6 +19,8 @@
 | 1.8 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes unitários com mock do repositório para `AuthService` e `TransacaoService` (issue #53) na seção 6.5 |
 | 1.9 | 20/11/2026 | Gabrielle Rosa | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `CalculadoraJuros` (issue #39) na seção 6.4 |
 | 1.10 | 20/11/2026 | Gabrielle Rosa | Entrega 2: teste de mutação de `CalculadoraJuros` com `mutmut` (escore 87,25%, issue #44) na seção 6.4 |
+| 1.11 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes de sistema com Selenium — Autenticação/RF01 e RF02 (issue #57) na seção 6.2 |
+
 ---
 
 ## 📖 1. Introdução
@@ -349,6 +351,26 @@ Pasta: `tests/system/credito/` (testes em `test_credito_sistema.py`, page object
 | — | Acesso à tela sem login | — | redireciona para `/login` |
 
 **Resultado (11/11/2026):** 13 cenários, todos passando (`uv run pytest tests/system -v`), em execuções seguidas com o mesmo resultado. Evidências em `tests/system/credito/evidencias/`: para cada cenário, um print do formulário preenchido antes do envio (`__1_formulario_preenchido`) e um da tela final com o resultado (`__2_final`).
+
+#### Autenticação (RF01/RF02) — Gabrielle Rosa, issue [#57](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/57)
+
+Pasta: `tests/system/auth/` (testes em `test_auth_sistema.py`, page object em `pagina_auth.py`). Os cenários automatizam os casos manuais de autenticação (`tests/testes_manuais/auth/caso_auth.md`) e acrescentam o bloqueio de acesso sem sessão às rotas protegidas (`/` e `/credito`).
+
+| Id | Cenário | Entrada | Resultado esperado |
+|---|---|---|---|
+| CT-01 | Login com usuário inexistente | E-mail inexistente · senha `123456` | Bloqueia acesso em `/login` e exibe `E-mail ou senha inválidos.` |
+| CT-02 | Cadastro válido e redirecionamento para dashboard | Nome `Gabrielle Rosa` · e-mail único · senha `senha123` | Cria conta, inicia sessão e redireciona para `/` |
+| CT-03 | Encerrar sessão (Logout) | Cliente autenticado acessando `/logout` | Encerra sessão e redireciona para `/login` |
+| CT-04 | Reautenticação após logout | E-mail recém-cadastrado · senha `senha123` | Concede acesso e redireciona para `/` |
+| CT-05 | Login com senha incorreta | E-mail cadastrado · senha `senhaERRADA` | Bloqueia acesso em `/login` e exibe `E-mail ou senha inválidos.` |
+| CT-06 | Tentativa de cadastro com e-mail duplicado | E-mail já cadastrado · senha `senha123` | Permanece em `/registro` e exibe `Este e-mail já está cadastrado.` |
+| CT-07 | Cadastro com e-mail sem `@` | E-mail sem `@` · senha `senha123` | Validação HTML5 (`typeMismatch`) impede envio em `/registro` |
+| CT-08 | Cadastro com e-mail sem domínio | E-mail terminado em `@` · senha `senha123` | Validação HTML5 (`typeMismatch`) impede envio em `/registro` |
+| CT-09 | Cadastro com senha curta (< 6 caracteres) | E-mail único · senha `12345` | Permanece em `/registro` e exibe `Dados inválidos. Verifique os campos.` |
+| CT-10 | Cadastro com campos obrigatórios vazios | Nome vazio · e-mail único · senha `senha123` | Validação HTML5 (`valueMissing`) impede envio em `/registro` |
+| — | Acesso a rotas protegidas sem autenticação (`/`, `/credito`) | Sem sessão ativa | Redireciona para `/login` |
+
+**Resultado (20/11/2026):** 12 cenários de autenticação (25 testes no total da suíte `tests/system`), todos passando (`.venv/bin/pytest tests/system -q`), em execuções seguidas com o mesmo resultado. Cada teste utiliza e-mails únicos e cookies limpos entre execuções, garantindo independência total; evidências geradas em `tests/system/auth/evidencias/` com `EVIDENCIAS=1` (screenshots numerados das etapas registradas e da tela final).
 
 ### 6.3 Requisito não funcional — segurança da autenticação (RNF06)
 
