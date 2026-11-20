@@ -87,7 +87,7 @@ class CalculadoraJuros:
             return self._arredondar(principal + aporte_mensal * meses)
         mensal = self.taxa_mensal(taxa_anual)
         total = principal
-        for mes in range(meses):
+        for mes in range(1, meses + 1):
             if capitaliza_aporte:
                 total = (total + aporte_mensal) * (1 + mensal)
             else:
