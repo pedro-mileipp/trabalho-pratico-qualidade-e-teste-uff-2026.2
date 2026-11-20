@@ -15,7 +15,7 @@
 | 1.4 | 11/11/2026 | Pedro Mileipp | Entrega 2: requisito não funcional de segurança da autenticação — RNF06 (issue #61, seção 6.3) |
 | 1.5 | 12/11/2026 | Pedro Mileipp | Entrega 2: mutação do `DecisorCredito` (issue #47) na seção 6.1 |
 | 1.6 | 18/11/2026 | Pedro Mileipp | Entrega 2: correções do Sonar na funcionalidade de crédito (issue #52) na seção 6.1 |
-
+| 1.7 | 20/11/2026 | Gabrielle Rosa | Entrega 2: correção do bug de desconto de IR no mês 12 em `CalculadoraJuros` (issue #20) na seção 6.4 |
 ---
 
 ## 📖 1. Introdução
@@ -233,7 +233,7 @@ Os entregáveis de teste são fornecidos conforme abaixo.
 - Issues de defeito abertas no GitHub (bugs encontrados pelos testes):
   - [#16](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/16) — e-mail com dois `@` aceito como válido (PIX)
   - [#17](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/17) — chave bloqueada ignora regra de valor no chargeback (PIX)
-  - [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) — desconto de IR não aplicado no mês 12 (Juros)
+  - [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) — desconto de IR não aplicado no mês 12 (Juros). **Corrigida na Entrega 2:** ajustado o laço em `CalculadoraJuros.montante_com_aportes` para `range(1, meses + 1)`
   - [#35](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/35) — limite máximo não aplicado para score ≥ 850 (Crédito). **Fechada na Entrega 2:** o defeito estava nas expectativas dos testes, não no código; corrigido na issue [#42](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/42)
 
 ---
@@ -364,5 +364,16 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 **Resultado (11/11/2026):** 22 testes, todos passando (`uv run pytest tests/rnf/seguranca -v`).
 
 **Riscos identificados** (fora dos critérios da issue; detalhes e recomendações no relatório): R1 — o botão Voltar após o logout mostra o painel do cache do navegador; R2 — um cookie de sessão copiado antes do logout continua válido; R3 — `SECRET_KEY` com valor padrão fixo no código; R4 — o cadastro revela se o e-mail já existe; R5 — cookie de sessão sem `Secure`/`SameSite`. O relatório também traz a avaliação da característica Segurança da ISO/IEC 25010:2023 para a issue #62.
+
+
+### 6.4 `CalculadoraJuros` — Gabrielle Rosa
+
+| Item | Issue | Situação | Resultado |
+|---|---|---|---|
+| Correção de defeito (desconto de IR no mês 12) | [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) | Concluído | Laço ajustado para `range(1, meses + 1)` em `montante_com_aportes`; 36 casos passando em `tests/unit/test_juros.py` em 20/11/2026 (evidências antes/depois em `docs/relatorios/evidencias/bug/`) |
+
+**Defeitos e decisões:**
+
+- [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) corrigida (20/11/2026): em `CalculadoraJuros.montante_com_aportes` (`app/dominio/juros.py`), o laço `for mes in range(meses)` percorria índices de `0` a `11`, impedindo o desconto de IR no 12º mês. A iteração foi ajustada para `range(1, meses + 1)`.
 
 ---
