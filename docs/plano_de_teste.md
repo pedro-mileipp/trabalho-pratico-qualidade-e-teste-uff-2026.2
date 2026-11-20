@@ -16,6 +16,7 @@
 | 1.5 | 12/11/2026 | Pedro Mileipp | Entrega 2: mutação do `DecisorCredito` (issue #47) na seção 6.1 |
 | 1.6 | 18/11/2026 | Pedro Mileipp | Entrega 2: correções do Sonar na funcionalidade de crédito (issue #52) na seção 6.1 |
 | 1.7 | 20/11/2026 | Gabrielle Rosa | Entrega 2: correção do bug de desconto de IR no mês 12 em `CalculadoraJuros` (issue #20) na seção 6.4 |
+| 1.8 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes unitários com mock do repositório para `AuthService` e `TransacaoService` (issue #53) na seção 6.5 |
 ---
 
 ## 📖 1. Introdução
@@ -375,5 +376,11 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 **Defeitos e decisões:**
 
 - [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) corrigida (20/11/2026): em `CalculadoraJuros.montante_com_aportes` (`app/dominio/juros.py`), o laço `for mes in range(meses)` percorria índices de `0` a `11`, impedindo o desconto de IR no 12º mês. A iteração foi ajustada para `range(1, meses + 1)`.
+
+### 6.5 Serviços (`AuthService` e `TransacaoService`) — Gabrielle Rosa
+
+| Item | Issue | Situação | Resultado |
+|---|---|---|---|
+| Testes unitários com mock do repositório (`AuthService` e `TransacaoService`) | [#53](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/53) | Concluído | 16 casos passando em 20/11/2026 (`tests/unit/test_auth_service.py` com 12 casos e `tests/unit/test_transacao_service.py` com 4 casos), isolando `Repositorio` via `pytest-mock` sem acesso a SQLite ou Flask |
 
 ---
