@@ -200,3 +200,64 @@ Cada arquivo de evidência traz a configuração, o comando, o resumo, o diff de
 Três dos equivalentes estão nos `if` de clamp do score (piso 0 e teto 1000). Essas comparações existem para manter a complexidade ciclomática da classe ≥ 10, requisito da disciplina; reescrevê-las com `max`/`min` eliminaria os mutantes, mas também reduziria a CC.
 
 **Lição registrada:** a cobertura de arestas já era de 100%, mas a mutação mostrou uma fronteira não testada (score 1001). Cobertura completa não garante que os valores-limite foram exercitados.
+
+---
+
+## `CalculadoraJuros` — `app/dominio/juros.py`
+
+| Campo | Valor |
+|---|---|
+| Responsável | Gabrielle Rosa (`n2Gabrielle`) |
+| Issues | #39 (unitários ampliados + cobertura estrutural todas-arestas) · #20 (correção prévia do desconto de IR no mês 12) |
+| Arquivo de testes | `tests/unit/test_juros.py` |
+
+### Cobertura estrutural (todas-arestas) — #39
+
+**Comando**
+
+```bash
+.venv/bin/pytest tests/unit/test_juros.py --cov=app.dominio.juros --cov-branch --cov-report=term-missing -v
+```
+
+**Antes × depois**
+
+| Métrica | Antes (Entrega 1 / #20) | Depois (20/11/2026 — #39) |
+|---|---|---|
+| Casos de teste | 36 | 68 |
+| Resultado | 36 passam | 68 passam (0.50s) |
+| Cobertura de linhas e ramos | 100% | **100.00%** |
+| Linhas / ramos não cobertos | nenhuma (67 stmts, 36 branches) | nenhuma (67 stmts, 0 miss, 36 branches, 0 partial) |
+
+**Saída (20/11/2026)**
+
+```text
+Name                   Stmts   Miss Branch BrPart  Cover   Missing
+------------------------------------------------------------------
+app/dominio/juros.py      67      0     36      0   100%
+------------------------------------------------------------------
+TOTAL                     67      0     36      0   100%
+Required test coverage of 80.0% reached. Total coverage: 100.00%
+68 passed in 0.50s
+```
+
+### Técnicas aplicadas
+
+A técnica de cada caso está identificada pelo prefixo do `pytest.param` ou por comentário em `tests/unit/test_juros.py`.
+
+| Técnica | Prefixo | Cobertura nos casos adicionados |
+|---|---|---|
+| Partição de equivalência | `pe_` | Prazos por faixa (`pe_prazo_*`) e cenários de atraso em `total_a_pagar` (`pe_total_*`) |
+| Análise de valor-limite | `vl_` | Prazos negativo/zero (`vl_prazo_*`), fronteiras de dias de atraso 15/16 e 60/61 (`vl_total_mora_limite_*`) e trava de R$ 1.000.000,00 no laço de aportes (`test_montante_com_aportes_vl_trava_um_milhao_estrita`) |
+| Tabela de decisão | `td_` | Combinações de capitalização de aporte, incidência de IR no mês 12 e patamar acima/abaixo de R$ 1.000.000,00 (`td_r1_*` a `td_r6_*`) |
+| Teste de laços | `laco_` | Variações de iterações em `calcular_montante` (1, 3, 13, 24 e 36 meses) e ciclos de IR em `montante_com_aportes` (1, 6, 13, 18 e 24 meses) |
+
+### Observações e validação
+
+As 16 falhas iniciais nos novos casos vieram de expectativas ou parâmetros incorretos nos testes:
+
+- mora sobre o montante composto em `total_a_pagar`;
+- capitalização mensal por iteração no laço de `montante_com_aportes`;
+- taxa por faixa em `calcular_montante`;
+- `taxa_anual=0.12` para exercitar a trava de R$ 1.000.000,00 no laço.
+
+Esses problemas não eram defeitos no código de produção. Após o ajuste das expectativas e parâmetros, todos os 68 casos passaram, mantendo 100.00% de cobertura estrutural, sem alterar `app/dominio/juros.py`.
