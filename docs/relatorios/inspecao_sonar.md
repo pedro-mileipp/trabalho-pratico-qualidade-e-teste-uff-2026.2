@@ -198,7 +198,7 @@ O dashboard “Overall Code” (print `dashboard-depois.png`) mostra a visão po
 
 ### 6.3 `CalculadoraJuros` e funcionalidade de autenticação — Gabrielle Rosa e Daniel Izu (#49)
 
-> A issue #49 é da Gabrielle Rosa e foi feita em conjunto por Gabrielle Rosa e Daniel Izu (sessão de trabalho em dupla, com o Claude Code na máquina de Daniel).
+> A issue #49 é da Gabrielle Rosa e foi feita em dupla por Gabrielle Rosa e Daniel Izu.
 
 **Ambiente:** a mesma instância e o mesmo perfil da seção 6.2 (SonarQube `26.11.0.134175-community` no Docker do Ubuntu, WSL 2; perfil Python **Sonar way comprehensive**, 407 regras; perfil Web padrão). Para não sobrescrever as análises do projeto principal, que estavam sendo usadas nos prints da #50, a #49 foi analisada num projeto separado da mesma instância, `banco-digital-uff-2026-2-issue49`, com os mesmos perfis. Data: 22/11/2026.
 
