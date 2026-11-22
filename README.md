@@ -99,11 +99,14 @@ Para mutar uma classe isolada, acrescente `only_mutate = ["app/dominio/<arquivo>
 ### Testes de integração
 
 ```bash
-uv run pytest tests/integration -q            # suíte de integração de rotas (test_client)
+uv run pytest tests/integration -q            # suíte de integração (rotas + serviços ↔ repositório)
+uv run pytest tests/integration/test_servicos_repositorio.py tests/integration/test_contrato_repositorio.py -q   # só serviços ↔ repositório (#54)
 uv run pytest tests/integration -v            # execução detalhada
 ```
 
 Testa a integração entre rotas HTTP Flask, templates Jinja2, gerenciamento de sessões, mensagens flash e banco de dados SQLite temporário por teste. As fixtures compartilhadas (`app`, `cliente`, `cliente_autenticado`, `definir_saldo`) estão em [`tests/integration/conftest.py`](tests/integration/conftest.py) e os testes em [`tests/integration/test_rotas.py`](tests/integration/test_rotas.py). Detalhes na seção 6.7 do [Plano de Teste](docs/plano_de_teste.md).
+
+A integração **serviços ↔ repositório** (#54) chama `AuthService` e `TransacaoService` diretamente, sem HTTP e sem mocks, sobre o `SqliteRepositorio` real (banco em `tmp_path`) e o `MemoriaRepositorio`, com a fixture `repositorio` parametrizada nas duas implementações. Testes em [`tests/integration/test_servicos_repositorio.py`](tests/integration/test_servicos_repositorio.py) e [`tests/integration/test_contrato_repositorio.py`](tests/integration/test_contrato_repositorio.py); cobertura em [`docs/relatorios/evidencias/integracao/servicos-repositorio.txt`](docs/relatorios/evidencias/integracao/servicos-repositorio.txt). Detalhes na seção 6.9 do [Plano de Teste](docs/plano_de_teste.md).
 
 ### Testes de sistema (Selenium)
 
@@ -179,6 +182,8 @@ O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes n
 | `app/web/` | Rotas e telas (login, dashboard, PIX, empréstimo, tarifas, crédito) |
 | `tests/unit/` | Testes unitários (1 arquivo por classe de domínio) |
 | [`tests/integration/`](tests/integration/) | Entrega 2 — testes de integração das rotas Flask com `test_client`: fixtures em [`conftest.py`](tests/integration/conftest.py) e testes em [`test_rotas.py`](tests/integration/test_rotas.py) |
+| [`tests/integration/test_servicos_repositorio.py`](tests/integration/test_servicos_repositorio.py) | Entrega 2 — integração `AuthService`/`TransacaoService` ↔ repositório real (SQLite e memória), sem mocks (#54) |
+| [`tests/integration/test_contrato_repositorio.py`](tests/integration/test_contrato_repositorio.py) | Entrega 2 — contrato de `Repositorio` nas duas implementações e divergências entre elas (#54) |
 | [`tests/system/`](tests/system/) | Entrega 2 — testes de sistema com Selenium: fixtures compartilhadas em `conftest.py` e uma pasta por funcionalidade |
 | [`tests/system/credito/`](tests/system/credito/) | Testes de sistema — Crédito (RF06): [`test_credito_sistema.py`](tests/system/credito/test_credito_sistema.py), page object [`pagina_credito.py`](tests/system/credito/pagina_credito.py) e evidências em [`evidencias/`](tests/system/credito/evidencias/) |
 | [`tests/system/emprestimo/`](tests/system/emprestimo/) | Testes de sistema — Empréstimo (RF05): [`test_emprestimo_sistema.py`](tests/system/emprestimo/test_emprestimo_sistema.py), page object [`pagina_emprestimo.py`](tests/system/emprestimo/pagina_emprestimo.py) e evidências em [`evidencias/`](tests/system/emprestimo/evidencias/) |
@@ -202,6 +207,7 @@ O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes n
 | `docs/ai/AI-LOG.md` | Registro de uso de IA (a preencher nas entregas) |
 | `docs/ai/prompts/sessao-11-caso-manual-tarifas.md` | [Sessão 11](docs/ai/prompts/sessao-11-caso-manual-tarifas.md) — Caso de teste manual de Tarifas |
 | `docs/ai/prompts/sessao-18-testes-integracao-rotas.md` | [Sessão 18](docs/ai/prompts/sessao-18-testes-integracao-rotas.md) — Testes de integração das rotas Flask com test_client |
+| `docs/ai/prompts/sessao-23-integracao-servicos-repositorio.md` | [Sessão 23](docs/ai/prompts/sessao-23-integracao-servicos-repositorio.md) — Testes de integração serviços ↔ repositório (#54) |
 | `pyproject.toml` | Dependências e configuração de ferramentas |
 | `.coveragerc` | Cobertura de arestas, caminhos relativos e gate de 80% |
 | `.python-version` | Versão do Python gerenciada pelo uv |
