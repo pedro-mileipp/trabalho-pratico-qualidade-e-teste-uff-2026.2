@@ -19,7 +19,13 @@
 | 1.8 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes unitários com mock do repositório para `AuthService` e `TransacaoService` (issue #53) na seção 6.5 |
 | 1.9 | 20/11/2026 | Gabrielle Rosa | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `CalculadoraJuros` (issue #39) na seção 6.4 |
 | 1.10 | 20/11/2026 | Gabrielle Rosa | Entrega 2: teste de mutação de `CalculadoraJuros` com `mutmut` (escore 87,25%, issue #44) na seção 6.4 |
-| 1.12 | 22/11/2026 | Gabrielle Rosa | Entrega 2: inspeção estática SonarQube em `CalculadoraJuros` — 0 apontamentos e evidência pós-correção (issue #49) nas seções 6.4 e registro de mudanças |
+| 1.11 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes de sistema com Selenium — Autenticação/RF01 e RF02 (issue #57) na seção 6.2 |
+| 1.12 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de sistema com Selenium — Empréstimo/RF05 (issue #59) nas seções 6.2 e 6.6 |
+| 1.13 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de integração das rotas Flask com test_client (seção 6.7) |
+| 1.14 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: teste de mutação de `SimuladorEmprestimo` com `mutmut` (escore 99,34%, issue #46) na seção 6.6 |
+| 1.14 | 22/11/2026 | Daniel Izu | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `TarifaBancaria` (issue #40), defeitos #77 e #78, na seção 6.8; antiguidade passa a ser coberta por testes unitários (seção 1.1.2) |
+| 1.15 | 22/11/2026 | Daniel Izu | Entrega 2: teste de mutação de `TarifaBancaria` com `mutmut` (escore 94,3%; 100% descontando equivalentes, issue #45) na seção 6.8 |
+| 1.16 | 22/11/2026 | Gabrielle Rosa | Entrega 2: inspeção estática SonarQube em `CalculadoraJuros` — 0 apontamentos e evidência pós-correção (issue #49) nas seções 6.4 e registro de mudanças |
 ---
 
 ## 📖 1. Introdução
@@ -79,7 +85,7 @@ Esses recursos não foram testados porque não estão expostos na interface ou n
 | Requisito | Justificativa |
 |----------|----------------|
 | Chargeback de PIX pela interface | Não exposto na UI na Entrega 1 (regra de domínio, coberta por testes unitários) |
-| Antiguidade e saldo negativo de tarifas | Campos não expostos no formulário web; saldo negativo coberto por testes unitários, antiguidade a cobrir na Entrega 2 |
+| Antiguidade e saldo negativo de tarifas | Campos não expostos no formulário web; saldo negativo e antiguidade cobertos por testes unitários (antiguidade na Entrega 2, issue #40) |
 | Integrações com sistemas externos | Não fazem parte da versão atual |
 
 ### Requisitos Não Funcionais Fora do Escopo
@@ -351,6 +357,41 @@ Pasta: `tests/system/credito/` (testes em `test_credito_sistema.py`, page object
 
 **Resultado (11/11/2026):** 13 cenários, todos passando (`uv run pytest tests/system -v`), em execuções seguidas com o mesmo resultado. Evidências em `tests/system/credito/evidencias/`: para cada cenário, um print do formulário preenchido antes do envio (`__1_formulario_preenchido`) e um da tela final com o resultado (`__2_final`).
 
+#### Autenticação (RF01/RF02) — Gabrielle Rosa, issue [#57](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/57)
+
+Pasta: `tests/system/auth/` (testes em `test_auth_sistema.py`, page object em `pagina_auth.py`). Os cenários automatizam os casos manuais de autenticação (`tests/testes_manuais/auth/caso_auth.md`) e acrescentam o bloqueio de acesso sem sessão às rotas protegidas (`/` e `/credito`).
+
+| Id | Cenário | Entrada | Resultado esperado |
+|---|---|---|---|
+| CT-01 | Login com usuário inexistente | E-mail inexistente · senha `123456` | Bloqueia acesso em `/login` e exibe `E-mail ou senha inválidos.` |
+| CT-02 | Cadastro válido e redirecionamento para dashboard | Nome `Gabrielle Rosa` · e-mail único · senha `senha123` | Cria conta, inicia sessão e redireciona para `/` |
+| CT-03 | Encerrar sessão (Logout) | Cliente autenticado acessando `/logout` | Encerra sessão e redireciona para `/login` |
+| CT-04 | Reautenticação após logout | E-mail recém-cadastrado · senha `senha123` | Concede acesso e redireciona para `/` |
+| CT-05 | Login com senha incorreta | E-mail cadastrado · senha `senhaERRADA` | Bloqueia acesso em `/login` e exibe `E-mail ou senha inválidos.` |
+| CT-06 | Tentativa de cadastro com e-mail duplicado | E-mail já cadastrado · senha `senha123` | Permanece em `/registro` e exibe `Este e-mail já está cadastrado.` |
+| CT-07 | Cadastro com e-mail sem `@` | E-mail sem `@` · senha `senha123` | Validação HTML5 (`typeMismatch`) impede envio em `/registro` |
+| CT-08 | Cadastro com e-mail sem domínio | E-mail terminado em `@` · senha `senha123` | Validação HTML5 (`typeMismatch`) impede envio em `/registro` |
+| CT-09 | Cadastro com senha curta (< 6 caracteres) | E-mail único · senha `12345` | Permanece em `/registro` e exibe `Dados inválidos. Verifique os campos.` |
+| CT-10 | Cadastro com campos obrigatórios vazios | Nome vazio · e-mail único · senha `senha123` | Validação HTML5 (`valueMissing`) impede envio em `/registro` |
+| — | Acesso a rotas protegidas sem autenticação (`/`, `/credito`) | Sem sessão ativa | Redireciona para `/login` |
+
+**Resultado (20/11/2026):** 12 cenários de autenticação (25 testes no total da suíte `tests/system`), todos passando (`.venv/bin/pytest tests/system -q`), em execuções seguidas com o mesmo resultado. Cada teste utiliza e-mails únicos e cookies limpos entre execuções, garantindo independência total; evidências geradas em `tests/system/auth/evidencias/` com `EVIDENCIAS=1` (screenshots numerados das etapas registradas e da tela final).
+
+#### Empréstimo (RF05) — Vinicius Sales Felinto, issue [#59](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/59)
+
+Pasta: `tests/system/emprestimo/` (testes em `test_emprestimo_sistema.py`, page object em `pagina_emprestimo.py`). Os cenários automatizam os casos manuais de empréstimo (`tests/testes_manuais/emprestimo/caso_emprestimo.md`) e acrescentam a validação de rota protegida sem autenticação (`/emprestimo` redirecionando para `/login`).
+
+| Id | Cenário | Entrada (principal / meses / renda / sistema) | Resultado esperado |
+|---|---|---|---|
+| TC-01 | Simulação válida com Tabela Price | 1000 / 12 / 5000 / Price | Aprovado · 1ª parcela R$ 100.46 · Total R$ 1205.52 · 12 parcelas |
+| TC-02 | Simulação válida com Tabela SAC | 1000 / 12 / 5000 / SAC | Aprovado · 1ª parcela R$ 113.33 · Total R$ 1194.96 · 12 parcelas |
+| TC-03 | Recusa por valor solicitado abaixo do mínimo (R$ 100,00) | 50 / 12 / 5000 / Price | Não aprovado · `valor_abaixo_minimo` |
+| TC-04 | Prazo abaixo do mínimo permitido (2 meses) | 1000 / 1 / 5000 / Price | Validação HTML5 (`min="2"` / `rangeUnderflow`) impede o envio na interface |
+| TC-05 | Recusa por principal acima do teto de renda (15% para renda < 2000) | 200 / 2 / 1000 / Price | Não aprovado · `acima_teto` |
+| — | Acesso à tela de empréstimo sem login | — | Redireciona para `/login` |
+
+**Resultado (22/11/2026):** 6 cenários de empréstimo (31 testes no total da suíte `tests/system`), todos passando (`uv run pytest tests/system -q`), em execuções repetidas obtendo o mesmo resultado verde (49.36s e 53.05s). Cada teste utiliza um cliente com e-mail único cadastrado via fixture `cliente_logado`, garantindo independência total e banco SQLite limpo por sessão; evidências geradas em `tests/system/emprestimo/evidencias/` com `EVIDENCIAS=1` (screenshots numerados do formulário preenchido, resultado e tela final).
+
 ### 6.3 Requisito não funcional — segurança da autenticação (RNF06)
 
 Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/61). Relatório completo em [`docs/relatorios/rnf_seguranca.md`](relatorios/rnf_seguranca.md).
@@ -394,5 +435,60 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 | Item | Issue | Situação | Resultado |
 |---|---|---|---|
 | Testes unitários com mock do repositório (`AuthService` e `TransacaoService`) | [#53](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/53) | Concluído | 16 casos passando em 20/11/2026 (`tests/unit/test_auth_service.py` com 12 casos e `tests/unit/test_transacao_service.py` com 4 casos), isolando `Repositorio` via `pytest-mock` sem acesso a SQLite ou Flask |
+
+### 6.6 `SimuladorEmprestimo` — Vinicius Sales Felinto
+
+| Item | Issue | Situação | Resultado |
+|---|---|---|---|
+| Testes unitários ampliados + cobertura estrutural todas-arestas | [#41](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/41) | Concluído | 118 casos passando em 22/11/2026 (`tests/unit/test_emprestimo.py`), 100.00% de cobertura estrutural de linhas e ramos (82 stmts, 38 branches); PE, AVL, TD, laços e conferência numérica completa; detalhes em `docs/relatorios/cobertura_mutacao.md` |
+| Mutação (escore ≥ 80%) | [#46](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/46) | Concluído | 301 mutantes gerados, 299 mortos e 2 sobreviventes em 22/11/2026: **99,34%** de escore bruto e **100,00%** de escore efetivo (meta ≥ 80% superada); expansão da suíte para 125 casos com foco em dízimas fracionárias, retornos de rejeição e limiar de comprometimento; evidência em `docs/relatorios/evidencias/mutacao/emprestimo-execucao-2-depois.txt` |
+| Testes de sistema (Selenium) — Empréstimo, RF05 | [#59](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/59) | Concluído | 6 cenários automatizados em Chrome headless, todos passando (ver seção 6.2); evidências em `tests/system/emprestimo/evidencias/` |
+
+**Decisões e particularidades:**
+
+- **Precedência de validação (TC-05):** A verificação de teto proporcional à faixa de renda (`principal > teto_por_renda(renda)`) é executada antes da análise de comprometimento da parcela no método `simular()`. Para renda de R$ 1.000,00 (< 2000), o teto é R$ 150,00 (15%), fazendo com que o valor solicitado de R$ 200,00 seja recusado por `acima_teto` (comportamento registrado e comprovado na evidência manual original da issue #11).
+- **Validação nativa de formulário (TC-04):** O campo `meses` no template `emprestimo.html` possui o atributo nativo `min="2"`. O Chrome headless bloqueia o envio via `rangeUnderflow` antes de submeter a requisição POST (evidência `evidenciastc04-prazo-invalido.png`), comportamento verificado pelo método `campo_abaixo_do_minimo("meses")` do Page Object.
+- **Mutação e Triagem de Equivalentes (#46):** A suíte foi ampliada de 118 para 125 casos para eliminar mutantes que sobreviviam por falta de teste de parcelas com dízima periódica (R$ 100 em 3 meses a taxa zero e SAC fracionário) e asserções incompletas nos retornos de recusa. Os 2 mutantes sobreviventes remanescentes foram justificados como equivalentes: `teto_por_renda__mutmut_1` (`renda < 0` vs `<= 0`, onde renda 0 resulta em `0.0 * 0.15 = 0.0`) e `simular__mutmut_205` (`round(sum(parcelas), 3)` vs `round(..., 2)`, cujas parcelas de 2 casas produzem somas idênticas em 2 e 3 casas decimais). Escore final: **99,34%** (bruto) e **100,00%** (descontando equivalentes).
+
+### 6.7 Testes de integração das rotas Flask (`test_client`) — Vinicius Sales Felinto
+
+Implementação da suíte de testes de integração para validar o ciclo completo das rotas HTTP, controladores, templates Jinja2, gerenciamento de sessões, mensagens flash, camadas de serviço e persistência em banco SQLite temporário.
+
+**Localização:** [`tests/integration/`](../tests/integration/)
+- Fixtures e configuração: [`tests/integration/conftest.py`](../tests/integration/conftest.py) (`app` com `TESTING=True` e `DATABASE` temporário via `tmp_path`, `cliente` `test_client`, `conexao_banco`, `cliente_autenticado` e `definir_saldo`).
+- Testes das rotas: [`tests/integration/test_rotas.py`](../tests/integration/test_rotas.py).
+
+| Módulo / Rota | Verificações de Integração | Qtd. Casos | Resultado |
+|---|---|:---:|:---:|
+| Autenticação e Dashboard (`/registro`, `/login`, `/logout`, `/`) | Acesso público anônimo, fluxo completo de cadastro → dashboard com saldo R$ 0,00 e extrato limpo → logout → login → dashboard; validações de erro com flash messages (e-mail duplicado, dados em branco e credenciais inválidas) | 5 | ✅ |
+| Rotas Protegidas (`/`, `/pix`, `/emprestimo`, `/tarifas`, `/credito`) | Redirecionamento 302 com cabeçalho `Location: /login` e renderização do formulário ao seguir redirecionamento tanto em requisições `GET` quanto em `POST` sem sessão ativa | 9 | ✅ |
+| Transferência PIX (`/pix`) | Formulário GET autenticado; POST de transferência com saldo suficiente (debita saldo, cria extrato no dashboard com descrição `PIX cpf` e mensagem de sucesso); recusa por valor inválido (texto e negativo); recusa por saldo insuficiente e recusa por formato de chave inválida | 6 | ✅ |
+| Serviços Financeiros (`/emprestimo`, `/tarifas`, `/credito`) | Exibição de formulários GET; POST de simulação de empréstimo aprovada (parcelamento e total) e reprovada; POST de consulta de tarifas com cálculo de tarifa mensal; POST de análise de crédito com situação, score e limite sugerido | 6 | ✅ |
+| Encerramento de Sessão (`/logout`) | Chamada a `/logout` limpando `cliente_id` da sessão Flask e bloqueando novos acessos subsequentes a rotas autenticadas | 2 | ✅ |
+
+**Resultado (22/11/2026):** **28 testes de integração aprovados** (`uv run pytest tests/integration -q` em 20.54s). Assegura que todas as rotas da aplicação web foram exercitadas de ponta a ponta com banco limpo e isolado entre cada execução.
+
+### 6.8 `TarifaBancaria` — Daniel Izu
+
+| Item | Issue | Situação | Resultado |
+|---|---|---|---|
+| Unitários ampliados + cobertura estrutural (todas-arestas) | [#40](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/40) | Concluído | 122 casos em 22/11/2026 (antes: 44): 118 passam e 4 `xfail` que documentam defeitos; **100%** de cobertura de arestas (antes: 97%, linha 49 não coberta) |
+| Defeito: `tarifa_anual` ignora a antiguidade | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | Aberto | Revelado na #40; teste com `xfail(strict=True)` |
+| Defeito: meia tarifa do pacote premium usa a tarifa da corrente | [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | Aberto (a confirmar pelo grupo) | Revelado na tabela de decisão (regra R3); teste com `xfail(strict=True)` |
+| Mutação (escore ≥ 80%) | [#45](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/45) | Concluído | 106 mutantes, 100 mortos: **94,3%** (antes: 82,1%; 100% descontando 6 equivalentes justificados); +7 casos (`custom_`, `vl_`, `pe_`) que exercitam os arredondamentos; mutmut executado no Ubuntu (WSL 2); evidências em [`docs/relatorios/evidencias/mutacao/`](relatorios/evidencias/mutacao/) |
+
+**Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_tarifas.py`):
+
+- **Partição de equivalência (`pe_`, 21 casos)**: as 18 combinações de tipo de conta × pacote × saldo (negativo / zero / positivo), antiguidade negativa/nova/média/alta e `tarifa_anual`.
+- **Análise de valor-limite (`vl_`, 25 casos)**: faixas de isenção (999,99/1000, 4999,99/5000/5000,01, 49999,99/50000), antiguidade 35/36/37 sem pacote e 23/24/25 com pacote, saldo -0,01/0 e 9/10/11 transações.
+- **Tabela de decisão (`td_`, 29 casos)**: sem pacote, isenção × antiguidade ≥ 36 × saldo negativo × extras (12 combinações possíveis, precedência isenção > antiguidade > saldo negativo); com pacote, tipo × saldo ≥ 50000 × saldo ≥ 5000 × antiguidade ≥ 24 (12 combinações).
+- **Teste de laços**: não se aplica, a classe não possui laços.
+- **Baseada em defeitos (mutação, mutmut)**: os 19 sobreviventes da primeira execução foram triados: 13 mortos por casos com tarifas em centavos (as tarifas padrão são redondas e não exercitavam os `round`) e 6 equivalentes justificados. Detalhes em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
+
+**Defeitos e decisões:**
+
+- Os defeitos #77 e #78 ficam com o teste marcado como `xfail(strict=True)` para não bloquear o mutmut (#45); a correção remove a marcação.
+- `_tarifa_com_pacote` é código morto (nunca chamado), e a faixa de isenção da poupança (1000) nunca é consultada por `tarifa_mensal`; ficam como entrada para a #50 (Sonar).
+- Os testes foram gerados com IA em duas rodadas, cada uma com a solução inicial preservada e revisada: 2 duplicados removidos, 1 partição inválida acrescentada, oráculo de `tarifa_anual` corrigido (comprovado por mutação manual), `xfail` restrito a `TypeError` e 3 cenários da premium recuperados na tabela de decisão. Detalhes em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md) e na sessão 20 do [AI-LOG](ai/AI-LOG.md).
 
 ---

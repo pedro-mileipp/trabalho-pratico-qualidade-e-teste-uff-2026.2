@@ -1,0 +1,220 @@
+Mutação — TarifaBancaria (issue #45) — execução 1 (antes), 22/11/2026
+Ferramenta: mutmut 3.8.0 · Python 3.12.16 · Ubuntu (WSL 2)
+Branch: test/issue-45-mutacao-tarifas @ 376f1d7 Merge da main (#81) na branch da #40
+
+Configuração (só na cópia de execução, não versionada):
+[tool.mutmut]
+source_paths = ["app/dominio"]
+only_mutate = ["app/dominio/tarifas.py"]
+pytest_add_cli_args = ["-q"]
+pytest_add_cli_args_test_selection = ["tests/unit/test_tarifas.py"]
+
+Comandos: uv run mutmut run --max-children 4 ; uv run mutmut results ; uv run mutmut show <mutante>
+
+== Resumo ==
+     87 killed
+     19 survived
+
+== Sobreviventes ==
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_2: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_3: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_26: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_28: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_29: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_44: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_46: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_49: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_62: survived
+app.dominio.tarifas.xǁTarifaBancariaǁ_tarifa_com_pacote__mutmut_3: survived
+app.dominio.tarifas.xǁTarifaBancariaǁ_tarifa_com_pacote__mutmut_8: survived
+app.dominio.tarifas.xǁTarifaBancariaǁ_tarifa_com_pacote__mutmut_10: survived
+app.dominio.tarifas.xǁTarifaBancariaǁ_tarifa_com_pacote__mutmut_13: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_por_transacao_extra__mutmut_1: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_1: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_2: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_4: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_6: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_17: survived
+
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_2
+@@ -3,7 +3,7 @@
+     tipo: TipoConta,
+     saldo: float,
+     tem_pacote: bool = False,
+-    quantidade_transacoes: int = 0,
++    quantidade_transacoes: int = 1,
+     antiguidade_meses: int = 0,
+ ) -> float:
+     if tipo is TipoConta.POUPANCA:
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_3
+@@ -4,7 +4,7 @@
+     saldo: float,
+     tem_pacote: bool = False,
+     quantidade_transacoes: int = 0,
+-    antiguidade_meses: int = 0,
++    antiguidade_meses: int = 1,
+ ) -> float:
+     if tipo is TipoConta.POUPANCA:
+         return 0.0
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_26
+@@ -15,7 +15,7 @@
+             base = self._base.corrente * 0.5
+         else:
+             base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium * 0.7
+-        return round(base, 2)
++        return round(base, None)
+     base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium
+     if self._tem_isencao(tipo, saldo):
+         base = 0.0
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_28
+@@ -15,7 +15,7 @@
+             base = self._base.corrente * 0.5
+         else:
+             base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium * 0.7
+-        return round(base, 2)
++        return round(base, )
+     base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium
+     if self._tem_isencao(tipo, saldo):
+         base = 0.0
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_29
+@@ -15,7 +15,7 @@
+             base = self._base.corrente * 0.5
+         else:
+             base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium * 0.7
+-        return round(base, 2)
++        return round(base, 3)
+     base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium
+     if self._tem_isencao(tipo, saldo):
+         base = 0.0
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_44
+@@ -20,7 +20,7 @@
+     if self._tem_isencao(tipo, saldo):
+         base = 0.0
+     elif antiguidade_meses >= 36:
+-        base = round(base * 0.8, 2)
++        base = round(base * 0.8, None)
+     elif saldo < 0:
+         base += self._base.corrente * 0.2
+     return round(base + self.tarifa_por_transacao_extra(quantidade_transacoes), 2)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_46
+@@ -20,7 +20,7 @@
+     if self._tem_isencao(tipo, saldo):
+         base = 0.0
+     elif antiguidade_meses >= 36:
+-        base = round(base * 0.8, 2)
++        base = round(base * 0.8, )
+     elif saldo < 0:
+         base += self._base.corrente * 0.2
+     return round(base + self.tarifa_por_transacao_extra(quantidade_transacoes), 2)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_49
+@@ -20,7 +20,7 @@
+     if self._tem_isencao(tipo, saldo):
+         base = 0.0
+     elif antiguidade_meses >= 36:
+-        base = round(base * 0.8, 2)
++        base = round(base * 0.8, 3)
+     elif saldo < 0:
+         base += self._base.corrente * 0.2
+     return round(base + self.tarifa_por_transacao_extra(quantidade_transacoes), 2)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_62
+@@ -23,4 +23,4 @@
+         base = round(base * 0.8, 2)
+     elif saldo < 0:
+         base += self._base.corrente * 0.2
+-    return round(base + self.tarifa_por_transacao_extra(quantidade_transacoes), 2)
++    return round(base + self.tarifa_por_transacao_extra(quantidade_transacoes), 3)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁ_tarifa_com_pacote__mutmut_3
+@@ -1,5 +1,5 @@
+ def _tarifa_com_pacote(self, tipo: TipoConta, saldo: float) -> float:
+-    if tipo is TipoConta.PREMIUM and saldo >= self._base.faixas_isencao[2]:
++    if tipo is TipoConta.PREMIUM and saldo > self._base.faixas_isencao[2]:
+         return 0.0
+     if tipo is TipoConta.CORRENTE:
+         return self._base.corrente
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁ_tarifa_com_pacote__mutmut_8
+@@ -3,4 +3,4 @@
+         return 0.0
+     if tipo is TipoConta.CORRENTE:
+         return self._base.corrente
+-    return round(self._base.premium * 0.7, 2)
++    return round(self._base.premium * 0.7, None)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁ_tarifa_com_pacote__mutmut_10
+@@ -3,4 +3,4 @@
+         return 0.0
+     if tipo is TipoConta.CORRENTE:
+         return self._base.corrente
+-    return round(self._base.premium * 0.7, 2)
++    return round(self._base.premium * 0.7, )
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁ_tarifa_com_pacote__mutmut_13
+@@ -3,4 +3,4 @@
+         return 0.0
+     if tipo is TipoConta.CORRENTE:
+         return self._base.corrente
+-    return round(self._base.premium * 0.7, 2)
++    return round(self._base.premium * 0.7, 3)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_por_transacao_extra__mutmut_1
+@@ -1,4 +1,4 @@
+ def tarifa_por_transacao_extra(self, quantidade: int) -> float:
+-    if quantidade <= self._base.transacoes_gratuitas:
++    if quantidade < self._base.transacoes_gratuitas:
+         return 0.0
+     return (quantidade - self._base.transacoes_gratuitas) * self._base.tarifa_por_transacao
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_1
+@@ -2,7 +2,7 @@
+     self,
+     tipo: TipoConta,
+     saldo: float,
+-    tem_pacote: bool = False,
++    tem_pacote: bool = True,
+     quantidade_transacoes: int = 0,
+ ) -> float:
+     return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes) * 12, 2)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_2
+@@ -3,6 +3,6 @@
+     tipo: TipoConta,
+     saldo: float,
+     tem_pacote: bool = False,
+-    quantidade_transacoes: int = 0,
++    quantidade_transacoes: int = 1,
+ ) -> float:
+     return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes) * 12, 2)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_4
+@@ -5,4 +5,4 @@
+     tem_pacote: bool = False,
+     quantidade_transacoes: int = 0,
+ ) -> float:
+-    return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes) * 12, 2)
++    return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes) * 12, None)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_6
+@@ -5,4 +5,4 @@
+     tem_pacote: bool = False,
+     quantidade_transacoes: int = 0,
+ ) -> float:
+-    return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes) * 12, 2)
++    return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes) * 12, )
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_17
+@@ -5,4 +5,4 @@
+     tem_pacote: bool = False,
+     quantidade_transacoes: int = 0,
+ ) -> float:
+-    return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes) * 12, 2)
++    return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes) * 12, 3)
