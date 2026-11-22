@@ -1,6 +1,6 @@
 # 📌 Plano de Teste — Banco Digital
 
-> Plano de Teste da **Entrega 1** do trabalho prático de Qualidade e Teste (UFF 2026.2).
+> Plano de Teste das **Entregas 1 e 2** do trabalho prático de Qualidade e Teste (UFF 2026.2).
 
 ---
 
@@ -39,6 +39,8 @@ O presente Plano de Teste tem como finalidade descrever as estratégias, process
 O principal objetivo é verificar se as funcionalidades implementadas atendem aos requisitos definidos, além de garantir uma experiência de uso confiável e adequada ao público alvo.
 
 Para isso, foram adotadas abordagens de **testes unitários** e **testes manuais**, contemplando funcionalidades como autenticação de usuários, transferência PIX, consulta de tarifas, simulação de empréstimo e análise de crédito. O processo de verificação e validação foi conduzido de forma iterativa, possibilitando a identificação antecipada de falhas e a evolução contínua do sistema ao longo da Entrega 1.
+
+Na **Entrega 2**, o processo foi ampliado com **testes de integração**, **testes de sistema automatizados (Selenium)**, **cobertura estrutural (todas-arestas)**, **teste de mutação (mutmut)** e **inspeção estática (SonarQube)**, além do requisito não funcional de segurança (RNF06). As seções 6.1 a 6.9 registram os resultados por classe e funcionalidade; o planejamento e os resultados de `TransacaoPix` ficam na seção 6.10.
 
 ---
 
@@ -100,7 +102,6 @@ Esses recursos não foram testados porque não estão expostos na interface ou n
 | Testes de segurança avançados | Fora do escopo acadêmico do projeto |
 | Testes de desempenho em larga escala | Não aplicável nesta entrega |
 | Testes de banco de dados em alto volume | Não contemplados |
-| Testes de sistema com Selenium, cobertura estrutural e mutação | Previstos para a Entrega 2 |
 
 ---
 
@@ -175,6 +176,29 @@ Além disso, os testes visam garantir a integridade dos dados, o tratamento de e
 | Tarifas | 15 | 15 aprovados |
 | Empréstimo | 5 | 5 aprovados |
 | Crédito | 10 | 10 aprovados |
+
+#### Estado atual (22/11/2026)
+
+| Suíte | Casos | Resultado |
+|-------|-------|-----------|
+| Unitária (`tests/unit/`) | 501 | 501 pass · 3 xfail (defeito #78, Tarifas) |
+| Integração (`tests/integration/`) | 84 | 84 pass |
+| Sistema (`tests/system/`) | 31 | 31 pass |
+| Requisitos não funcionais (`tests/rnf/`) | 22 | 22 pass |
+| **Total** | **638** | **638 pass · 3 xfail** |
+
+Unitários por classe de domínio:
+
+| Classe | Casos | Resultado |
+|--------|-------|-----------|
+| `TransacaoPix` | 68 | 68 pass |
+| `DecisorCredito` | 96 | 96 pass |
+| `CalculadoraJuros` | 68 | 68 pass |
+| `SimuladorEmprestimo` | 125 | 125 pass |
+| `TarifaBancaria` | 128 | 128 pass · 3 xfail (#78) |
+| `AuthService` e `TransacaoService` | 16 | 16 pass |
+
+> A suíte completa ficou verde em 22/11/2026, após a correção dos bugs de PIX #16 e #17 (commit `e7881bd`, PR #89). Os 3 `xfail` restantes documentam o defeito #78 (Tarifas) e não bloqueiam a execução.
 
 ---
 
@@ -299,7 +323,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 
 ## 🚀 6. Entrega 2 — Resultados
 
-> Seção em construção: cada integrante adiciona a subseção da sua classe ao concluir as issues da Entrega 2. O detalhamento (comandos, saídas e casos) fica em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
+> Cada integrante documenta a subseção da sua classe ao concluir as issues da Entrega 2; pendentes: Tarifas/Selenium (#58), ISO 25010 (#62) e relatório consolidado do Sonar (#63). O detalhamento (comandos, saídas e casos) fica em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
 
 ### 6.1 `DecisorCredito` — Pedro Mileipp
 
@@ -327,6 +351,8 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 ### 6.2 Testes de sistema (Selenium)
 
 **Ferramentas:** Selenium WebDriver 4 com Google Chrome em modo headless (driver resolvido pelo Selenium Manager) e pytest.
+
+**Situação em 22/11/2026:** 31 testes de sistema, todos passando — Crédito (13), Auth (12) e Empréstimo (6). O PIX (RF03, issue #56) está planejado na seção 6.10.
 
 **Base compartilhada** (`tests/system/conftest.py`), para todos os testes de sistema:
 
@@ -516,7 +542,7 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 | Contrato do `Repositorio` | `criar_cliente` (saldo 0, score 500, ids distintos); busca por id e por e-mail; inexistentes → `None`; `atualizar_saldo` e `atualizar_score` persistem; `registrar_transacao` devolve data ISO; `listar_transacoes` mantém a ordem de inserção | 8 × 2 | ✅ |
 | Divergências entre as implementações | Comportamento atual fixado em testes separados por implementação (ver abaixo) | 4 | ✅ |
 
-**Resultado (22/11/2026):** **56 testes novos** passando. `uv run pytest tests/integration -q`: **84 passed** (os 28 da #55 e os 56 novos). Cobertura de linhas e arestas de `app/servicos` e `app/repositorios` com os testes de integração: **100%** (136 statements, 18 ramos). Nenhum `banco.db` criado no workspace: uma fixture autouse compara a existência e o `mtime` de `banco.db` na raiz antes e depois de cada teste. Suíte completa (`uv run pytest`): só falham os 2 testes de PIX dos bugs #16 e #17, de outra issue. Evidência em [`docs/relatorios/evidencias/integracao/servicos-repositorio.txt`](relatorios/evidencias/integracao/servicos-repositorio.txt).
+**Resultado (22/11/2026):** **56 testes novos** passando. `uv run pytest tests/integration -q`: **84 passed** (os 28 da #55 e os 56 novos). Cobertura de linhas e arestas de `app/servicos` e `app/repositorios` com os testes de integração: **100%** (136 statements, 18 ramos). Nenhum `banco.db` criado no workspace: uma fixture autouse compara a existência e o `mtime` de `banco.db` na raiz antes e depois de cada teste. Suíte completa (`uv run pytest`): **638 passed e 3 xfailed** (defeito #78, de outra issue; os bugs de PIX #16 e #17 foram corrigidos depois, no commit `e7881bd`, PR #89). Evidência em [`docs/relatorios/evidencias/integracao/servicos-repositorio.txt`](relatorios/evidencias/integracao/servicos-repositorio.txt).
 
 **Divergências e observações** (o código de produção não foi alterado):
 
