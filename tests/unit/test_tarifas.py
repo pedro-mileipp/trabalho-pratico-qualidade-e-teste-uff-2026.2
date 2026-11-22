@@ -357,25 +357,33 @@ def test_tem_isencao_valor_limite(tipo: TipoConta, saldo: float, esperado: bool,
 #   C3 saldo negativo  x  C4 transações extras (12 transações = +5,00).
 # C1 e C3 são mutuamente exclusivas (saldo >= 5000 não é negativo): 12 combinações possíveis.
 # Precedência do if/elif: isenção > antiguidade > saldo negativo; as extras somam em todas.
+# As linhas td_sp_premium_* repetem regras da tabela na conta premium (base 50,00, isenção a
+# partir de 50000), onde a sobretaxa de saldo negativo continua sendo corrente * 0,2.
+# Algumas linhas coincidem com casos vl_/Entrega 1: mantidas para a tabela ficar completa.
 @pytest.mark.parametrize(
-    ("saldo", "antiguidade_meses", "quantidade_transacoes", "esperado"),
+    ("tipo", "saldo", "antiguidade_meses", "quantidade_transacoes", "esperado"),
     [
-        # C1  C2  C3  C4
-        pytest.param(6000.0, 0, 0, 0.0, id="td_sp_01_isento"),                              # V F F F
-        pytest.param(6000.0, 0, 12, 5.0, id="td_sp_02_isento_extras"),                      # V F F V
-        pytest.param(6000.0, 36, 0, 0.0, id="td_sp_03_isento_antiguidade"),                 # V V F F
-        pytest.param(6000.0, 36, 12, 5.0, id="td_sp_04_isento_antiguidade_extras"),         # V V F V
-        pytest.param(1000.0, 0, 0, 30.0, id="td_sp_05_nenhuma_condicao"),                   # F F F F
-        pytest.param(1000.0, 0, 12, 35.0, id="td_sp_06_extras"),                            # F F F V
-        pytest.param(1000.0, 36, 0, 24.0, id="td_sp_07_antiguidade"),                       # F V F F
-        pytest.param(1000.0, 36, 12, 29.0, id="td_sp_08_antiguidade_extras"),               # F V F V
-        pytest.param(-100.0, 0, 0, 36.0, id="td_sp_09_negativo"),                           # F F V F
-        pytest.param(-100.0, 0, 12, 41.0, id="td_sp_10_negativo_extras"),                   # F F V V
-        pytest.param(-100.0, 36, 0, 24.0, id="td_sp_11_antiguidade_prevalece_negativo"),    # F V V F
-        pytest.param(-100.0, 36, 12, 29.0, id="td_sp_12_antiguidade_prevalece_negativo_extras"),  # F V V V
+        #                                                                                       C1  C2  C3  C4
+        pytest.param(TipoConta.CORRENTE, 6000.0, 0, 0, 0.0, id="td_sp_01_isento"),                              # V F F F
+        pytest.param(TipoConta.CORRENTE, 6000.0, 0, 12, 5.0, id="td_sp_02_isento_extras"),                      # V F F V
+        pytest.param(TipoConta.CORRENTE, 6000.0, 36, 0, 0.0, id="td_sp_03_isento_antiguidade"),                 # V V F F
+        pytest.param(TipoConta.CORRENTE, 6000.0, 36, 12, 5.0, id="td_sp_04_isento_antiguidade_extras"),         # V V F V
+        pytest.param(TipoConta.CORRENTE, 1000.0, 0, 0, 30.0, id="td_sp_05_nenhuma_condicao"),                   # F F F F
+        pytest.param(TipoConta.CORRENTE, 1000.0, 0, 12, 35.0, id="td_sp_06_extras"),                            # F F F V
+        pytest.param(TipoConta.CORRENTE, 1000.0, 36, 0, 24.0, id="td_sp_07_antiguidade"),                       # F V F F
+        pytest.param(TipoConta.CORRENTE, 1000.0, 36, 12, 29.0, id="td_sp_08_antiguidade_extras"),               # F V F V
+        pytest.param(TipoConta.CORRENTE, -100.0, 0, 0, 36.0, id="td_sp_09_negativo"),                           # F F V F
+        pytest.param(TipoConta.CORRENTE, -100.0, 0, 12, 41.0, id="td_sp_10_negativo_extras"),                   # F F V V
+        pytest.param(TipoConta.CORRENTE, -100.0, 36, 0, 24.0, id="td_sp_11_antiguidade_prevalece_negativo"),    # F V V F
+        pytest.param(TipoConta.CORRENTE, -100.0, 36, 12, 29.0, id="td_sp_12_antiguidade_prevalece_negativo_extras"),  # F V V V
+        # premium: 50000 isento mesmo com antiguidade; 50*0,8 = 40; 40 + 5*2,50 = 52,50
+        pytest.param(TipoConta.PREMIUM, 50000.0, 36, 0, 0.0, id="td_sp_premium_isento_limite_com_antiguidade"),
+        pytest.param(TipoConta.PREMIUM, -100.0, 36, 0, 40.0, id="td_sp_premium_antiguidade_prevalece_negativo"),
+        pytest.param(TipoConta.PREMIUM, 20000.0, 36, 15, 52.5, id="td_sp_premium_antiguidade_extras"),
     ],
 )
 def test_tarifa_mensal_tabela_decisao_sem_pacote(
+    tipo: TipoConta,
     saldo: float,
     antiguidade_meses: int,
     quantidade_transacoes: int,
@@ -383,7 +391,7 @@ def test_tarifa_mensal_tabela_decisao_sem_pacote(
     tarifa: TarifaBancaria,
 ):
     resultado = tarifa.tarifa_mensal(
-        TipoConta.CORRENTE,
+        tipo,
         saldo,
         quantidade_transacoes=quantidade_transacoes,
         antiguidade_meses=antiguidade_meses,
