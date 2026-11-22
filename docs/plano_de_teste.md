@@ -436,6 +436,7 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 
 | Item | Issue | Situação | Resultado |
 |---|---|---|---|
+| Testes unitários ampliados + cobertura estrutural todas-arestas | [#41](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/41) | Concluído | 118 casos passando em 22/11/2026 (`tests/unit/test_emprestimo.py`), 100.00% de cobertura estrutural de linhas e ramos (82 stmts, 38 branches); PE, AVL, TD, laços e conferência numérica completa; detalhes em `docs/relatorios/cobertura_mutacao.md` |
 | Testes de sistema (Selenium) — Empréstimo, RF05 | [#59](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/59) | Concluído | 6 cenários automatizados em Chrome headless, todos passando (ver seção 6.2); evidências em `tests/system/emprestimo/evidencias/` |
 
 **Decisões e particularidades:**
