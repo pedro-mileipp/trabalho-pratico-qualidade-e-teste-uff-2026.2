@@ -10,7 +10,7 @@
 
 ## Contexto
 
-A sessão foi feita em dupla: Gabrielle Rosa (responsável pela issue) e Daniel Izu, juntos, usando o Claude Code na máquina de Daniel. Os prompts abaixo foram digitados por Daniel.
+A sessão foi feita em dupla por Gabrielle Rosa (responsável pela issue) e Daniel Izu. Os prompts abaixo foram digitados por Daniel.
 
 A issue #49 pede resolver os apontamentos do Sonar na `CalculadoraJuros`. A IA verificou que a classe tem **0 apontamentos**, na A2 e na análise atual, e que ela não tem tela nem rota (nenhum arquivo de `app/web` ou `app/templates` a usa). Por isso não há o que corrigir nem na classe nem numa tela da mesma funcionalidade. Os 30 apontamentos restantes no projeto estavam em telas de outras issues (empréstimo #51, PIX #48) e na autenticação, com 12 apontamentos sem responsável.
 
