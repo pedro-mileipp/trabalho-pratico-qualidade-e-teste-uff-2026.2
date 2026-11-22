@@ -196,9 +196,9 @@ O dashboard “Overall Code” (print `dashboard-depois.png`) mostra a visão po
 
 **Observação para a reprodução:** numa instância nova, o comando `bootstrap` do `scripts/sonar_local.sh` não consegue associar o perfil comprehensive, porque o projeto ainda não existe no SonarQube antes do primeiro scan (a API devolve HTTP 404, “Project not found”). Aqui, o projeto foi criado antes pela API (`api/projects/create`) e só então o perfil foi associado.
 
-### 6.3 `CalculadoraJuros` e funcionalidade de autenticação — Daniel Izu (#49)
+### 6.3 `CalculadoraJuros` e funcionalidade de autenticação — Gabrielle Rosa e Daniel Izu (#49)
 
-> A issue #49 estava atribuída a Gabrielle Rosa; a execução abaixo foi feita por Daniel Izu.
+> A issue #49 é da Gabrielle Rosa e foi feita em conjunto por Gabrielle Rosa e Daniel Izu (sessão de trabalho em dupla, com o Claude Code na máquina de Daniel).
 
 **Ambiente:** a mesma instância e o mesmo perfil da seção 6.2 (SonarQube `26.11.0.134175-community` no Docker do Ubuntu, WSL 2; perfil Python **Sonar way comprehensive**, 407 regras; perfil Web padrão). Para não sobrescrever as análises do projeto principal, que estavam sendo usadas nos prints da #50, a #49 foi analisada num projeto separado da mesma instância, `banco-digital-uff-2026-2-issue49`, com os mesmos perfis. Data: 22/11/2026.
 
