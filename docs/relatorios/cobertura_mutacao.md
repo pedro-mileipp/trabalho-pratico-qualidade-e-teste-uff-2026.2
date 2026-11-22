@@ -49,6 +49,8 @@ Escore: 74 / 106 = 69,8%
 
 **Resultado:** a configuração foi validada. O escore ainda está abaixo de 80%; a issue #45 (mutação de `TarifaBancaria`) deve adicionar testes para matar os 32 sobreviventes. A lista completa está em [`docs/relatorios/evidencias/mutacao/piloto-tarifas-resultados.txt`](evidencias/mutacao/piloto-tarifas-resultados.txt) e o resumo em [`piloto-tarifas.txt`](evidencias/mutacao/piloto-tarifas.txt).
 
+> **Atualização (#45, 22/11/2026):** com a suíte ampliada na #40 e na #45, o escore de `TarifaBancaria` chegou a **94,3%** (100% descontando 6 equivalentes). Ver a subseção "Mutação — #45" na seção da classe.
+
 > O run completo de todas as classes continua bloqueado pelas 3 falhas atuais da suíte (#16, #17 e #20).
 
 ---
@@ -562,3 +564,65 @@ As duas soluções iniciais já tinham 100% de cobertura de arestas. Os problema
 | 2 | o relatório e o plano citavam ids que deixaram de existir (`td_r1_*`, `td_r5_*`, `td_r6_*`) | conferência das referências nos documentos | documentação atualizada |
 
 Todos os valores esperados foram conferidos à mão contra o código e a seção 4.3 de `docs/aplicacao.md` (ex.: 30 + 30 × 0,2 + 5 = 41,00; 50 × 0,8 + 5 × 2,50 = 52,50).
+
+### Mutação (baseada em defeitos) — #45
+
+**Ferramenta:** mutmut 3.8.0, Python 3.12, Ubuntu no WSL 2 (o mutmut 3 não roda nativamente no Windows). Configuração `[tool.mutmut]` da issue #36, com a receita de classe isolada acrescentada **só na cópia de execução**, sem versionar:
+
+```toml
+only_mutate = ["app/dominio/tarifas.py"]
+pytest_add_cli_args_test_selection = ["tests/unit/test_tarifas.py"]
+```
+
+**Comandos**
+
+```bash
+uv run mutmut run --max-children 4
+uv run mutmut results
+uv run mutmut show <mutante>
+```
+
+**Resultado (22/11/2026)**
+
+| | Piloto da #36 (suíte da Entrega 1, 44 casos) | Execução 1 — antes (suíte da #40, 122 casos) | Execução 3 — depois (suíte da #45, 129 casos) |
+|---|---|---|---|
+| Mutantes gerados | 106 | 106 | 106 |
+| Mortos | 74 | 87 | **100** |
+| Sobreviventes | 32 | 19 | 6 (todos equivalentes) |
+| Timeout / suspeitos | 0 | 0 | 0 |
+| Escore (mortos / gerados) | 69,8% | 82,1% | **94,3%** |
+| Escore descontando os equivalentes | — | 87 / 100 = 87,0% | **100 / 100 = 100%** |
+| Evidência | [`piloto-tarifas.txt`](evidencias/mutacao/piloto-tarifas.txt) | [`tarifas-execucao-1-antes.txt`](evidencias/mutacao/tarifas-execucao-1-antes.txt) | [`tarifas-execucao-3-final.txt`](evidencias/mutacao/tarifas-execucao-3-final.txt) |
+
+Meta da disciplina: ≥ 80%. ✅ A ampliação da #40 já tinha levado o escore de 69,8% para 82,1%; a #45 eliminou todos os sobreviventes que não são equivalentes. A execução 1 foi feita pelo responsável. Cada arquivo de evidência traz a configuração, os comandos, o resumo e o diff de cada sobrevivente.
+
+**Por que os 13 mutantes sobreviviam:** as tarifas padrão (corrente 30, premium 50, transação 2,50) são valores redondos. Por isso, nenhum teste dependia dos `round(..., 2)`: trocar o arredondamento por `round(x)`, `round(x, None)` ou `round(x, 3)` não mudava nenhum resultado. Os testes novos usam `TarifasBase` com centavos (ex.: premium 50,01, corrente 30,01 e 31). Os valores foram escolhidos para evitar meio centavo exato (x,xx5), em que o arredondamento de `float` é ambíguo.
+
+**Sobreviventes da execução 1 que foram mortos (13)**
+
+| Mutante | Linha original → mutação | Caso que mata |
+|---|---|---|
+| `tarifa_mensal__mutmut_26`, `_28`, `_29` | `return round(base, 2)` (pacote) → `round(base, None)` / `round(base, )` / `round(base, 3)` | `custom_pacote_premium_arredonda_centavos` (50,01 × 0,7 = 35,007 → 35,01) |
+| `tarifa_mensal__mutmut_44`, `_46` | `round(base * 0.8, 2)` → `round(…, None)` / `round(…, )` | `custom_antiguidade_desconto_com_centavos` (31 × 0,8 = 24,80; o mutante dá 25) |
+| `tarifa_mensal__mutmut_62` | `round(base + extras, 2)` → `round(…, 3)` | `custom_saldo_negativo_arredonda_resultado_final` (30,01 + 6,002 = 36,012 → 36,01) |
+| `_tarifa_com_pacote__mutmut_3` | `saldo >= faixas_isencao[2]` → `saldo > …` | `vl_tarifa_com_pacote_premium_limite_50000` |
+| `_tarifa_com_pacote__mutmut_8`, `_10`, `_13` | `round(premium * 0.7, 2)` → `round(…, None)` / `round(…, )` / `round(…, 3)` | `custom_tarifa_com_pacote_premium_centavos` |
+| `tarifa_anual__mutmut_1` | padrão `tem_pacote: bool = False` → `True` | `test_pe_anual_premium_com_valores_padrao` (600,00; o mutante dá 420,00) |
+| `tarifa_anual__mutmut_4`, `_6` | `round(mensal * 12, 2)` → `round(…, None)` / `round(…, )` | `test_custom_anual_arredonda_centavos` (360,12; o mutante dá 360) |
+
+O mapeamento foi conferido aplicando cada mutante sozinho (`mutmut apply`) e rodando só os testes novos: os 13 são mortos exatamente pelos casos acima ([`tarifas-mapeamento-mutante-teste.txt`](evidencias/mutacao/tarifas-mapeamento-mutante-teste.txt)).
+
+**Sobreviventes equivalentes (6)**
+
+| Mutante | Linha original → mutação | Justificativa |
+|---|---|---|
+| `tarifa_mensal__mutmut_2` | padrão `quantidade_transacoes: int = 0` → `1` | De 0 a 10 transações a taxa extra é 0; o padrão 1 dá o mesmo resultado que 0 |
+| `tarifa_mensal__mutmut_3` | padrão `antiguidade_meses: int = 0` → `1` | As regras só mudam em 24 e 36 meses; 1 mês se comporta igual a 0 |
+| `tarifa_mensal__mutmut_49` | `round(base * 0.8, 2)` → `round(…, 3)` | O `round(…, 2)` final desfaz a diferença. Verificado para todas as tarifas de R$ 0,01 a R$ 20.000,00 em passos de 1 centavo: nenhum valor distingue o mutante |
+| `tarifa_por_transacao_extra__mutmut_1` | `quantidade <= transacoes_gratuitas` → `<` | Com exatamente 10 transações, o mutante calcula (10 − 10) × 2,50 = 0, o mesmo `0.0` do original |
+| `tarifa_anual__mutmut_2` | padrão `quantidade_transacoes: int = 0` → `1` | Mesmo raciocínio do `tarifa_mensal__mutmut_2` |
+| `tarifa_anual__mutmut_17` | `round(mensal * 12, 2)` → `round(…, 3)` | A mensal já vem arredondada a 2 casas, e × 12 continua com no máximo 2 casas. Verificado de R$ 0,01 a R$ 20.000,00: nenhum valor distingue |
+
+**Observação:** 4 dos 13 mutantes mortos estão em `_tarifa_com_pacote`, que é **código morto** (apontado na #40 para a #50). Se a #50 remover o método, os testes dele saem junto e o escore deve ser recalculado sobre os mutantes restantes.
+
+**Revisão da solução gerada por IA** ([sessão 21 do AI-LOG](../ai/prompts/sessao-21-mutacao-tarifas.md)): a solução inicial (commit `145bd2d`, [`tarifas-execucao-2-solucao-inicial.txt`](evidencias/mutacao/tarifas-execucao-2-solucao-inicial.txt)) já matava os 13 mutantes. A revisão conferiu o mapeamento mutante → teste e corrigiu três pontos de manutenção (commit `21e9824`): os comentários citavam só o número do mutante, que muda quando `tarifas.py` muda, e passaram a descrever a mutação; faltava o aviso de que os testes de `_tarifa_com_pacote` cobrem código morto; e faltava a justificativa dos valores com centavos.

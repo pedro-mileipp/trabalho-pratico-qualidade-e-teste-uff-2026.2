@@ -471,6 +471,83 @@ def test_custom_sobretaxa_premium_usa_tarifa_da_corrente():
     assert tarifa.tarifa_mensal(TipoConta.PREMIUM, -1.0) == 78.0
 
 
+# ---------------------------------------------------------------------------
+# Issue #45 — casos motivados pela análise de mutação (mutmut).
+# As tarifas padrão (30, 50, 2,50) são valores redondos, então nenhum teste
+# dependia dos round(..., 2). Os casos custom_ usam tarifas com centavos para
+# que o arredondamento faça diferença no resultado.
+# Os valores evitam meio centavo exato (x,xx5), em que o arredondamento de
+# float é ambíguo: 35,007 e 36,012 arredondam sem dúvida para 35,01 e 36,01.
+# Os nomes dos mutantes (mutmut_N) são os da execução de 22/11/2026 e mudam
+# quando tarifas.py muda; por isso cada comentário descreve também a mutação.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("base", "tipo", "saldo", "tem_pacote", "antiguidade_meses", "esperado"),
+    [
+        # premium com pacote: 50,01 * 0,7 = 35,007 -> 35,01
+        # mata round(base, 2) -> round(base, None) / round(base) / round(base, 3) no retorno do pacote
+        # (tarifa_mensal__mutmut_26, 28, 29)
+        pytest.param(
+            TarifasBase(premium=50.01), TipoConta.PREMIUM, 1000.0, True, 0, 35.01,
+            id="custom_pacote_premium_arredonda_centavos",
+        ),
+        # desconto por antiguidade: 31 * 0,8 = 24,80
+        # mata round(base * 0.8, 2) -> round(..., None) / round(...) (tarifa_mensal__mutmut_44, 46)
+        pytest.param(
+            TarifasBase(corrente=31.0), TipoConta.CORRENTE, 1000.0, False, 36, 24.8,
+            id="custom_antiguidade_desconto_com_centavos",
+        ),
+        # sobretaxa: 30,01 + 30,01 * 0,2 = 36,012 -> 36,01
+        # mata o round(..., 2) final -> round(..., 3) (tarifa_mensal__mutmut_62)
+        pytest.param(
+            TarifasBase(corrente=30.01), TipoConta.CORRENTE, -1.0, False, 0, 36.01,
+            id="custom_saldo_negativo_arredonda_resultado_final",
+        ),
+    ],
+)
+def test_custom_arredondamento_tarifa_mensal(
+    base: TarifasBase,
+    tipo: TipoConta,
+    saldo: float,
+    tem_pacote: bool,
+    antiguidade_meses: int,
+    esperado: float,
+):
+    tarifa = TarifaBancaria(base)
+    assert tarifa.tarifa_mensal(tipo, saldo, tem_pacote=tem_pacote, antiguidade_meses=antiguidade_meses) == esperado
+
+
+# _tarifa_com_pacote é código morto (nunca chamado por tarifa_mensal; apontado na #40
+# para a #50). Os casos abaixo matam os mutantes desse método, mas, se a #50 remover
+# o método, eles devem ser removidos junto e o escore de mutação recalculado.
+@pytest.mark.parametrize(
+    ("base", "saldo", "esperado"),
+    [
+        # limite exato da isenção da premium: mata saldo >= 50000 -> saldo > 50000 (_tarifa_com_pacote__mutmut_3)
+        pytest.param(TarifasBase(), 50000.0, 0.0, id="vl_tarifa_com_pacote_premium_limite_50000"),
+        # 50,01 * 0,7 = 35,007 -> 35,01: mata round(..., 2) -> round(..., None) / round(...) / round(..., 3)
+        # (_tarifa_com_pacote__mutmut_8, 10, 13)
+        pytest.param(TarifasBase(premium=50.01), 1000.0, 35.01, id="custom_tarifa_com_pacote_premium_centavos"),
+    ],
+)
+def test_tarifa_com_pacote_mutacao(base: TarifasBase, saldo: float, esperado: float):
+    assert TarifaBancaria(base)._tarifa_com_pacote(TipoConta.PREMIUM, saldo) == esperado
+
+
+def test_pe_anual_premium_com_valores_padrao(tarifa: TarifaBancaria):
+    # sem informar tem_pacote nem transações: 50 * 12 = 600,00
+    # mata o padrão tem_pacote=False -> True (tarifa_anual__mutmut_1), que daria 35 * 12 = 420,00
+    assert tarifa.tarifa_anual(TipoConta.PREMIUM, 1000.0) == 600.0
+
+
+def test_custom_anual_arredonda_centavos():
+    # 30,01 * 12 = 360,12: mata round(..., 2) -> round(..., None) / round(...) (tarifa_anual__mutmut_4, 6)
+    tarifa = TarifaBancaria(TarifasBase(corrente=30.01))
+    assert tarifa.tarifa_anual(TipoConta.CORRENTE, 1000.0) == 360.12
+
+
 # --- Defeitos revelados (issue #40) -> bugs #77 e #78 -----------------------
 # Os casos abaixo afirmam o comportamento esperado pela especificação
 # (docs/aplicacao.md, seção 4.3). Falham com o código atual e ficam marcados
