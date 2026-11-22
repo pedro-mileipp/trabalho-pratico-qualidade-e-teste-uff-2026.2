@@ -1,0 +1,108 @@
+Mutação — TarifaBancaria (issue #45) — execução 4 (após as correções da #50: tarifa_mensal plana com CC 14 e caso da meia tarifa com centavos), 22/11/2026
+Ferramenta: mutmut 3.8.0 · Python 3.12.16 · Ubuntu (WSL 2)
+Branch: fix/issue-50-sonar-tarifas @ 0322a7d fix(tarifas): solução final revisada das correções do Sonar e da #77 (#50)
+
+Configuração (só na cópia de execução, não versionada):
+[tool.mutmut]
+source_paths = ["app/dominio"]
+only_mutate = ["app/dominio/tarifas.py"]
+pytest_add_cli_args = ["-q"]
+pytest_add_cli_args_test_selection = ["tests/unit/test_tarifas.py"]
+
+Comandos: uv run mutmut run --max-children 4 ; uv run mutmut results ; uv run mutmut show <mutante>
+
+== Resumo ==
+     93 killed
+      8 survived
+
+== Sobreviventes ==
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_2: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_3: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_24: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_54: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_por_transacao_extra__mutmut_1: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_2: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_3: survived
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_20: survived
+
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_2
+@@ -3,7 +3,7 @@
+     tipo: TipoConta,
+     saldo: float,
+     tem_pacote: bool = False,
+-    quantidade_transacoes: int = 0,
++    quantidade_transacoes: int = 1,
+     antiguidade_meses: int = 0,
+ ) -> float:
+     # Regras com pacote em sequência de retornos antecipados, sem if aninhado:
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_3
+@@ -4,7 +4,7 @@
+     saldo: float,
+     tem_pacote: bool = False,
+     quantidade_transacoes: int = 0,
+-    antiguidade_meses: int = 0,
++    antiguidade_meses: int = 1,
+ ) -> float:
+     # Regras com pacote em sequência de retornos antecipados, sem if aninhado:
+     # mantém a complexidade ciclomática (CC >= 10, requisito da disciplina) e
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_24
+@@ -14,7 +14,7 @@
+     if tem_pacote and tipo is TipoConta.PREMIUM and saldo >= self._base.faixas_isencao[2]:
+         return 0.0
+     if tem_pacote and (saldo >= self._base.faixas_isencao[1] or antiguidade_meses >= 24):
+-        return round(self._base.corrente * 0.5, 2)
++        return round(self._base.corrente * 0.5, 3)
+     if tem_pacote:
+         return round(self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium * 0.7, 2)
+     base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_mensal__mutmut_54
+@@ -21,7 +21,7 @@
+     if self._tem_isencao(tipo, saldo):
+         base = 0.0
+     elif antiguidade_meses >= 36:
+-        base = round(base * 0.8, 2)
++        base = round(base * 0.8, 3)
+     elif saldo < 0:
+         base += self._base.corrente * 0.2
+     return round(base + self.tarifa_por_transacao_extra(quantidade_transacoes), 2)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_por_transacao_extra__mutmut_1
+@@ -1,4 +1,4 @@
+ def tarifa_por_transacao_extra(self, quantidade: int) -> float:
+-    if quantidade <= self._base.transacoes_gratuitas:
++    if quantidade < self._base.transacoes_gratuitas:
+         return 0.0
+     return (quantidade - self._base.transacoes_gratuitas) * self._base.tarifa_por_transacao
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_2
+@@ -3,7 +3,7 @@
+     tipo: TipoConta,
+     saldo: float,
+     tem_pacote: bool = False,
+-    quantidade_transacoes: int = 0,
++    quantidade_transacoes: int = 1,
+     antiguidade_meses: int = 0,
+ ) -> float:
+     return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes, antiguidade_meses) * 12, 2)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_3
+@@ -4,6 +4,6 @@
+     saldo: float,
+     tem_pacote: bool = False,
+     quantidade_transacoes: int = 0,
+-    antiguidade_meses: int = 0,
++    antiguidade_meses: int = 1,
+ ) -> float:
+     return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes, antiguidade_meses) * 12, 2)
+------------------------------------------------------------------
+app.dominio.tarifas.xǁTarifaBancariaǁtarifa_anual__mutmut_20
+@@ -6,4 +6,4 @@
+     quantidade_transacoes: int = 0,
+     antiguidade_meses: int = 0,
+ ) -> float:
+-    return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes, antiguidade_meses) * 12, 2)
++    return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes, antiguidade_meses) * 12, 3)

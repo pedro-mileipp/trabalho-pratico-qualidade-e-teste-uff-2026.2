@@ -32,16 +32,17 @@ class TarifaBancaria:
         quantidade_transacoes: int = 0,
         antiguidade_meses: int = 0,
     ) -> float:
+        # Regras com pacote em sequência de retornos antecipados, sem if aninhado:
+        # mantém a complexidade ciclomática (CC >= 10, requisito da disciplina) e
+        # deixa a complexidade cognitiva abaixo do limite do Sonar (python:S3776).
         if tipo is TipoConta.POUPANCA:
             return 0.0
+        if tem_pacote and tipo is TipoConta.PREMIUM and saldo >= self._base.faixas_isencao[2]:
+            return 0.0
+        if tem_pacote and (saldo >= self._base.faixas_isencao[1] or antiguidade_meses >= 24):
+            return round(self._base.corrente * 0.5, 2)
         if tem_pacote:
-            if tipo is TipoConta.PREMIUM and saldo >= self._base.faixas_isencao[2]:
-                return 0.0
-            if saldo >= self._base.faixas_isencao[1] or antiguidade_meses >= 24:
-                base = self._base.corrente * 0.5
-            else:
-                base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium * 0.7
-            return round(base, 2)
+            return round(self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium * 0.7, 2)
         base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium
         if self._tem_isencao(tipo, saldo):
             base = 0.0
@@ -50,13 +51,6 @@ class TarifaBancaria:
         elif saldo < 0:
             base += self._base.corrente * 0.2
         return round(base + self.tarifa_por_transacao_extra(quantidade_transacoes), 2)
-
-    def _tarifa_com_pacote(self, tipo: TipoConta, saldo: float) -> float:
-        if tipo is TipoConta.PREMIUM and saldo >= self._base.faixas_isencao[2]:
-            return 0.0
-        if tipo is TipoConta.CORRENTE:
-            return self._base.corrente
-        return round(self._base.premium * 0.7, 2)
 
     def _tem_isencao(self, tipo: TipoConta, saldo: float) -> bool:
         if tipo is TipoConta.PREMIUM:
@@ -76,5 +70,6 @@ class TarifaBancaria:
         saldo: float,
         tem_pacote: bool = False,
         quantidade_transacoes: int = 0,
+        antiguidade_meses: int = 0,
     ) -> float:
-        return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes) * 12, 2)
+        return round(self.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes, antiguidade_meses) * 12, 2)

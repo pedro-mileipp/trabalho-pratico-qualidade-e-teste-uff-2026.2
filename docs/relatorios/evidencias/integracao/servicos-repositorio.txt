@@ -1,0 +1,107 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\daniel.izu\Desktop\trabalho qualidade e teste\trabalho-pratico-qualidade-e-teste-uff-2026.2\.venv\Scripts\python.exe
+rootdir: C:\Users\daniel.izu\Desktop\trabalho qualidade e teste\trabalho-pratico-qualidade-e-teste-uff-2026.2
+configfile: pyproject.toml
+plugins: cov-7.1.0, mock-3.15.1
+collecting ... collected 84 items
+
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_criar_cliente_comeca_com_saldo_zero_e_score_500[sqlite] PASSED [  1%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_criar_cliente_comeca_com_saldo_zero_e_score_500[memoria] PASSED [  2%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_buscar_por_id_e_por_email_encontram_o_cliente[sqlite] PASSED [  3%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_buscar_por_id_e_por_email_encontram_o_cliente[memoria] PASSED [  4%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_buscas_por_cliente_inexistente_devolvem_none[sqlite] PASSED [  5%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_buscas_por_cliente_inexistente_devolvem_none[memoria] PASSED [  7%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_clientes_recebem_ids_distintos[sqlite] PASSED [  8%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_clientes_recebem_ids_distintos[memoria] PASSED [  9%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_atualizar_saldo_persiste[sqlite] PASSED [ 10%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_atualizar_saldo_persiste[memoria] PASSED [ 11%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_atualizar_score_persiste[sqlite] PASSED [ 13%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_atualizar_score_persiste[memoria] PASSED [ 14%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_registrar_transacao_devolve_data_em_iso[sqlite] PASSED [ 15%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_registrar_transacao_devolve_data_em_iso[memoria] PASSED [ 16%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_listar_transacoes_mantem_ordem_de_insercao[sqlite] PASSED [ 17%]
+tests/integration/test_contrato_repositorio.py::TestContratoRepositorio::test_listar_transacoes_mantem_ordem_de_insercao[memoria] PASSED [ 19%]
+tests/integration/test_contrato_repositorio.py::TestDivergenciasEntreImplementacoes::test_sqlite_recusa_email_duplicado_com_integrity_error PASSED [ 20%]
+tests/integration/test_contrato_repositorio.py::TestDivergenciasEntreImplementacoes::test_memoria_aceita_email_duplicado PASSED [ 21%]
+tests/integration/test_contrato_repositorio.py::TestDivergenciasEntreImplementacoes::test_sqlite_ignora_atualizar_saldo_de_id_inexistente PASSED [ 22%]
+tests/integration/test_contrato_repositorio.py::TestDivergenciasEntreImplementacoes::test_memoria_lanca_key_error_ao_atualizar_saldo_de_id_inexistente PASSED [ 23%]
+tests/integration/test_rotas.py::TestFluxoAutenticacaoEDashboard::test_telas_publicas_sao_acessiveis_sem_sessao PASSED [ 25%]
+tests/integration/test_rotas.py::TestFluxoAutenticacaoEDashboard::test_fluxo_completo_registro_login_dashboard PASSED [ 26%]
+tests/integration/test_rotas.py::TestFluxoAutenticacaoEDashboard::test_registro_falha_quando_email_ja_cadastrado PASSED [ 27%]
+tests/integration/test_rotas.py::TestFluxoAutenticacaoEDashboard::test_registro_falha_com_campos_invalidos PASSED [ 28%]
+tests/integration/test_rotas.py::TestFluxoAutenticacaoEDashboard::test_login_falha_com_senha_incorreta PASSED [ 29%]
+tests/integration/test_rotas.py::TestRotasProtegidasSemSessao::test_get_em_rotas_protegidas_redireciona_para_login[/] PASSED [ 30%]
+tests/integration/test_rotas.py::TestRotasProtegidasSemSessao::test_get_em_rotas_protegidas_redireciona_para_login[/pix] PASSED [ 32%]
+tests/integration/test_rotas.py::TestRotasProtegidasSemSessao::test_get_em_rotas_protegidas_redireciona_para_login[/emprestimo] PASSED [ 33%]
+tests/integration/test_rotas.py::TestRotasProtegidasSemSessao::test_get_em_rotas_protegidas_redireciona_para_login[/tarifas] PASSED [ 34%]
+tests/integration/test_rotas.py::TestRotasProtegidasSemSessao::test_get_em_rotas_protegidas_redireciona_para_login[/credito] PASSED [ 35%]
+tests/integration/test_rotas.py::TestRotasProtegidasSemSessao::test_post_em_rotas_protegidas_redireciona_para_login[/pix] PASSED [ 36%]
+tests/integration/test_rotas.py::TestRotasProtegidasSemSessao::test_post_em_rotas_protegidas_redireciona_para_login[/emprestimo] PASSED [ 38%]
+tests/integration/test_rotas.py::TestRotasProtegidasSemSessao::test_post_em_rotas_protegidas_redireciona_para_login[/tarifas] PASSED [ 39%]
+tests/integration/test_rotas.py::TestRotasProtegidasSemSessao::test_post_em_rotas_protegidas_redireciona_para_login[/credito] PASSED [ 40%]
+tests/integration/test_rotas.py::TestRotasPix::test_get_pix_autenticado_exibe_formulario PASSED [ 41%]
+tests/integration/test_rotas.py::TestRotasPix::test_pix_sucesso_atualiza_saldo_e_reflete_no_dashboard PASSED [ 42%]
+tests/integration/test_rotas.py::TestRotasPix::test_pix_falha_com_valor_invalido_texto PASSED [ 44%]
+tests/integration/test_rotas.py::TestRotasPix::test_pix_falha_com_valor_negativo_ou_zero PASSED [ 45%]
+tests/integration/test_rotas.py::TestRotasPix::test_pix_recusa_por_saldo_insuficiente PASSED [ 46%]
+tests/integration/test_rotas.py::TestRotasPix::test_pix_recusa_por_chave_invalida PASSED [ 47%]
+tests/integration/test_rotas.py::TestRotasServicosFinanceiros::test_get_telas_de_servicos_exibem_formularios[/emprestimo-Simula\xe7\xe3o de Empr\xe9stimo] PASSED [ 48%]
+tests/integration/test_rotas.py::TestRotasServicosFinanceiros::test_get_telas_de_servicos_exibem_formularios[/tarifas-Consulta de Tarifas] PASSED [ 50%]
+tests/integration/test_rotas.py::TestRotasServicosFinanceiros::test_get_telas_de_servicos_exibem_formularios[/credito-An\xe1lise de Cr\xe9dito] PASSED [ 51%]
+tests/integration/test_rotas.py::TestRotasServicosFinanceiros::test_post_emprestimo_simulacao_aprovada PASSED [ 52%]
+tests/integration/test_rotas.py::TestRotasServicosFinanceiros::test_post_emprestimo_simulacao_recusada PASSED [ 53%]
+tests/integration/test_rotas.py::TestRotasServicosFinanceiros::test_post_tarifas_calculo_exibido PASSED [ 54%]
+tests/integration/test_rotas.py::TestRotasServicosFinanceiros::test_post_credito_analise_exibida PASSED [ 55%]
+tests/integration/test_rotas.py::TestFluxoLogout::test_logout_encerra_sessao_e_bloqueia_acessos_subsequentes PASSED [ 57%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_registra_e_autentica_cliente[sqlite] PASSED [ 58%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_registra_e_autentica_cliente[memoria] PASSED [ 59%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_autentica_com_email_em_maiusculas_e_espacos[sqlite] PASSED [ 60%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_autentica_com_email_em_maiusculas_e_espacos[memoria] PASSED [ 61%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_email_duplicado_lanca_email_ja_cadastrado[sqlite-ana@teste.com] PASSED [ 63%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_email_duplicado_lanca_email_ja_cadastrado[sqlite-  ANA@Teste.com ] PASSED [ 64%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_email_duplicado_lanca_email_ja_cadastrado[memoria-ana@teste.com] PASSED [ 65%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_email_duplicado_lanca_email_ja_cadastrado[memoria-  ANA@Teste.com ] PASSED [ 66%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_registro_invalido_nao_grava_cliente[sqlite-nome_vazio] PASSED [ 67%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_registro_invalido_nao_grava_cliente[sqlite-email_vazio] PASSED [ 69%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_registro_invalido_nao_grava_cliente[sqlite-senha_vazia] PASSED [ 70%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_registro_invalido_nao_grava_cliente[sqlite-senha_5_caracteres] PASSED [ 71%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_registro_invalido_nao_grava_cliente[memoria-nome_vazio] PASSED [ 72%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_registro_invalido_nao_grava_cliente[memoria-email_vazio] PASSED [ 73%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_registro_invalido_nao_grava_cliente[memoria-senha_vazia] PASSED [ 75%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_registro_invalido_nao_grava_cliente[memoria-senha_5_caracteres] PASSED [ 76%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_senha_errada_lanca_credenciais_invalidas[sqlite] PASSED [ 77%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_senha_errada_lanca_credenciais_invalidas[memoria] PASSED [ 78%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_email_inexistente_lanca_credenciais_invalidas[sqlite] PASSED [ 79%]
+tests/integration/test_servicos_repositorio.py::TestAuthServiceComRepositorioReal::test_email_inexistente_lanca_credenciais_invalidas[memoria] PASSED [ 80%]
+tests/integration/test_servicos_repositorio.py::TestTransacaoServiceComRepositorioReal::test_pix_aprovado_atualiza_saldo_e_extrato[sqlite] PASSED [ 82%]
+tests/integration/test_servicos_repositorio.py::TestTransacaoServiceComRepositorioReal::test_pix_aprovado_atualiza_saldo_e_extrato[memoria] PASSED [ 83%]
+tests/integration/test_servicos_repositorio.py::TestTransacaoServiceComRepositorioReal::test_dois_pix_seguidos_acumulam_saldo_e_extrato_em_ordem[sqlite] PASSED [ 84%]
+tests/integration/test_servicos_repositorio.py::TestTransacaoServiceComRepositorioReal::test_dois_pix_seguidos_acumulam_saldo_e_extrato_em_ordem[memoria] PASSED [ 85%]
+tests/integration/test_servicos_repositorio.py::TestTransacaoServiceComRepositorioReal::test_pix_do_cliente_a_nao_aparece_no_extrato_do_cliente_b[sqlite] PASSED [ 86%]
+tests/integration/test_servicos_repositorio.py::TestTransacaoServiceComRepositorioReal::test_pix_do_cliente_a_nao_aparece_no_extrato_do_cliente_b[memoria] PASSED [ 88%]
+tests/integration/test_servicos_repositorio.py::TestTransferenciaRecusadaNaoAlteraEstado::test_recusa_mantem_saldo_e_extrato[sqlite-saldo_insuficiente] PASSED [ 89%]
+tests/integration/test_servicos_repositorio.py::TestTransferenciaRecusadaNaoAlteraEstado::test_recusa_mantem_saldo_e_extrato[sqlite-chave_invalida] PASSED [ 90%]
+tests/integration/test_servicos_repositorio.py::TestTransferenciaRecusadaNaoAlteraEstado::test_recusa_mantem_saldo_e_extrato[sqlite-limite_noturno] PASSED [ 91%]
+tests/integration/test_servicos_repositorio.py::TestTransferenciaRecusadaNaoAlteraEstado::test_recusa_mantem_saldo_e_extrato[memoria-saldo_insuficiente] PASSED [ 92%]
+tests/integration/test_servicos_repositorio.py::TestTransferenciaRecusadaNaoAlteraEstado::test_recusa_mantem_saldo_e_extrato[memoria-chave_invalida] PASSED [ 94%]
+tests/integration/test_servicos_repositorio.py::TestTransferenciaRecusadaNaoAlteraEstado::test_recusa_mantem_saldo_e_extrato[memoria-limite_noturno] PASSED [ 95%]
+tests/integration/test_servicos_repositorio.py::TestTransferenciaRecusadaNaoAlteraEstado::test_cliente_inexistente_e_recusado[sqlite] PASSED [ 96%]
+tests/integration/test_servicos_repositorio.py::TestTransferenciaRecusadaNaoAlteraEstado::test_cliente_inexistente_e_recusado[memoria] PASSED [ 97%]
+tests/integration/test_servicos_repositorio.py::TestPersistenciaSqlite::test_dados_persistem_em_novo_contexto_e_conferem_com_select PASSED [ 98%]
+tests/integration/test_servicos_repositorio.py::TestPersistenciaSqlite::test_banco_do_teste_fica_dentro_de_tmp_path PASSED [100%]
+
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.12.14-final-0 _______________
+
+Name                                      Stmts   Miss Branch BrPart  Cover   Missing
+-------------------------------------------------------------------------------------
+app\repositorios\memoria_repositorio.py      35      0      4      0   100%
+app\repositorios\repositorio.py               4      0      0      0   100%
+app\repositorios\sqlite_repositorio.py       47      0      2      0   100%
+app\servicos\auth.py                         27      0      8      0   100%
+app\servicos\transacoes.py                   23      0      4      0   100%
+-------------------------------------------------------------------------------------
+TOTAL                                       136      0     18      0   100%
+
+2 empty files skipped.
+============================= 84 passed in 22.33s =============================

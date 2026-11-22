@@ -26,6 +26,9 @@
 | 1.14 | 22/11/2026 | Daniel Izu | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `TarifaBancaria` (issue #40), defeitos #77 e #78, na seção 6.8; antiguidade passa a ser coberta por testes unitários (seção 1.1.2) |
 | 1.15 | 22/11/2026 | Daniel Izu | Entrega 2: teste de mutação de `TarifaBancaria` com `mutmut` (escore 94,3%; 100% descontando equivalentes, issue #45) na seção 6.8 |
 | 1.16 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: correções do Sonar na funcionalidade de empréstimo (issue #51) na seção 6.6 |
+| 1.16 | 22/11/2026 | Gabrielle Rosa | Entrega 2: inspeção estática SonarQube em `CalculadoraJuros` — 0 apontamentos e evidência pós-correção (issue #49) nas seções 6.4 e registro de mudanças |
+| 1.17 | 22/11/2026 | Daniel Izu | Entrega 2: correção dos apontamentos do Sonar em `TarifaBancaria` e `tarifas.html` (7 → 0) e do defeito #77 (issue #50) na seção 6.8 |
+| 1.18 | 22/11/2026 | Daniel Izu | Entrega 2: testes de integração serviços ↔ repositório, sem mocks, no `SqliteRepositorio` e no `MemoriaRepositorio` (issue #54) na seção 6.9 |
 
 ---
 
@@ -419,6 +422,7 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 | Correção de defeito (desconto de IR no mês 12) | [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) | Concluído | Laço ajustado para `range(1, meses + 1)` em `montante_com_aportes`; 36 casos passando em `tests/unit/test_juros.py` em 20/11/2026 (evidências antes/depois em `docs/relatorios/evidencias/bug/`) |
 | Unitários ampliados + cobertura estrutural (todas-arestas) | [#39](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/39) | Concluído | 68 casos passando em 20/11/2026 (`0.40s`); **100.00%** de cobertura de linhas e ramos (`67` statements, `0` missed, `36` branches, `0` partial) com `pe_`, `vl_`, `td_` e `laco_`[cite: 7] |
 | Mutação (escore ≥ 80%) | [#44](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/44) | Concluído | 149 mutantes gerados, 130 mortos e 19 sobreviventes em 20/11/2026: **87,25%** de escore (meta ≥ 80% atingida); evidência em [`docs/relatorios/evidencias/mutacao/juros-mutacao.txt`](relatorios/evidencias/mutacao/juros-mutacao.txt) |
+| Inspeção estática (SonarQube — sem apontamentos + bug #20) | [#49](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/49) | Concluído | 0 apontamentos estáticos em `app/dominio/juros.py`; bug #20 corrigido; CC verificada com `radon cc` e evidência em `docs/relatorios/evidencias/sonar/depois/juros/` |
 
 
 **Defeitos e decisões:**
@@ -475,9 +479,10 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 | Item | Issue | Situação | Resultado |
 |---|---|---|---|
 | Unitários ampliados + cobertura estrutural (todas-arestas) | [#40](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/40) | Concluído | 122 casos em 22/11/2026 (antes: 44): 118 passam e 4 `xfail` que documentam defeitos; **100%** de cobertura de arestas (antes: 97%, linha 49 não coberta) |
-| Defeito: `tarifa_anual` ignora a antiguidade | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | Aberto | Revelado na #40; teste com `xfail(strict=True)` |
+| Defeito: `tarifa_anual` ignora a antiguidade | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | Corrigido na #50 | Revelado na #40; `tarifa_anual` passou a repassar `antiguidade_meses`; o teste virou regressão (`vl_anual_antiguidade_35/36`) |
 | Defeito: meia tarifa do pacote premium usa a tarifa da corrente | [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | Aberto (a confirmar pelo grupo) | Revelado na tabela de decisão (regra R3); teste com `xfail(strict=True)` |
 | Mutação (escore ≥ 80%) | [#45](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/45) | Concluído | 106 mutantes, 100 mortos: **94,3%** (antes: 82,1%; 100% descontando 6 equivalentes justificados); +7 casos (`custom_`, `vl_`, `pe_`) que exercitam os arredondamentos; mutmut executado no Ubuntu (WSL 2); evidências em [`docs/relatorios/evidencias/mutacao/`](relatorios/evidencias/mutacao/) |
+| Correções do Sonar | [#50](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/50) | Concluído | 7 apontamentos de tarifas corrigidos (`tarifas.py`: 1 → 0; `tarifas.html`: 6 → 0); projeto: 37 → 30. `tarifa_mensal` reescrita sem aninhamento: complexidade cognitiva ≤ 15 e CC 14 (antes 12). Detalhes na seção 6.3 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md) |
 
 **Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_tarifas.py`):
 
@@ -492,5 +497,33 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 - Os defeitos #77 e #78 ficam com o teste marcado como `xfail(strict=True)` para não bloquear o mutmut (#45); a correção remove a marcação.
 - `_tarifa_com_pacote` é código morto (nunca chamado), e a faixa de isenção da poupança (1000) nunca é consultada por `tarifa_mensal`; ficam como entrada para a #50 (Sonar).
 - Os testes foram gerados com IA em duas rodadas, cada uma com a solução inicial preservada e revisada: 2 duplicados removidos, 1 partição inválida acrescentada, oráculo de `tarifa_anual` corrigido (comprovado por mutação manual), `xfail` restrito a `TypeError` e 3 cenários da premium recuperados na tabela de decisão. Detalhes em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md) e na sessão 20 do [AI-LOG](ai/AI-LOG.md).
+
+### 6.9 Integração serviços ↔ repositório — Daniel Izu ([#54](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/54))
+
+**Escopo e diferença para a #55 (seção 6.7):** na #55, o teste entra pelas rotas HTTP com o `test_client`. Aqui não há HTTP: os testes chamam `AuthService` e `TransacaoService` diretamente sobre o **`SqliteRepositorio` real** (`SqliteRepositorio(get_db)` dentro de `app.app_context()`, com `DATABASE` num arquivo em `tmp_path`) e sobre o **`MemoriaRepositorio`**. O app Flask só fornece o contexto e o banco temporário. **Nenhum mock** é usado.
+
+**Localização:** [`tests/integration/`](../tests/integration/)
+- Fixtures acrescentadas em [`conftest.py`](../tests/integration/conftest.py), sem alterar as da #55: `repo_sqlite`, `repo_memoria` e `repositorio`. A `repositorio` é parametrizada em `sqlite` e `memoria`, e o mesmo teste roda nas duas implementações.
+- [`test_servicos_repositorio.py`](../tests/integration/test_servicos_repositorio.py): serviços sobre o repositório real.
+- [`test_contrato_repositorio.py`](../tests/integration/test_contrato_repositorio.py): contrato da classe abstrata `Repositorio`, chamado diretamente.
+
+| Grupo | Verificações | Casos | Resultado |
+|---|---|:---:|:---:|
+| `AuthService` com repositório real | Registra e autentica (mesmo id; e-mail salvo em minúsculas e sem espaços; `senha_hash` começa com `pbkdf2:sha256` e é diferente da senha); autentica com e-mail em maiúsculas e espaços; e-mail duplicado → `EmailJaCadastrado` (2 variações); registro inválido (nome, e-mail ou senha vazios; senha com 5 caracteres) → `CredenciaisInvalidas` sem gravar cliente; senha errada e e-mail inexistente → `CredenciaisInvalidas` | 10 × 2 | ✅ |
+| `TransacaoService`: PIX aprovado | Saldo 1000, PIX 300 → retorno 700, saldo 700 gravado e 1 transação (`pix`, −300, `PIX email`); dois PIX seguidos (saldo 500, extrato com 2 itens na ordem); o PIX do cliente A não aparece no extrato do B | 3 × 2 | ✅ |
+| Transferência recusada | Saldo insuficiente (`SALDO_INSUFICIENTE`), chave inválida (`CHAVE_INVALIDA`) e limite noturno às 22h com 1500 (`FORA_HORARIO`): confere `TransacaoRecusada.resultado`, saldo inalterado e extrato vazio; cliente inexistente → `TransacaoRecusada` | 4 × 2 | ✅ |
+| Persistência (só SQLite) | Dados gravados num `app.app_context()` são lidos num contexto novo (conexão nova) e conferem com `SELECT` direto no banco; `DATABASE` fica dentro de `tmp_path` | 2 | ✅ |
+| Contrato do `Repositorio` | `criar_cliente` (saldo 0, score 500, ids distintos); busca por id e por e-mail; inexistentes → `None`; `atualizar_saldo` e `atualizar_score` persistem; `registrar_transacao` devolve data ISO; `listar_transacoes` mantém a ordem de inserção | 8 × 2 | ✅ |
+| Divergências entre as implementações | Comportamento atual fixado em testes separados por implementação (ver abaixo) | 4 | ✅ |
+
+**Resultado (22/11/2026):** **56 testes novos** passando. `uv run pytest tests/integration -q`: **84 passed** (os 28 da #55 e os 56 novos). Cobertura de linhas e arestas de `app/servicos` e `app/repositorios` com os testes de integração: **100%** (136 statements, 18 ramos). Nenhum `banco.db` criado no workspace: uma fixture autouse compara a existência e o `mtime` de `banco.db` na raiz antes e depois de cada teste. Suíte completa (`uv run pytest`): só falham os 2 testes de PIX dos bugs #16 e #17, de outra issue. Evidência em [`docs/relatorios/evidencias/integracao/servicos-repositorio.txt`](relatorios/evidencias/integracao/servicos-repositorio.txt).
+
+**Divergências e observações** (o código de produção não foi alterado):
+
+- **E-mail duplicado direto no repositório:** o SQLite recusa com `sqlite3.IntegrityError`, porque a coluna `email` é `UNIQUE`; a memória aceita e cria outro cliente. O `AuthService` evita o caso, porque confere o e-mail antes de criar.
+- **`atualizar_saldo` com id inexistente:** o SQLite não faz nada; a memória lança `KeyError`.
+- **Tipo do horário:** `TransacaoService.transferir_pix` anota `horario: datetime | None`, mas `TransacaoPix.autorizar` espera `datetime.time`. Os testes sempre passam `horario=time(...)`, porque sem horário o resultado dependeria da hora da execução (o limite noturno começa às 20h).
+- Chaves de e-mail com dois `@` (bug #16) e chargeback (bug #17) não foram usadas.
+- Os testes foram gerados com IA. A solução inicial foi preservada (`829b937`), e a revisão acrescentou o caso de registro inválido, que leva `auth.py` de 94% para 100% sem depender dos testes de rota da #55 (`093eed1`). Detalhes na sessão 23 do [AI-LOG](ai/AI-LOG.md).
 
 ---

@@ -246,3 +246,97 @@ Como a classe de domínio `SimuladorEmprestimo` não possuía apontamentos está
 - `issues-emprestimo-depois.json` — 0 apontamentos abertos nos arquivos de empréstimo após nova análise;
 - `dashboard-depois.png` — print do dashboard SonarQube após a análise;
 - `issues-emprestimo-resolvidos.png` — print da lista de issues demonstrando a resolução.
+### 6.2 `CalculadoraJuros` — Gabrielle Rosa (#49)
+
+**Ambiente:** SonarQube Community Build (`26.11.0.134175-community`, instância local), com o perfil Python **Sonar way comprehensive** (407 regras), na mesma base de comparação do relatório[cite: 12].
+
+**Apontamentos da classe**
+
+| Arquivo | Antes | Depois | Situação |
+|---|---:|---:|---|
+| `app/dominio/juros.py` (`CalculadoraJuros`) | 0 | 0 | Nenhum apontamento estático no SonarQube; defeito funcional **#20** (desconto de IR no mês 12 em `montante_com_aportes`) corrigido com `range(1, meses + 1)` |
+
+**Verificação:**
+- Complexidade ciclomática verificada via `.venv/bin/radon cc app/dominio -s` (mantendo CC ≥ 10).
+- Suíte unitária de `CalculadoraJuros` (`tests/unit/test_juros.py`) executada com `.venv/bin/pytest` passando.
+
+**Evidências** em `docs/relatorios/evidencias/sonar/depois/juros/`:
+- `issues-juros-depois.png` — print da tela de issues do SonarQube confirmando `0 issues` para `app/dominio/juros.py`.
+
+### 6.3 `TarifaBancaria` e funcionalidade de tarifas — Daniel Izu (#50)
+
+**Ambiente:** a mesma imagem do SonarQube (`26.11.0.134175-community`, via `docker-compose.yml` do projeto), numa instância local nova no Ubuntu (WSL 2), com o perfil Python **Sonar way comprehensive** (407 regras) e o perfil Web padrão, como no “antes”. Scanner: imagem oficial `sonar-scanner-cli` (SonarScanner CLI 8.4.0.16527), chamada pelo `scripts/sonar_local.sh scan`. Data: 22/11/2026.
+
+**Reprodução do “antes” na mesma instância.** Antes das correções, o código da `main` (commit `68d4f53`) foi analisado: **37 apontamentos** (15 bugs, 21 code smells, 1 vulnerabilidade). Os 7 apontamentos da funcionalidade de tarifas são os mesmos do relatório original (seções 2 e 3). A diferença no total do projeto (40 → 37) vem dos 4 apontamentos de `credito.html` corrigidos na #52 (−4) e de 1 apontamento novo em `tests/integration/conftest.py:26` (`python:S9100`), arquivo criado depois da análise original (+1). Comparação feita apontamento por apontamento (arquivo, regra e linha) com `antes/issues-antes.json`.
+
+**Apontamentos da classe e da funcionalidade**
+
+| Arquivo | Antes | Depois | Situação |
+|---|---:|---:|---|
+| `app/dominio/tarifas.py` (`TarifaBancaria`) | **1** | **0** | Corrigido (status `CLOSED` / `FIXED` no SonarQube) |
+| `app/web/routes/tarifas.py` | 0 | 0 | Sem apontamentos |
+| `app/templates/tarifas.html` | **6** | **0** | 6 corrigidos (status `CLOSED` / `FIXED`) |
+
+| Linha | Regra | Tipo / severidade | Apontamento | Correção |
+|---|---|---|---|---|
+| `tarifas.py:27` | `python:S3776` | Code smell / crítica | `tarifa_mensal` com complexidade cognitiva 16 (limite 15) | Regra do pacote reescrita como retornos antecipados sem `if` aninhado (detalhes abaixo) |
+| `tarifas.html:7` | `Web:S6853` | Code smell / maior | Rótulo “Tipo de conta” sem associação com o campo | `<label for="tipo">` |
+| `tarifas.html:8` | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `tipo` sem `id` | `id="tipo"` |
+| `tarifas.html:13` | `Web:S6853` | Code smell / maior | Rótulo “Saldo (R$)” sem associação com o campo | `<label for="saldo">` |
+| `tarifas.html:14` | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `saldo` sem `id` | `id="saldo"` |
+| `tarifas.html:15` | `Web:S6853` | Code smell / maior | Rótulo “Transações no mês” sem associação com o campo | `<label for="transacoes">` |
+| `tarifas.html:16` | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `transacoes` sem `id` | `id="transacoes"` |
+
+**Correção do `python:S3776` sem reduzir a complexidade ciclomática.** As duas métricas medem coisas diferentes: a complexidade **cognitiva** do Sonar pesa os `if` aninhados, e a complexidade **ciclomática** do `radon` conta as decisões. No código original, as regras do pacote ficavam dentro de `if tem_pacote:`, e o aninhamento levava a complexidade cognitiva a 16. Elas passaram a ser uma sequência de retornos antecipados com condições compostas (ex.: `if tem_pacote and tipo is TipoConta.PREMIUM and saldo >= ...: return 0.0`), sem aninhamento. Resultado:
+
+| Métrica (`TarifaBancaria`) | Antes | Depois |
+|---|---:|---:|
+| Complexidade cognitiva de `tarifa_mensal` (Sonar) | 16 (apontada) | ≤ 15 (sem apontamento) |
+| CC de `tarifa_mensal` (`radon cc`) | 12 | **14** |
+| CC da classe (soma dos métodos) | 24 | 22 |
+
+O requisito da disciplina (CC ≥ 10 por classe, e um método com CC ≥ 10, conforme `docs/aplicacao.md`) continua atendido. A soma da classe caiu porque o método `_tarifa_com_pacote` (CC 4) foi removido: era código morto, nunca chamado, e reimplementava a regra do pacote de forma diferente da usada na tela (corrente com pacote e saldo R$ 6.000 dava 30,00 no método e 15,00 em `tarifa_mensal`). Os testes que o chamavam diretamente passaram a verificar a mesma regra por `tarifa_mensal` com pacote.
+
+> Uma primeira versão da correção moveu o ramo com pacote para dentro de `_tarifa_com_pacote` (delegação). Ela também resolvia o apontamento, mas deixava `tarifa_mensal` com CC 7 e nenhum método da classe com CC ≥ 10. A versão final, plana, foi adotada para manter o requisito.
+
+**Defeito funcional corrigido junto:** a #50 pede corrigir também os bugs funcionais da classe. O defeito [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) (`tarifa_anual` ignorava a antiguidade) foi corrigido: o método passou a receber e repassar `antiguidade_meses` (36 meses: 288,00 em vez de 360,00). O `xfail` saiu, e os casos `vl_anual_antiguidade_35` e `vl_anual_antiguidade_36` viraram testes de regressão. O defeito [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) **não foi corrigido**: aguarda a confirmação do grupo, porque a especificação não define o valor; o teste continua com `xfail(strict=True)`.
+
+Assim como na #52, a correção do HTML melhora a acessibilidade (leitores de tela passam a anunciar o rótulo de cada campo, e clicar no rótulo foca o campo) e dá `id`s estáveis aos campos, que poderão ser usados pelo page object do Selenium de tarifas (#58).
+
+**Projeto inteiro**
+
+| Métrica | Antes (reprodução) | Depois |
+|---|---:|---:|
+| Apontamentos abertos | 37 | **30** |
+| Bugs (tipo) | 15 | 12 |
+| Code smells (tipo) | 21 | 17 |
+| Vulnerabilidades (tipo) | 1 | 1 |
+| Security (impacto) | 1 | 1 |
+| Reliability (impacto) | 30 | **24** |
+| Maintainability (impacto) | 6 | **5** |
+| Cobertura | 69,9% | 69,5% |
+
+A cobertura do projeto caiu 0,4 ponto porque o método removido (`_tarifa_com_pacote`) estava 100% coberto e saiu do total; `tarifas.py` continua com 100% de cobertura de arestas.
+
+**Verificação:**
+
+- `tests/unit/test_tarifas.py`: 128 passando e 3 `xfail` (#78); 100% de cobertura de arestas.
+- Unitários, integração e segurança: 542 passando; as 2 falhas são os bugs de PIX #16 e #17, de outra classe e anteriores a esta issue. Sistema (Selenium): 31 passando.
+- Mutação (`mutmut`, só em `tarifas.py`): 101 mutantes, 93 mortos (**92,1%**). Dos 8 sobreviventes, 7 são equivalentes (os 6 justificados na #45, com outros números porque o código mudou, e 1 novo do mesmo tipo: o padrão `antiguidade_meses` 0 → 1 de `tarifa_anual`) e 1 (`round(corrente * 0.5, 2)` → `round(..., 3)`) só se distingue em meio centavo exato, onde o arredondamento de `float` é ambíguo; não foi criado teste frágil para ele. Ver `docs/relatorios/cobertura_mutacao.md`.
+- `uv run ruff check app/`: sem apontamentos.
+
+**Evidências** em `docs/relatorios/evidencias/sonar/depois/tarifas/`:
+
+- `antes-main/issues-abertas.json` e `antes-main/scanner.txt` — reprodução do “antes” (37 apontamentos, 7 de tarifas);
+- `depois-branch/issues-abertas.json` — 30 apontamentos abertos, nenhum de tarifas;
+- `depois-branch/issues-resolvidas.json` — os 7 apontamentos de tarifas com status `CLOSED` / `FIXED`;
+- `depois-branch/scanner.txt` — log do scanner do “depois”;
+- `issues-tarifas-resolvidos.png` — print da lista de issues filtrada por `tarifas.py` e `tarifas.html`, com os 7 corrigidos;
+- `issues-tarifas-abertos.png` — print da mesma lista filtrada por abertos: 0 issues;
+- `dashboard-depois.png` — print do dashboard “Overall Code” depois da correção;
+- `pytest-solucao-inicial.txt` e `pytest-solucao-final.txt` — testes e `radon cc` antes e depois da revisão.
+
+**Observações para a reprodução:**
+
+- O mutmut 3 e o SonarQube local exigem Linux: no Windows, foram usados o WSL 2 com Ubuntu e o Docker instalado nele. O WSL desliga o Ubuntu alguns segundos depois do último comando, e o container do SonarQube cai junto; é preciso manter um terminal do Ubuntu aberto durante a análise.
+- Numa instância nova, a interface exige trocar a senha padrão do `admin` antes de mostrar as telas. Para não alterar a senha usada pelo `scripts/sonar_local.sh`, os prints foram tirados com um usuário local só de leitura, criado pela API.
