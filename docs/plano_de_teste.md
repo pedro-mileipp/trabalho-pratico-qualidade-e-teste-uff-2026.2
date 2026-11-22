@@ -21,6 +21,7 @@
 | 1.10 | 20/11/2026 | Gabrielle Rosa | Entrega 2: teste de mutação de `CalculadoraJuros` com `mutmut` (escore 87,25%, issue #44) na seção 6.4 |
 | 1.11 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes de sistema com Selenium — Autenticação/RF01 e RF02 (issue #57) na seção 6.2 |
 | 1.12 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de sistema com Selenium — Empréstimo/RF05 (issue #59) nas seções 6.2 e 6.6 |
+| 1.13 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de integração das rotas Flask com test_client (seção 6.7) |
 
 ---
 
@@ -441,5 +442,23 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 
 - **Precedência de validação (TC-05):** A verificação de teto proporcional à faixa de renda (`principal > teto_por_renda(renda)`) é executada antes da análise de comprometimento da parcela no método `simular()`. Para renda de R$ 1.000,00 (< 2000), o teto é R$ 150,00 (15%), fazendo com que o valor solicitado de R$ 200,00 seja recusado por `acima_teto` (comportamento registrado e comprovado na evidência manual original da issue #11).
 - **Validação nativa de formulário (TC-04):** O campo `meses` no template `emprestimo.html` possui o atributo nativo `min="2"`. O Chrome headless bloqueia o envio via `rangeUnderflow` antes de submeter a requisição POST (evidência `evidenciastc04-prazo-invalido.png`), comportamento verificado pelo método `campo_abaixo_do_minimo("meses")` do Page Object.
+
+### 6.7 Testes de integração das rotas Flask (`test_client`) — Vinicius Sales Felinto
+
+Implementação da suíte de testes de integração para validar o ciclo completo das rotas HTTP, controladores, templates Jinja2, gerenciamento de sessões, mensagens flash, camadas de serviço e persistência em banco SQLite temporário.
+
+**Localização:** [`tests/integration/`](../tests/integration/)
+- Fixtures e configuração: [`tests/integration/conftest.py`](../tests/integration/conftest.py) (`app` com `TESTING=True` e `DATABASE` temporário via `tmp_path`, `cliente` `test_client`, `conexao_banco`, `cliente_autenticado` e `definir_saldo`).
+- Testes das rotas: [`tests/integration/test_rotas.py`](../tests/integration/test_rotas.py).
+
+| Módulo / Rota | Verificações de Integração | Qtd. Casos | Resultado |
+|---|---|:---:|:---:|
+| Autenticação e Dashboard (`/registro`, `/login`, `/logout`, `/`) | Acesso público anônimo, fluxo completo de cadastro → dashboard com saldo R$ 0,00 e extrato limpo → logout → login → dashboard; validações de erro com flash messages (e-mail duplicado, dados em branco e credenciais inválidas) | 5 | ✅ |
+| Rotas Protegidas (`/`, `/pix`, `/emprestimo`, `/tarifas`, `/credito`) | Redirecionamento 302 com cabeçalho `Location: /login` e renderização do formulário ao seguir redirecionamento tanto em requisições `GET` quanto em `POST` sem sessão ativa | 9 | ✅ |
+| Transferência PIX (`/pix`) | Formulário GET autenticado; POST de transferência com saldo suficiente (debita saldo, cria extrato no dashboard com descrição `PIX cpf` e mensagem de sucesso); recusa por valor inválido (texto e negativo); recusa por saldo insuficiente e recusa por formato de chave inválida | 6 | ✅ |
+| Serviços Financeiros (`/emprestimo`, `/tarifas`, `/credito`) | Exibição de formulários GET; POST de simulação de empréstimo aprovada (parcelamento e total) e reprovada; POST de consulta de tarifas com cálculo de tarifa mensal; POST de análise de crédito com situação, score e limite sugerido | 6 | ✅ |
+| Encerramento de Sessão (`/logout`) | Chamada a `/logout` limpando `cliente_id` da sessão Flask e bloqueando novos acessos subsequentes a rotas autenticadas | 2 | ✅ |
+
+**Resultado (22/11/2026):** **28 testes de integração aprovados** (`uv run pytest tests/integration -q` em 20.54s). Assegura que todas as rotas da aplicação web foram exercitadas de ponta a ponta com banco limpo e isolado entre cada execução.
 
 ---
