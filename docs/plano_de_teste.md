@@ -19,6 +19,7 @@
 | 1.8 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes unitários com mock do repositório para `AuthService` e `TransacaoService` (issue #53) na seção 6.5 |
 | 1.9 | 20/11/2026 | Gabrielle Rosa | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `CalculadoraJuros` (issue #39) na seção 6.4 |
 | 1.10 | 20/11/2026 | Gabrielle Rosa | Entrega 2: teste de mutação de `CalculadoraJuros` com `mutmut` (escore 87,25%, issue #44) na seção 6.4 |
+| 1.12 | 22/11/2026 | Gabrielle Rosa | Entrega 2: inspeção estática SonarQube em `CalculadoraJuros` — 0 apontamentos e evidência pós-correção (issue #49) nas seções 6.4 e registro de mudanças |
 ---
 
 ## 📖 1. Introdução
@@ -376,6 +377,7 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 | Correção de defeito (desconto de IR no mês 12) | [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) | Concluído | Laço ajustado para `range(1, meses + 1)` em `montante_com_aportes`; 36 casos passando em `tests/unit/test_juros.py` em 20/11/2026 (evidências antes/depois em `docs/relatorios/evidencias/bug/`) |
 | Unitários ampliados + cobertura estrutural (todas-arestas) | [#39](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/39) | Concluído | 68 casos passando em 20/11/2026 (`0.40s`); **100.00%** de cobertura de linhas e ramos (`67` statements, `0` missed, `36` branches, `0` partial) com `pe_`, `vl_`, `td_` e `laco_`[cite: 7] |
 | Mutação (escore ≥ 80%) | [#44](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/44) | Concluído | 149 mutantes gerados, 130 mortos e 19 sobreviventes em 20/11/2026: **87,25%** de escore (meta ≥ 80% atingida); evidência em [`docs/relatorios/evidencias/mutacao/juros-mutacao.txt`](relatorios/evidencias/mutacao/juros-mutacao.txt) |
+| Inspeção estática (SonarQube — sem apontamentos + bug #20) | [#49](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/49) | Concluído | 0 apontamentos estáticos em `app/dominio/juros.py`; bug #20 corrigido; CC verificada com `radon cc` e evidência em `docs/relatorios/evidencias/sonar/depois/juros/` |
 
 
 **Defeitos e decisões:**
