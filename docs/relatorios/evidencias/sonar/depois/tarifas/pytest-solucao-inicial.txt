@@ -1,0 +1,48 @@
+# Solução inicial (IA, sem revisão) — issue #50 — 22/11/2026 16:06
+$ uv run pytest tests/unit/test_tarifas.py -rfxX
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\daniel.izu\Desktop\trabalho qualidade e teste\trabalho-pratico-qualidade-e-teste-uff-2026.2
+configfile: pyproject.toml
+plugins: cov-7.1.0, mock-3.15.1
+collected 129 items
+tests\unit\test_tarifas.py ......................F...................... [ 34%]
+........................................................................ [ 90%]
+.........xxx                                                             [100%]
+================================== FAILURES ===================================
+________________ test_tarifa_com_pacote[corrente_pacote_base] _________________
+tipo = <TipoConta.CORRENTE: 'corrente'>, saldo = 6000.0, esperado = 30.0
+tarifa = <app.dominio.tarifas.TarifaBancaria object at 0x000002441AAED610>
+    @pytest.mark.parametrize(
+        ("tipo", "saldo", "esperado"),
+        [
+            pytest.param(TipoConta.CORRENTE, 3000.0, 30.0, id="corrente_sem_pacote"),
+            pytest.param(TipoConta.CORRENTE, 6000.0, 30.0, id="corrente_pacote_base"),
+            pytest.param(TipoConta.PREMIUM, 60000.0, 0.0, id="premium_isento"),
+            pytest.param(TipoConta.PREMIUM, 4000.0, 35.0, id="premium_pacote"),
+        ],
+    )
+    def test_tarifa_com_pacote(tipo: TipoConta, saldo: float, esperado: float, tarifa: TarifaBancaria):
+>       assert tarifa._tarifa_com_pacote(tipo, saldo) == esperado
+E       AssertionError: assert 15.0 == 30.0
+E        +  where 15.0 = _tarifa_com_pacote(<TipoConta.CORRENTE: 'corrente'>, 6000.0)
+E        +    where _tarifa_com_pacote = <app.dominio.tarifas.TarifaBancaria object at 0x000002441AAED610>._tarifa_com_pacote
+tests\unit\test_tarifas.py:107: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_tarifas.py::test_tarifa_com_pacote[corrente_pacote_base]
+XFAIL tests/unit/test_tarifas.py::test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_saldo_20000] - #78: meia tarifa do pacote premium usa a tarifa da corrente
+XFAIL tests/unit/test_tarifas.py::test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_antiguidade_24] - #78: meia tarifa do pacote premium usa a tarifa da corrente
+XFAIL tests/unit/test_tarifas.py::test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_saldo_20000_antiguidade_24] - #78: meia tarifa do pacote premium usa a tarifa da corrente
+================== 1 failed, 125 passed, 3 xfailed in 0.36s ===================
+
+$ uv run radon cc app/dominio/tarifas.py -s
+app/dominio/tarifas.py
+    M 27:4 TarifaBancaria.tarifa_mensal - B (7)
+    M 48:4 TarifaBancaria._tarifa_com_pacote - B (6)
+    C 23:0 TarifaBancaria - A (4)
+    M 57:4 TarifaBancaria._tem_isencao - A (3)
+    M 24:4 TarifaBancaria.__init__ - A (2)
+    M 64:4 TarifaBancaria.tarifa_por_transacao_extra - A (2)
+    C 7:0 TipoConta - A (1)
+    C 14:0 TarifasBase - A (1)
+    M 69:4 TarifaBancaria.tarifa_anual - A (1)

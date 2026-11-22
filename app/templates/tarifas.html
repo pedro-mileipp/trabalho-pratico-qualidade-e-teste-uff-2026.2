@@ -4,16 +4,16 @@
 <div class="cartao">
   <h2>Consulta de Tarifas</h2>
   <form method="post">
-    <label>Tipo de conta</label>
-    <select name="tipo">
+    <label for="tipo">Tipo de conta</label>
+    <select id="tipo" name="tipo">
       <option value="corrente">Corrente</option>
       <option value="poupanca">Poupança</option>
       <option value="premium">Premium</option>
     </select>
-    <label>Saldo (R$)</label>
-    <input type="number" name="saldo" step="0.01" min="0" value="0">
-    <label>Transações no mês</label>
-    <input type="number" name="transacoes" min="0" value="0">
+    <label for="saldo">Saldo (R$)</label>
+    <input type="number" id="saldo" name="saldo" step="0.01" min="0" value="0">
+    <label for="transacoes">Transações no mês</label>
+    <input type="number" id="transacoes" name="transacoes" min="0" value="0">
     <label><input type="checkbox" name="pacote"> Possui pacote de serviços</label>
     <button type="submit">Calcular</button>
   </form>

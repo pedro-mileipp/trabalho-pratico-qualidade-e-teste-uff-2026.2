@@ -555,7 +555,6 @@ def test_custom_anual_arredonda_centavos():
 # Ao corrigir o defeito, remova o xfail (strict=True acusa XPASS).
 
 
-@pytest.mark.xfail(strict=True, raises=TypeError, reason="#77: tarifa_anual não repassa antiguidade_meses")
 def test_defeito_tarifa_anual_aplica_desconto_por_antiguidade(tarifa: TarifaBancaria):
     # mensal com 36 meses = 30 * 0,8 = 24,00 -> anual = 24 * 12 = 288,00
     assert tarifa.tarifa_anual(TipoConta.CORRENTE, 1000.0, antiguidade_meses=36) == 288.0
