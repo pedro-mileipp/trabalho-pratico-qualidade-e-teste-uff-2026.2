@@ -1,4 +1,4 @@
-# Sessão 20 — Teste de mutação de `TarifaBancaria` (issue #45)
+# Sessão 21 — Teste de mutação de `TarifaBancaria` (issue #45)
 
 | Campo | Valor |
 |---|---|
@@ -22,7 +22,7 @@ Antes do prompt, o responsável pediu orientação ("ta quero fazer o teste de m
 
 ## Solução inicial (gerada pela IA) vs. solução final (após validação)
 
-Exigência do enunciado: preservar a solução inicial, a final e descrever as alterações quando a IA é usada na geração de testes. A solução inicial foi gravada no commit `145bd2d` **antes de qualquer revisão**; a final está no commit `21e9824`; o diff entre as duas está em [`sessao-20-diff-mutacao-inicial-final.diff`](sessao-20-diff-mutacao-inicial-final.diff).
+Exigência do enunciado: preservar a solução inicial, a final e descrever as alterações quando a IA é usada na geração de testes. A solução inicial foi gravada no commit `145bd2d` **antes de qualquer revisão**; a final está no commit `21e9824`; o diff entre as duas está em [`sessao-21-diff-mutacao-inicial-final.diff`](sessao-21-diff-mutacao-inicial-final.diff).
 
 | Solução inicial | Solução final | Alterações realizadas |
 |---|---|---|

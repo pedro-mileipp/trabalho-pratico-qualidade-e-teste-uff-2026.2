@@ -1,4 +1,4 @@
-# Sessão 19 — Testes unitários e cobertura estrutural de `TarifaBancaria` (issue #40)
+# Sessão 20 — Testes unitários e cobertura estrutural de `TarifaBancaria` (issue #40)
 
 | Campo | Valor |
 |---|---|
@@ -28,7 +28,7 @@ A sessão teve duas rodadas. Na **rodada 1**, a IA planejou e executou a issue a
 
 ## Solução inicial (gerada pela IA) vs. solução final (após validação)
 
-Exigência do enunciado: preservar a solução inicial, a final e descrever as alterações quando a IA é usada na geração de testes. Em cada rodada, a solução da IA foi gravada em commit **antes** de qualquer revisão. Os diffs entre inicial e final estão em [`sessao-19-diff-solucao-inicial-final.diff`](sessao-19-diff-solucao-inicial-final.diff) (rodada 1) e [`sessao-19-diff-prompt-tecnico-inicial-final.diff`](sessao-19-diff-prompt-tecnico-inicial-final.diff) (rodada 2).
+Exigência do enunciado: preservar a solução inicial, a final e descrever as alterações quando a IA é usada na geração de testes. Em cada rodada, a solução da IA foi gravada em commit **antes** de qualquer revisão. Os diffs entre inicial e final estão em [`sessao-20-diff-solucao-inicial-final.diff`](sessao-20-diff-solucao-inicial-final.diff) (rodada 1) e [`sessao-20-diff-prompt-tecnico-inicial-final.diff`](sessao-20-diff-prompt-tecnico-inicial-final.diff) (rodada 2).
 
 | Solução inicial | Solução final | Alterações realizadas |
 |---|---|---|
