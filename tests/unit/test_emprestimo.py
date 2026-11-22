@@ -144,6 +144,11 @@ class TestParcelas:
         parcelas = simulador.parcelas_price(500.0, 0.0, 1)
         assert parcelas == [500.0]
 
+    def test_parcelas_price_taxa_zero_divisao_com_dizima(self, simulador: SimuladorEmprestimo):
+        """Divisão não exata com taxa zero para validar arredondamento a duas casas (mata mutantes)."""
+        parcelas = simulador.parcelas_price(100.0, 0.0, 3)
+        assert parcelas == [33.33, 33.33, 33.33]
+
     @pytest.mark.parametrize(
         ("principal", "taxa", "meses", "parcela_esperada", "total_esperado"),
         [
@@ -242,6 +247,13 @@ class TestParcelas:
         assert parcelas[0] == 344.0  # 100 + 6100 * 0.04 = 344.0
         assert parcelas[-1] == 104.0  # 100 + 100 * 0.04 = 104.0
 
+    def test_parcelas_sac_arredondamento_fracionario(self, simulador: SimuladorEmprestimo):
+        """Amortização fracionária para validar arredondamento a duas casas decimais no SAC."""
+        parcelas = simulador.parcelas_sac(100.0, 0.025, 3)
+        assert len(parcelas) == 3
+        # Amortização: 33.3333... Juros 1: 2.50 -> 35.83. Juros 2: 1.6666... -> 35.00. Juros 3: 0.8333... -> 34.17
+        assert parcelas == [35.83, 35.0, 34.17]
+
 
 # ==============================================================================
 # 4. simular: Validações Iniciais (PE e AVL)
@@ -298,6 +310,12 @@ class TestSimularValidacoes:
         assert resultado.numero_parcelas == 0
         assert resultado.total_pago == 0.0
         assert resultado.parcelas == []
+
+    def test_vl_renda_um_real_valida_fronteira(self, simulador: SimuladorEmprestimo):
+        """AVL: renda de R$ 1,00 é positiva e válida, ultrapassa o teto (mata mutante renda <= 1)."""
+        resultado = simulador.simular(principal=100.0, meses=2, renda=1.0)
+        assert resultado.aprovado is False
+        assert resultado.motivo == "acima_teto"
 
 
 # ==============================================================================
@@ -384,6 +402,27 @@ class TestSimularTabelaDecisao:
         assert resultado.aprovado is False
         assert resultado.motivo == "acima_teto"
 
+    def test_td_r8_acima_teto_conferencia_campos_completos(self, simulador: SimuladorEmprestimo):
+        """Conferência estrita de todos os atributos para empréstimo recusado por acima_teto."""
+        resultado = simulador.simular(principal=2000.0, meses=12, renda=5000.0)
+        assert resultado.aprovado is False
+        assert resultado.motivo == "acima_teto"
+        assert resultado.valor_parcela == 0.0
+        assert resultado.numero_parcelas == 0
+        assert resultado.total_pago == 0.0
+        assert resultado.parcelas == []
+
+    def test_td_r9_comprometimento_acima_conferencia_campos_completos(self):
+        """Conferência estrita de todos os atributos para empréstimo recusado por comprometimento_acima."""
+        sim = SimuladorEmprestimo(teto_comprometimento=0.10)
+        resultado = sim.simular(principal=386.0, meses=2, renda=2000.0, sistema=SistemaAmortizacao.PRICE)
+        assert resultado.aprovado is False
+        assert resultado.motivo == "comprometimento_acima"
+        assert resultado.valor_parcela == 0.0
+        assert resultado.numero_parcelas == 0
+        assert resultado.total_pago == 0.0
+        assert resultado.parcelas == []
+
 
 # ==============================================================================
 # 6. simular: Fronteiras de Teto por Renda e Comprometimento (AVL)
@@ -454,6 +493,17 @@ class TestSimularFronteirasNegocio:
         res_nok = sim.simular(principal=381.0, meses=2, renda=2000.0, sistema=SistemaAmortizacao.SAC)
         assert res_nok.aprovado is False
         assert res_nok.motivo == "comprometimento_acima"
+
+    def test_vl_primeira_parcela_exatamente_igual_teto_comprometimento(self):
+        """AVL na fronteira estrita: primeira parcela igual ao limite deve ser aprovada (> vs >=)."""
+        # taxa_base 0.005 -> meses=2 tem taxa = 0.005 - 0.005 = 0.0
+        # teto_comprometimento = 0.10 -> renda 2000.0 * 0.10 = 200.00 de teto de parcela
+        # principal 400.0 em 2 meses com taxa 0 -> parcela = 200.00 exatos
+        sim = SimuladorEmprestimo(taxa_base=0.005, teto_comprometimento=0.10)
+        resultado = sim.simular(principal=400.0, meses=2, renda=2000.0, sistema=SistemaAmortizacao.PRICE)
+        assert resultado.aprovado is True
+        assert resultado.motivo == "aprovado"
+        assert resultado.valor_parcela == 200.00
 
     @pytest.mark.parametrize(
         ("score", "esperado_motivo"),
@@ -567,6 +617,14 @@ class TestSimularResultadosCompletos:
 
 class TestConstrutorCustomizado:
     """Testes com parâmetros customizados de SimuladorEmprestimo."""
+
+    def test_default_valores_construtor(self, simulador: SimuladorEmprestimo):
+        """Valores padrão do construtor mantêm as configurações de negócio especificadas."""
+        assert simulador._taxa_base == 0.03
+        assert simulador._teto_comprometimento == 0.30
+        assert simulador._prazo_min == 2
+        assert simulador._prazo_max == 60
+        assert simulador._valor_minimo == 100.0
 
     def test_custom_taxa_base(self):
         """Customização de taxa_base afeta todas as faixas de prazo."""

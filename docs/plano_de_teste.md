@@ -22,6 +22,7 @@
 | 1.11 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes de sistema com Selenium — Autenticação/RF01 e RF02 (issue #57) na seção 6.2 |
 | 1.12 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de sistema com Selenium — Empréstimo/RF05 (issue #59) nas seções 6.2 e 6.6 |
 | 1.13 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de integração das rotas Flask com test_client (seção 6.7) |
+| 1.14 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: teste de mutação de `SimuladorEmprestimo` com `mutmut` (escore 99,34%, issue #46) na seção 6.6 |
 | 1.14 | 22/11/2026 | Daniel Izu | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `TarifaBancaria` (issue #40), defeitos #77 e #78, na seção 6.8; antiguidade passa a ser coberta por testes unitários (seção 1.1.2) |
 | 1.15 | 22/11/2026 | Daniel Izu | Entrega 2: teste de mutação de `TarifaBancaria` com `mutmut` (escore 94,3%; 100% descontando equivalentes, issue #45) na seção 6.8 |
 
@@ -439,12 +440,14 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 | Item | Issue | Situação | Resultado |
 |---|---|---|---|
 | Testes unitários ampliados + cobertura estrutural todas-arestas | [#41](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/41) | Concluído | 118 casos passando em 22/11/2026 (`tests/unit/test_emprestimo.py`), 100.00% de cobertura estrutural de linhas e ramos (82 stmts, 38 branches); PE, AVL, TD, laços e conferência numérica completa; detalhes em `docs/relatorios/cobertura_mutacao.md` |
+| Mutação (escore ≥ 80%) | [#46](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/46) | Concluído | 301 mutantes gerados, 299 mortos e 2 sobreviventes em 22/11/2026: **99,34%** de escore bruto e **100,00%** de escore efetivo (meta ≥ 80% superada); expansão da suíte para 125 casos com foco em dízimas fracionárias, retornos de rejeição e limiar de comprometimento; evidência em `docs/relatorios/evidencias/mutacao/emprestimo-execucao-2-depois.txt` |
 | Testes de sistema (Selenium) — Empréstimo, RF05 | [#59](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/59) | Concluído | 6 cenários automatizados em Chrome headless, todos passando (ver seção 6.2); evidências em `tests/system/emprestimo/evidencias/` |
 
 **Decisões e particularidades:**
 
 - **Precedência de validação (TC-05):** A verificação de teto proporcional à faixa de renda (`principal > teto_por_renda(renda)`) é executada antes da análise de comprometimento da parcela no método `simular()`. Para renda de R$ 1.000,00 (< 2000), o teto é R$ 150,00 (15%), fazendo com que o valor solicitado de R$ 200,00 seja recusado por `acima_teto` (comportamento registrado e comprovado na evidência manual original da issue #11).
 - **Validação nativa de formulário (TC-04):** O campo `meses` no template `emprestimo.html` possui o atributo nativo `min="2"`. O Chrome headless bloqueia o envio via `rangeUnderflow` antes de submeter a requisição POST (evidência `evidenciastc04-prazo-invalido.png`), comportamento verificado pelo método `campo_abaixo_do_minimo("meses")` do Page Object.
+- **Mutação e Triagem de Equivalentes (#46):** A suíte foi ampliada de 118 para 125 casos para eliminar mutantes que sobreviviam por falta de teste de parcelas com dízima periódica (R$ 100 em 3 meses a taxa zero e SAC fracionário) e asserções incompletas nos retornos de recusa. Os 2 mutantes sobreviventes remanescentes foram justificados como equivalentes: `teto_por_renda__mutmut_1` (`renda < 0` vs `<= 0`, onde renda 0 resulta em `0.0 * 0.15 = 0.0`) e `simular__mutmut_205` (`round(sum(parcelas), 3)` vs `round(..., 2)`, cujas parcelas de 2 casas produzem somas idênticas em 2 e 3 casas decimais). Escore final: **99,34%** (bruto) e **100,00%** (descontando equivalentes).
 
 ### 6.7 Testes de integração das rotas Flask (`test_client`) — Vinicius Sales Felinto
 
