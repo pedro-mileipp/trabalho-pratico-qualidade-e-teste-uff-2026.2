@@ -4,126 +4,65 @@
 |---|---|
 | Responsável | Daniel Izu (`danielcamposs`) |
 | Data | 22/11/2026 |
-| Ferramenta | Claude Code (extensão do VS Code), modelo Claude Opus 5.5 (`claude-opus-5-5`) |
-| Atividade | Planejar e executar a issue #40: ampliar os testes unitários de `TarifaBancaria` com técnicas funcionais e comprovar cobertura todas-arestas ≥ 80%; abrir issues para os defeitos revelados |
-| Artefatos | `tests/unit/test_tarifas.py`; `docs/relatorios/cobertura_mutacao.md` (seção `TarifaBancaria`); `docs/relatorios/evidencias/cobertura/tarifas-*.txt`; `docs/plano_de_teste.md` (v1.12, seção 6.6); issues #77 e #78; este arquivo e o diff `sessao-17-diff-solucao-inicial-final.diff` |
-| Commits | `04f2296` (solução inicial, gerada pela IA, sem revisão) · `bb5025b` (solução final, revisada) |
+| Ferramenta | Claude Code (extensão do VS Code), modelo Claude Opus 5.5 (`claude-opus-5-5`) / Terminal (`uv run pytest`) |
+| Atividade | Ampliar casos de teste unitários e comprovar cobertura estrutural todas-arestas de `TarifaBancaria` (issue #40); abrir issues para os defeitos revelados |
+| Artefatos | `tests/unit/test_tarifas.py`; `docs/relatorios/cobertura_mutacao.md`; `docs/relatorios/evidencias/cobertura/tarifas-*.txt`; `docs/plano_de_teste.md`; issues #77 e #78 |
 
 ## Contexto
 
-A issue #40 pede: revisar os casos existentes, ampliar com partição de equivalência, valor-limite, tabela de decisão e teste de laços (técnica no id), cobrir a linha 49 (desconto de 20% com antiguidade ≥ 36 meses), registrar os números em `docs/relatorios/cobertura_mutacao.md` e abrir issues de bug para defeitos revelados.
+Ampliar os testes unitários da classe `TarifaBancaria` (`app/dominio/tarifas.py`) em `tests/unit/test_tarifas.py` para a issue #40, aplicando partição de equivalência (`pe_`), análise de valor-limite (`vl_`) e tabela de decisão (`td_`), e cobrir a aresta que faltava: linha 49, desconto de 20% com antiguidade ≥ 36 meses. Antes da sessão a suíte tinha 44 casos passando e 97% de cobertura de arestas. A classe não possui laços, então o teste de laços não se aplica.
 
-Antes da sessão: 44 casos passando e 97% de cobertura de arestas (linha 49 não coberta).
+A IA foi orientada pelo relatório de issues da Entrega 2 (`relatorio_issues_entrega_2.md`, seção B3) e pelo enunciado do trabalho (`instrucoes_trabalho.md`).
 
-A IA foi orientada por dois documentos fornecidos pelo responsável: o relatório de issues da Entrega 2 (`relatorio_issues_entrega_2.md`, seção B3 — `TarifaBancaria`) e o enunciado do trabalho (`instrucoes_trabalho.md`), com ênfase no registro do uso de IA.
+## Prompt utilizado
 
-## Prompts utilizados
+Prompts do responsável, na ordem em que foram enviados (transcrição literal):
 
-Transcrição dos prompts do responsável, na ordem, com o resumo de cada resposta da IA.
+> 1. (com o relatório de issues da Entrega 2 anexado) "esse é o plano da entrega, voce deve seguir totalmente esse plano"
+> 2. "me fale exatamente o que voce vai fazer na #40 qual seu plano de realmente executa-la"
+> 3. (com print da issue #40) "tudo isso esta sendo incluido nessa issue?"
+> 4. (com o enunciado e o relatório de issues anexados) "voce deve se orientar por 2 arquivos, de enfase para o registro do uso da ia"
+> 5. "nao entendi o item 1"
+> 6. "faça pelo plano A, como voce planeja seguir com o registro dos prompts e ai-log.md eu preciso que voce siga estritamente isso"
+> 7. "quero revisar o que a ia fez"
+> 8. "como faço para rodar a aplicação e simular o que ia implementou?"
+> 9. (com print do navegador: `ERR_CONNECTION_REFUSED` em `127.0.0.1:5000`)
+> 10. (com a sessão 15 colada como modelo) "queria que voce seguisse esse modelo para registro nos prompts e realização da issue"
 
-**Prompt 1** (com o relatório de issues da Entrega 2 anexado)
+**Resposta da IA:** leu a issue #40, `app/dominio/tarifas.py` e `tests/unit/test_tarifas.py`, mediu a cobertura (97%, linha 49 faltando) e apresentou um plano relacionando cada item da issue a uma etapa (prompts 1–3). Apontou 3 suspeitas de defeito: `tarifa_anual` sem antiguidade, meia tarifa do pacote premium calculada sobre a corrente e `_tarifa_com_pacote` nunca chamado. Propôs tratar os defeitos com teste que falha, issue de bug e `xfail(strict=True)` para não bloquear o mutmut da #45 (prompt 5, "plano A"). Depois de autorizada (prompt 6), ampliou a suíte de 44 para 98 casos com identificadores `pe_`, `vl_`, `td_` e `custom_`, gravou essa versão sem revisão, revisou e chegou a 97 casos. Nos prompts 7–9, orientou a revisão humana, explicou como rodar a aplicação (`uv run flask --app app:create_app run` com banco temporário) e quais casos aparecem na tela de tarifas, e subiu o servidor quando o navegador acusou conexão recusada. No prompt 10, reorganizou este registro no formato da sessão 15.
 
-> "esse é o plano da entrega, voce deve seguir totalmente esse plano"
+## Solução inicial (gerada pela IA) vs. solução final (após validação)
 
-**Resposta da IA:** consultou as issues do milestone "Entrega 2" (`gh issue list`) e apontou as diferenças entre o relatório e o GitHub (grupo B dividido em unitários #38–42 e mutação #43–47; Selenium dividido por funcionalidade #56–60; issues já atribuídas). Listou as issues do responsável (#40, #45, #50, #54, #58, #62) e sugeriu começar pela #40.
+Exigência do enunciado: preservar a solução inicial, a final e descrever as alterações quando a IA é usada na geração de testes. A solução inicial está no commit `04f2296` e a final no `bb5025b`; o diff está em [`sessao-17-diff-solucao-inicial-final.diff`](sessao-17-diff-solucao-inicial-final.diff).
 
-**Prompt 2**
-
-> "me fale exatamente o que voce vai fazer na #40 qual seu plano de realmente executa-la"
-
-**Resposta da IA:** leu a issue, `app/dominio/tarifas.py`, `tests/unit/test_tarifas.py` e as seções de Pedro e Gabrielle no relatório de cobertura; rodou a cobertura (97%, linha 49) e o `radon cc` (`tarifa_mensal` = 12). Apresentou um plano em 7 etapas e já apontou 3 suspeitas de defeito: `tarifa_anual` sem antiguidade, meia tarifa do pacote premium calculada sobre a corrente e `_tarifa_com_pacote` nunca chamado.
-
-**Prompt 3** (com print da issue #40 no GitHub)
-
-> "tudo isso esta sendo incluido nessa issue?"
-
-**Resposta da IA:** relacionou cada item de "O que fazer" e dos "Critérios de aceite" a uma etapa do plano; explicou que teste de laços não se aplica (a classe não tem laços) e que isso seria justificado no relatório; indicou o que vai além da issue (AI-LOG, Plano de Teste) e o que fica fora (alterar o código de domínio → issues de bug e #50; mutação → #45).
-
-**Prompt 4** (com o enunciado `instrucoes_trabalho.md` e o relatório de issues anexados)
-
-> "voce deve se orientar por 2 arquivos, de enfase para o registro do uso da ia"
-
-**Resposta da IA:** leu o `AI-LOG.md` e a sessão 15 como modelo e propôs o registro: linha na tabela com os 7 campos do enunciado, este arquivo com os prompts transcritos, **commit separado da solução inicial** antes de qualquer revisão, tabela "solução inicial × final", erros da IA e como foram detectados, e atualização da "Configuração do agente".
-
-**Prompt 5**
-
-> "nao entendi o item 1"
-
-**Resposta da IA:** explicou com o exemplo de `tarifa_anual` (corrente, saldo 1000, 36 meses: esperado 288,00, código dá 360,00) o fluxo proposto: teste com o valor correto, que falha (evidência); issue de bug; marcação `xfail(strict=True)` para não bloquear o mutmut da #45. Ofereceu três opções: A (issues + `xfail`), B (só relatório) e C (consultar o grupo antes).
-
-**Prompt 6**
-
-> "faça pelo plano A, como voce planeja seguir com o registro dos prompts e ai-log.md eu preciso que voce siga estritamente isso"
-
-**Resposta da IA:** executou a issue conforme as ações abaixo.
-
-## Solução inicial (gerada pela IA) vs. solução final (após revisão)
-
-Exigência do enunciado: preservar a solução inicial, a final e descrever as alterações. A solução inicial está no commit `04f2296` e a final no `bb5025b`; o diff entre as duas está em [`sessao-17-diff-solucao-inicial-final.diff`](sessao-17-diff-solucao-inicial-final.diff).
-
-| | Solução inicial (`04f2296`) | Solução final (`bb5025b`) |
+| Solução inicial | Solução final | Alterações realizadas |
 |---|---|---|
-| Casos | 98 (54 novos) | 97 (53 novos) |
-| Resultado | 95 passed, 3 xfailed | 94 passed, 3 xfailed |
-| Cobertura de arestas | 100% | 100% |
-| Evidência | [`tarifas-1-solucao-inicial.txt`](../../relatorios/evidencias/cobertura/tarifas-1-solucao-inicial.txt) | [`tarifas-2-solucao-final.txt`](../../relatorios/evidencias/cobertura/tarifas-2-solucao-final.txt) |
+| Suíte ampliada para 98 casos (54 novos), com **95 passando e 3 `xfail`** e **100%** de cobertura de arestas. Passava de primeira, mas tinha 2 casos duplicados, faltava a partição inválida de antiguidade, `tarifa_anual` era testada com oráculo calculado pelo próprio código (`tarifa_mensal(...) * 12`) e o `xfail` do defeito da anual aceitava qualquer exceção | Suíte com 97 casos (53 novos): **94 passando e 3 `xfail`** que documentam os defeitos #77 e #78; **100%** de cobertura de arestas (`54` statements, `0` missed, `24` branches, `0` partial) | Removidos `pe_corrente_saldo_zero` (= `vl_saldo_zero_sem_sobretaxa`) e `pe_corrente_pacote_antiguidade_nova` (= `td_r4_corrente_pacote`); acrescentado `pe_antiguidade_negativa_sem_validacao`; `test_tarifa_anual_igual_a_doze_mensais` substituído por `test_tarifa_anual_particao_equivalencia`, com valores explícitos (0; 180; 420; 462); `xfail` da anual restrito com `raises=TypeError`; `reason` dos `xfail` com os números das issues #77 e #78 |
 
-A solução inicial passou de primeira e já atingia 100%; os problemas abaixo **não apareciam na execução** e só foram encontrados na revisão crítica.
+**Como os problemas foram encontrados:** nenhum aparecia na execução. Os duplicados foram achados comparando os parâmetros dos casos. A partição inválida faltando foi achada revisando as classes de equivalência. O oráculo fraco foi comprovado com uma mutação manual temporária em `tarifas.py` (`corrente * 0.5` → `corrente * 0.6`, depois revertida): o teste inicial **continuou passando** (`4 passed`) e o final falhou (`assert 216.0 == 180.0`), conforme [`tarifas-verificacao-oraculo-anual.txt`](../../relatorios/evidencias/cobertura/tarifas-verificacao-oraculo-anual.txt). O `xfail` amplo foi achado executando com `--runxfail`, que mostrou que a falha real era `TypeError`.
 
-| # | Problema na solução inicial | Como foi identificado | Alteração na solução final |
-|---|---|---|---|
-| 1 | Casos duplicados: `pe_corrente_saldo_zero` repetia `vl_saldo_zero_sem_sobretaxa`, e `pe_corrente_pacote_antiguidade_nova` repetia `td_r4_corrente_pacote` | Comparação dos parâmetros de cada caso | Os 2 casos `pe_` duplicados foram removidos |
-| 2 | Faltava a partição **inválida** de antiguidade (valor negativo) | Revisão das classes de equivalência de `antiguidade_meses` | Acrescentado `pe_antiguidade_negativa_sem_validacao` (−12 meses → 30,00, tratado como conta nova) |
-| 3 | `test_tarifa_anual_igual_a_doze_mensais` usava como oráculo `tarifa_mensal(...) * 12`, calculado pelo **próprio código sob teste**: se a mensal estiver errada, a anual erra igual e o teste passa | Mutação manual temporária em `tarifas.py` (`corrente * 0.5` → `corrente * 0.6`, depois revertida): o teste inicial **continuou passando** (`4 passed`) e o final falhou (`assert 216.0 == 180.0`). Evidência: [`tarifas-verificacao-oraculo-anual.txt`](../../relatorios/evidencias/cobertura/tarifas-verificacao-oraculo-anual.txt) | Substituído por `test_tarifa_anual_particao_equivalencia`, com valores explícitos calculados à mão (0; 15 × 12 = 180; 35 × 12 = 420; 38,50 × 12 = 462) |
-| 4 | O `xfail` do defeito de `tarifa_anual` aceitava **qualquer** exceção: um erro de digitação no teste também seria aceito como "defeito confirmado" | Execução com `--runxfail`, que mostrou que a falha real é `TypeError: ... unexpected keyword argument 'antiguidade_meses'` | `xfail(strict=True, raises=TypeError, ...)` |
-| 5 | `reason` dos `xfail` sem o número da issue | Os números só existiram depois de abrir as issues | `reason="#77: ..."` e `reason="#78: ..."`; comentário do bloco aponta para #77 e #78 |
+**Decisão:** a estrutura e os valores esperados gerados pela IA foram aceitos, depois de conferidos à mão contra o código e a seção 4.3 de `docs/aplicacao.md` (ex.: 30 × 0,8 = 24,00; 50 × 0,8 + 5 × 2,50 = 52,50). Os problemas acima foram corrigidos em `tests/unit/test_tarifas.py`. Duas falhas revelaram comportamento divergente da especificação e foram abertas como issues de bug (#77 e #78), com o teste marcado `xfail(strict=True)`. O código de domínio em `app/dominio/tarifas.py` foi mantido sem alterações. O reagrupamento dos 44 casos da Entrega 1 por técnica, proposto no plano, não foi feito; só o id `premium_pacote_isencao_5x5` foi renomeado para `premium_pacote_isento_saldo_limite_50000`.
 
-**Decisão:** a estrutura e os valores esperados da IA foram aceitos (todos conferidos à mão contra o código e a seção 4.3 de `docs/aplicacao.md`); os itens 1–5 foram corrigidos. O código de domínio (`app/dominio/tarifas.py`) **não foi alterado**: correções ficam nas issues #77/#78 e na #50.
+**Validação inicial:** `uv run pytest tests/unit/test_tarifas.py --cov=app.dominio.tarifas --cov-branch --cov-report=term-missing -rxX` → `95 passed, 3 xfailed in 0.73s` (`100%` de cobertura). Evidência: [`tarifas-1-solucao-inicial.txt`](../../relatorios/evidencias/cobertura/tarifas-1-solucao-inicial.txt).
 
-**Desvio do plano apresentado:** no prompt 2 a IA propôs reagrupar os 44 casos da Entrega 1 por técnica. Na execução, eles foram mantidos como estavam (só o id `premium_pacote_isencao_5x5` foi renomeado para `premium_pacote_isento_saldo_limite_50000`), para preservar a comparação com a Entrega 1; os prefixos de técnica valem para os casos novos.
+**Validação dos defeitos:** `uv run pytest tests/unit/test_tarifas.py -k defeito --runxfail` → `3 failed` (`TypeError: TarifaBancaria.tarifa_anual() got an unexpected keyword argument 'antiguidade_meses'` e 2× `AssertionError: assert 15.0 == 25.0`). Evidência: [`tarifas-defeitos-runxfail.txt`](../../relatorios/evidencias/cobertura/tarifas-defeitos-runxfail.txt).
 
-## Defeitos revelados
-
-| Issue | Defeito | Evidência (`--runxfail`) |
-|---|---|---|
-| [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | `tarifa_anual` não recebe nem repassa `antiguidade_meses` (esperado 288,00; sempre 360,00) | `TypeError: TarifaBancaria.tarifa_anual() got an unexpected keyword argument 'antiguidade_meses'` |
-| [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | meia tarifa do pacote premium usa a tarifa da corrente (esperado 25,00; atual 15,00) — suspeito, a confirmar pelo grupo | `AssertionError: assert 15.0 == 25.0` (2 casos) |
-
-Saída completa: [`tarifas-defeitos-runxfail.txt`](../../relatorios/evidencias/cobertura/tarifas-defeitos-runxfail.txt). As issues foram abertas com labels `bug` e `entrega-2`, milestone "Entrega 2", atribuídas a `danielcamposs`, no formato da #16.
-
-A terceira suspeita (`_tarifa_com_pacote` nunca chamado) não virou issue de bug: é código morto, sem efeito no resultado, e fica como entrada para a #50 (Sonar).
+**Validação final:** `uv run pytest tests/unit/test_tarifas.py --cov=app.dominio.tarifas --cov-branch --cov-report=term-missing -rxX` → `94 passed, 3 xfailed in 0.77s` (`100%` de cobertura: `54` statements, `0` missed, `24` branches, `0` partial). Evidência: [`tarifas-2-solucao-final.txt`](../../relatorios/evidencias/cobertura/tarifas-2-solucao-final.txt). Também: `uv run ruff check tests/unit/test_tarifas.py` → `All checks passed!`; `uv run radon cc app/dominio/tarifas.py -s` → `tarifa_mensal - C (12)`, inalterado; `uv run pytest tests/unit` → `2 failed, 380 passed, 3 xfailed`. As 2 falhas são os bugs #16 e #17 (PIX), que já existiam antes desta sessão.
 
 ## Ações executadas
 
-1. Criada a branch `test/issue-40-cobertura-tarifas` a partir da `main` atualizada.
-2. Medida a situação inicial: `44 passed`, 97% de arestas, linha 49 faltando.
-3. Gerada a solução inicial (casos `pe_`, `vl_`, `td_`, `custom_` e 3 casos de defeito com `xfail`), executada e salva em evidência; commit `04f2296` **sem revisão**.
+1. Analisadas as regras de `TarifaBancaria` em `app/dominio/tarifas.py`, a suíte em `tests/unit/test_tarifas.py` e a cobertura inicial (`44 passed`, 97%, linha 49 faltando).
+2. Criada a branch `test/issue-40-cobertura-tarifas` e adicionados os novos casos com os prefixos `pe_`, `vl_`, `td_` e `custom_`, mais 3 casos de defeito com `xfail`.
+3. Executada a suíte com `--cov=app.dominio.tarifas --cov-branch --cov-report=term-missing`; solução inicial gravada sem revisão (commit `04f2296`).
 4. Executados os casos de defeito com `--runxfail` para registrar a falha real.
-5. Revisão crítica (itens 1–5 da tabela acima), incluindo a mutação manual temporária para comprovar o oráculo fraco; `app/dominio/tarifas.py` restaurado (`git status` limpo em `app/`).
-6. Abertas as issues #77 e #78; números incluídos no corpo das issues e no `reason` dos `xfail`.
-7. Executada a solução final, salva em evidência; commit `bb5025b`.
-8. Atualizados `docs/relatorios/cobertura_mutacao.md`, `docs/plano_de_teste.md` e este AI-LOG.
+5. Revisada a solução inicial: duplicados removidos, partição inválida acrescentada, oráculo de `tarifa_anual` corrigido (comprovado por mutação manual temporária, com `tarifas.py` restaurado) e `xfail` restrito a `TypeError`.
+6. Abertas as issues [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) e [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) (labels `bug` e `entrega-2`, milestone "Entrega 2"), com a saída do `--runxfail` como evidência; os números foram incluídos no `reason` dos `xfail`.
+7. Reexecutada a suíte (`94 passed, 3 xfailed`, 100%); solução final gravada (commit `bb5025b`).
+8. Atualizados `docs/relatorios/cobertura_mutacao.md` (seção `TarifaBancaria`), `docs/plano_de_teste.md` (v1.12, seção 6.6) e este AI-LOG.
 
-## Validação
+## Resultado
 
-| Verificação | Comando | Resultado |
-|---|---|---|
-| Cobertura antes | `uv run pytest tests/unit/test_tarifas.py --cov=app.dominio.tarifas --cov-branch --cov-report=term-missing` | `44 passed`; 97% (Missing: 49) |
-| Solução inicial | mesmo comando, com `-rxX` | `95 passed, 3 xfailed`; 100% |
-| Defeitos | `uv run pytest tests/unit/test_tarifas.py -k defeito --runxfail` | `3 failed` (1 `TypeError`, 2 `AssertionError 15.0 == 25.0`) |
-| Oráculo de `tarifa_anual` | mutação manual temporária + teste inicial × final | inicial `4 passed` (não detecta); final `1 failed` (detecta) |
-| Solução final | mesmo comando de cobertura, com `-rxX` | `94 passed, 3 xfailed`; **100%** (54 stmts, 24 branches, 0 parciais) |
-| Lint | `uv run ruff check tests/unit/test_tarifas.py` | `All checks passed!` |
-| Complexidade | `uv run radon cc app/dominio/tarifas.py -s` | `tarifa_mensal - C (12)` (inalterada) |
-| Suíte unitária completa | `uv run pytest tests/unit` | `2 failed, 380 passed, 3 xfailed`; as 2 falhas são os bugs #16 e #17 (PIX), já existentes antes desta sessão |
-| Valores esperados | conferência manual | ex.: 30 × 0,8 = 24,00; 50 × 0,8 + 5 × 2,50 = 52,50; 30 + 30 × 0,2 + 2,50 = 38,50 |
-
-## Configuração do agente
-
-| Item | Valor |
-|---|---|
-| Ferramenta | Claude Code, extensão do VS Code (Windows 11) |
-| Modelo | Claude Opus 5.5 (`claude-opus-5-5`) |
-| Instruções seguidas | `AGENTS.md` do repositório; `relatorio_issues_entrega_2.md` (seção B3); `instrucoes_trabalho.md` (enunciado); memória persistente do agente com duas notas criadas nesta sessão: seguir os dois documentos e registrar o uso de IA no formato do AI-LOG |
-| Ferramentas | leitura e edição de arquivos; terminal (Git Bash): `git`, `gh` (issues), `uv run pytest` (+ `pytest-cov`), `uv run ruff`, `uv run radon cc` |
-| Ações públicas | abertura das issues #77 e #78, autorizada pelo responsável (prompt 6, plano A); push e PR apenas com autorização |
+- **97 casos** em `tests/unit/test_tarifas.py` (antes: 44): **94 aprovados e 3 `xfail`** (`0.77s`).
+- Cobertura estrutural todas-arestas de **97% → 100%** (`54` statements, `0` missed, `24` branches, `0` partial); linha 49 coberta.
+- **2 defeitos revelados**, abertos como issues: [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) (`tarifa_anual` ignora a antiguidade: esperado 288,00, atual sempre 360,00) e [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) (meia tarifa do pacote premium usa a tarifa da corrente: esperado 25,00, atual 15,00; a confirmar pelo grupo).
+- `_tarifa_com_pacote` é código morto (nunca chamado); fica como entrada para a #50 (Sonar), sem issue de bug.
