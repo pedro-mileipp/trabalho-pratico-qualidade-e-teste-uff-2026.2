@@ -8,6 +8,8 @@ from app.servicos.auth import AuthService, CredenciaisInvalidas, EmailJaCadastra
 
 bp = Blueprint("auth", __name__)
 
+TEMPLATE_REGISTRO = "registro.html"
+
 
 def _repositorio() -> SqliteRepositorio:
     return SqliteRepositorio(get_db)
@@ -24,13 +26,13 @@ def registro():
             )
         except EmailJaCadastrado:
             flash("Este e-mail já está cadastrado.", "erro")
-            return render_template("registro.html")
+            return render_template(TEMPLATE_REGISTRO)
         except CredenciaisInvalidas:
             flash("Dados inválidos. Verifique os campos.", "erro")
-            return render_template("registro.html")
+            return render_template(TEMPLATE_REGISTRO)
         session["cliente_id"] = cliente.id
         return redirect(url_for("dashboard.index"))
-    return render_template("registro.html")
+    return render_template(TEMPLATE_REGISTRO)
 
 
 @bp.route("/login", methods=["GET", "POST"])
@@ -49,7 +51,7 @@ def login():
     return render_template("login.html")
 
 
-@bp.route("/logout")
+@bp.route("/logout", methods=["GET"])
 def logout():
     session.clear()
     return redirect(url_for("auth.login"))
