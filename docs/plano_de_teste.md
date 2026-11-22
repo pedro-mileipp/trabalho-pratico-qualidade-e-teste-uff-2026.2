@@ -23,6 +23,7 @@
 | 1.12 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de sistema com Selenium — Empréstimo/RF05 (issue #59) nas seções 6.2 e 6.6 |
 | 1.13 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de integração das rotas Flask com test_client (seção 6.7) |
 | 1.14 | 22/11/2026 | Daniel Izu | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `TarifaBancaria` (issue #40), defeitos #77 e #78, na seção 6.8; antiguidade passa a ser coberta por testes unitários (seção 1.1.2) |
+| 1.15 | 22/11/2026 | Daniel Izu | Entrega 2: teste de mutação de `TarifaBancaria` com `mutmut` (escore 94,3%; 100% descontando equivalentes, issue #45) na seção 6.8 |
 
 ---
 
@@ -469,6 +470,7 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 | Unitários ampliados + cobertura estrutural (todas-arestas) | [#40](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/40) | Concluído | 122 casos em 22/11/2026 (antes: 44): 118 passam e 4 `xfail` que documentam defeitos; **100%** de cobertura de arestas (antes: 97%, linha 49 não coberta) |
 | Defeito: `tarifa_anual` ignora a antiguidade | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | Aberto | Revelado na #40; teste com `xfail(strict=True)` |
 | Defeito: meia tarifa do pacote premium usa a tarifa da corrente | [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | Aberto (a confirmar pelo grupo) | Revelado na tabela de decisão (regra R3); teste com `xfail(strict=True)` |
+| Mutação (escore ≥ 80%) | [#45](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/45) | Concluído | 106 mutantes, 100 mortos: **94,3%** (antes: 82,1%; 100% descontando 6 equivalentes justificados); +7 casos (`custom_`, `vl_`, `pe_`) que exercitam os arredondamentos; mutmut executado no Ubuntu (WSL 2); evidências em [`docs/relatorios/evidencias/mutacao/`](relatorios/evidencias/mutacao/) |
 
 **Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_tarifas.py`):
 
@@ -476,6 +478,7 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 - **Análise de valor-limite (`vl_`, 25 casos)**: faixas de isenção (999,99/1000, 4999,99/5000/5000,01, 49999,99/50000), antiguidade 35/36/37 sem pacote e 23/24/25 com pacote, saldo -0,01/0 e 9/10/11 transações.
 - **Tabela de decisão (`td_`, 29 casos)**: sem pacote, isenção × antiguidade ≥ 36 × saldo negativo × extras (12 combinações possíveis, precedência isenção > antiguidade > saldo negativo); com pacote, tipo × saldo ≥ 50000 × saldo ≥ 5000 × antiguidade ≥ 24 (12 combinações).
 - **Teste de laços**: não se aplica, a classe não possui laços.
+- **Baseada em defeitos (mutação, mutmut)**: os 19 sobreviventes da primeira execução foram triados: 13 mortos por casos com tarifas em centavos (as tarifas padrão são redondas e não exercitavam os `round`) e 6 equivalentes justificados. Detalhes em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
 
 **Defeitos e decisões:**
 
