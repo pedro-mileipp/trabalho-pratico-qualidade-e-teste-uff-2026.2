@@ -1,0 +1,133 @@
+diff --git a/app/dominio/tarifas.py b/app/dominio/tarifas.py
+index 2bd3781..575aece 100644
+--- a/app/dominio/tarifas.py
++++ b/app/dominio/tarifas.py
+@@ -32,10 +32,17 @@ class TarifaBancaria:
+         quantidade_transacoes: int = 0,
+         antiguidade_meses: int = 0,
+     ) -> float:
++        # Regras com pacote em sequência de retornos antecipados, sem if aninhado:
++        # mantém a complexidade ciclomática (CC >= 10, requisito da disciplina) e
++        # deixa a complexidade cognitiva abaixo do limite do Sonar (python:S3776).
+         if tipo is TipoConta.POUPANCA:
+             return 0.0
++        if tem_pacote and tipo is TipoConta.PREMIUM and saldo >= self._base.faixas_isencao[2]:
++            return 0.0
++        if tem_pacote and (saldo >= self._base.faixas_isencao[1] or antiguidade_meses >= 24):
++            return round(self._base.corrente * 0.5, 2)
+         if tem_pacote:
+-            return self._tarifa_com_pacote(tipo, saldo, antiguidade_meses)
++            return round(self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium * 0.7, 2)
+         base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium
+         if self._tem_isencao(tipo, saldo):
+             base = 0.0
+@@ -45,15 +52,6 @@ class TarifaBancaria:
+             base += self._base.corrente * 0.2
+         return round(base + self.tarifa_por_transacao_extra(quantidade_transacoes), 2)
+ 
+-    def _tarifa_com_pacote(self, tipo: TipoConta, saldo: float, antiguidade_meses: int = 0) -> float:
+-        if tipo is TipoConta.PREMIUM and saldo >= self._base.faixas_isencao[2]:
+-            return 0.0
+-        if saldo >= self._base.faixas_isencao[1] or antiguidade_meses >= 24:
+-            base = self._base.corrente * 0.5
+-        else:
+-            base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium * 0.7
+-        return round(base, 2)
+-
+     def _tem_isencao(self, tipo: TipoConta, saldo: float) -> bool:
+         if tipo is TipoConta.PREMIUM:
+             return saldo >= self._base.faixas_isencao[2]
+diff --git a/tests/unit/test_tarifas.py b/tests/unit/test_tarifas.py
+index a1d304c..920066f 100644
+--- a/tests/unit/test_tarifas.py
++++ b/tests/unit/test_tarifas.py
+@@ -98,13 +98,16 @@ def test_tem_isencao(tipo: TipoConta, saldo: float, esperado: bool, tarifa: Tari
+     ("tipo", "saldo", "esperado"),
+     [
+         pytest.param(TipoConta.CORRENTE, 3000.0, 30.0, id="corrente_sem_pacote"),
+-        pytest.param(TipoConta.CORRENTE, 6000.0, 30.0, id="corrente_pacote_base"),
++        # Até a #50 estes casos chamavam _tarifa_com_pacote, código morto com regra própria
++        # (corrente com saldo 6000 dava 30,00). O método foi removido na #50 e os casos passaram
++        # a verificar a regra real, via tarifa_mensal com pacote: saldo >= 5000 dá 30 * 0,5 = 15,00.
++        pytest.param(TipoConta.CORRENTE, 6000.0, 15.0, id="corrente_pacote_base"),
+         pytest.param(TipoConta.PREMIUM, 60000.0, 0.0, id="premium_isento"),
+         pytest.param(TipoConta.PREMIUM, 4000.0, 35.0, id="premium_pacote"),
+     ],
+ )
+ def test_tarifa_com_pacote(tipo: TipoConta, saldo: float, esperado: float, tarifa: TarifaBancaria):
+-    assert tarifa._tarifa_com_pacote(tipo, saldo) == esperado
++    assert tarifa.tarifa_mensal(tipo, saldo, tem_pacote=True) == esperado
+ 
+ 
+ @pytest.mark.parametrize(
+@@ -505,6 +508,12 @@ def test_custom_sobretaxa_premium_usa_tarifa_da_corrente():
+             TarifasBase(corrente=30.01), TipoConta.CORRENTE, -1.0, False, 0, 36.01,
+             id="custom_saldo_negativo_arredonda_resultado_final",
+         ),
++        # meia tarifa do pacote (#50 separou essa regra numa linha própria): 31 * 0,5 = 15,50
++        # mata round(corrente * 0.5, 2) -> round(..., None) / round(...), que dariam 16
++        pytest.param(
++            TarifasBase(corrente=31.0), TipoConta.CORRENTE, 6000.0, True, 0, 15.5,
++            id="custom_pacote_meia_tarifa_com_centavos",
++        ),
+     ],
+ )
+ def test_custom_arredondamento_tarifa_mensal(
+@@ -519,21 +528,20 @@ def test_custom_arredondamento_tarifa_mensal(
+     assert tarifa.tarifa_mensal(tipo, saldo, tem_pacote=tem_pacote, antiguidade_meses=antiguidade_meses) == esperado
+ 
+ 
+-# _tarifa_com_pacote é código morto (nunca chamado por tarifa_mensal; apontado na #40
+-# para a #50). Os casos abaixo matam os mutantes desse método, mas, se a #50 remover
+-# o método, eles devem ser removidos junto e o escore de mutação recalculado.
++# Na #45 estes casos mataram mutantes de _tarifa_com_pacote (código morto). Na #50 o
++# método foi removido e a regra do pacote ficou só em tarifa_mensal; os casos passaram
++# a verificá-la por tarifa_mensal com pacote (mesmos valores esperados).
+ @pytest.mark.parametrize(
+     ("base", "saldo", "esperado"),
+     [
+-        # limite exato da isenção da premium: mata saldo >= 50000 -> saldo > 50000 (_tarifa_com_pacote__mutmut_3)
++        # limite exato da isenção da premium com pacote: mata saldo >= 50000 -> saldo > 50000
+         pytest.param(TarifasBase(), 50000.0, 0.0, id="vl_tarifa_com_pacote_premium_limite_50000"),
+         # 50,01 * 0,7 = 35,007 -> 35,01: mata round(..., 2) -> round(..., None) / round(...) / round(..., 3)
+-        # (_tarifa_com_pacote__mutmut_8, 10, 13)
+         pytest.param(TarifasBase(premium=50.01), 1000.0, 35.01, id="custom_tarifa_com_pacote_premium_centavos"),
+     ],
+ )
+ def test_tarifa_com_pacote_mutacao(base: TarifasBase, saldo: float, esperado: float):
+-    assert TarifaBancaria(base)._tarifa_com_pacote(TipoConta.PREMIUM, saldo) == esperado
++    assert TarifaBancaria(base).tarifa_mensal(TipoConta.PREMIUM, saldo, tem_pacote=True) == esperado
+ 
+ 
+ def test_pe_anual_premium_com_valores_padrao(tarifa: TarifaBancaria):
+@@ -550,14 +558,25 @@ def test_custom_anual_arredonda_centavos():
+ 
+ # --- Defeitos revelados (issue #40) -> bugs #77 e #78 -----------------------
+ # Os casos abaixo afirmam o comportamento esperado pela especificação
+-# (docs/aplicacao.md, seção 4.3). Falham com o código atual e ficam marcados
+-# como xfail(strict=True) até a correção, para não bloquear o mutmut (#45).
++# (docs/aplicacao.md, seção 4.3). Enquanto o defeito existe, ficam marcados como
++# xfail(strict=True), para não bloquear o mutmut (#45).
+ # Ao corrigir o defeito, remova o xfail (strict=True acusa XPASS).
++# #77 foi corrigido na #50: os casos abaixo passaram a ser testes de regressão.
+ 
+ 
+-def test_defeito_tarifa_anual_aplica_desconto_por_antiguidade(tarifa: TarifaBancaria):
+-    # mensal com 36 meses = 30 * 0,8 = 24,00 -> anual = 24 * 12 = 288,00
+-    assert tarifa.tarifa_anual(TipoConta.CORRENTE, 1000.0, antiguidade_meses=36) == 288.0
++@pytest.mark.parametrize(
++    ("antiguidade_meses", "esperado"),
++    [
++        # mensal com 35 meses = 30,00 (sem desconto) -> anual = 30 * 12 = 360,00
++        pytest.param(35, 360.0, id="vl_anual_antiguidade_35"),
++        # mensal com 36 meses = 30 * 0,8 = 24,00 -> anual = 24 * 12 = 288,00
++        pytest.param(36, 288.0, id="vl_anual_antiguidade_36"),
++    ],
++)
++def test_defeito_tarifa_anual_aplica_desconto_por_antiguidade(
++    antiguidade_meses: int, esperado: float, tarifa: TarifaBancaria
++):
++    assert tarifa.tarifa_anual(TipoConta.CORRENTE, 1000.0, antiguidade_meses=antiguidade_meses) == esperado
+ 
+ 
+ @pytest.mark.xfail(strict=True, reason="#78: meia tarifa do pacote premium usa a tarifa da corrente")
