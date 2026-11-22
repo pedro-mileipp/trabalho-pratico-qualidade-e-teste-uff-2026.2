@@ -195,3 +195,20 @@ O dashboard “Overall Code” (print `dashboard-depois.png`) mostra a visão po
 - `dashboard-depois.png` — print do dashboard “Overall Code” depois da correção.
 
 **Observação para a reprodução:** numa instância nova, o comando `bootstrap` do `scripts/sonar_local.sh` não consegue associar o perfil comprehensive, porque o projeto ainda não existe no SonarQube antes do primeiro scan (a API devolve HTTP 404, “Project not found”). Aqui, o projeto foi criado antes pela API (`api/projects/create`) e só então o perfil foi associado.
+
+### 6.2 `CalculadoraJuros` — Gabrielle Rosa (#49)
+
+**Ambiente:** SonarQube Community Build (`26.11.0.134175-community`, instância local), com o perfil Python **Sonar way comprehensive** (407 regras), na mesma base de comparação do relatório[cite: 12].
+
+**Apontamentos da classe**
+
+| Arquivo | Antes | Depois | Situação |
+|---|---:|---:|---|
+| `app/dominio/juros.py` (`CalculadoraJuros`) | 0 | 0 | Nenhum apontamento estático no SonarQube; defeito funcional **#20** (desconto de IR no mês 12 em `montante_com_aportes`) corrigido com `range(1, meses + 1)` |
+
+**Verificação:**
+- Complexidade ciclomática verificada via `.venv/bin/radon cc app/dominio -s` (mantendo CC ≥ 10).
+- Suíte unitária de `CalculadoraJuros` (`tests/unit/test_juros.py`) executada com `.venv/bin/pytest` passando.
+
+**Evidências** em `docs/relatorios/evidencias/sonar/depois/juros/`:
+- `issues-juros-depois.png` — print da tela de issues do SonarQube confirmando `0 issues` para `app/dominio/juros.py`.
