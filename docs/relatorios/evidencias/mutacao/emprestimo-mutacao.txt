@@ -1,0 +1,344 @@
+Relatório de Mutação — SimuladorEmprestimo (app/dominio/emprestimo.py)
+Data: 22/11/2026 15:56:41
+Ferramenta: mutmut 3.8.0 engine (trampoline / libcst)
+Suíte de testes: tests/unit/test_emprestimo.py
+
+Resumo:
+  Total gerados:      301
+  Mortos:             299
+  Sobreviventes:      2
+  Timeouts:           0
+  Escore de mutação:  99.34%
+  Tempo decorrido:    123.4s
+
+============================================================
+LISTA DE MUTANTES SOBREVIVENTES E SEUS DIFFS
+============================================================
+
+--- Sobrevivente #1: xǁSimuladorEmprestimoǁteto_por_renda__mutmut_1 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -1,5 +1,5 @@
+ def teto_por_renda(self, renda: float) -> float:
+-    if renda <= 0:
++    if renda < 0:
+         return 0.0
+     if renda < 2000:
+         return renda * 0.15
+
+--- Sobrevivente #2: xǁSimuladorEmprestimoǁsimular__mutmut_205 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -32,5 +32,5 @@
+     primeira = parcelas[0]
+     if primeira > renda * self._teto_comprometimento:
+         return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, [])
+-    total = round(sum(parcelas), 2)
++    total = round(sum(parcelas), 3)
+     return ResultadoEmprestimo(True, "aprovado", primeira, meses, total, parcelas)
+
+============================================================
+TODOS OS MUTANTES E SEUS STATUS
+============================================================
+
+  xǁSimuladorEmprestimoǁ__init____mutmut_1: killed
+  xǁSimuladorEmprestimoǁ__init____mutmut_2: killed
+  xǁSimuladorEmprestimoǁ__init____mutmut_3: killed
+  xǁSimuladorEmprestimoǁ__init____mutmut_4: killed
+  xǁSimuladorEmprestimoǁ__init____mutmut_5: killed
+  xǁSimuladorEmprestimoǁ__init____mutmut_6: killed
+  xǁSimuladorEmprestimoǁ__init____mutmut_7: killed
+  xǁSimuladorEmprestimoǁ__init____mutmut_8: killed
+  xǁSimuladorEmprestimoǁ__init____mutmut_9: killed
+  xǁSimuladorEmprestimoǁ__init____mutmut_10: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_1: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_2: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_3: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_4: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_5: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_6: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_7: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_8: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_9: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_10: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_11: killed
+  xǁSimuladorEmprestimoǁtaxa_por_prazo__mutmut_12: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_1: survived
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_2: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_3: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_4: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_5: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_6: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_7: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_8: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_9: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_10: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_11: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_12: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_13: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_14: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_15: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_16: killed
+  xǁSimuladorEmprestimoǁteto_por_renda__mutmut_17: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_1: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_2: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_3: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_4: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_5: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_6: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_7: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_8: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_9: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_10: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_11: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_12: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_13: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_14: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_15: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_16: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_17: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_18: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_19: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_20: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_21: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_22: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_23: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_24: killed
+  xǁSimuladorEmprestimoǁparcelas_price__mutmut_25: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_1: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_2: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_3: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_4: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_5: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_6: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_7: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_8: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_9: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_10: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_11: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_12: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_13: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_14: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_15: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_16: killed
+  xǁSimuladorEmprestimoǁparcelas_sac__mutmut_17: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_1: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_2: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_3: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_4: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_5: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_6: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_7: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_8: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_9: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_10: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_11: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_12: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_13: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_14: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_15: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_16: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_17: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_18: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_19: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_20: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_21: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_22: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_23: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_24: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_25: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_26: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_27: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_28: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_29: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_30: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_31: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_32: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_33: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_34: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_35: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_36: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_37: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_38: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_39: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_40: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_41: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_42: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_43: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_44: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_45: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_46: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_47: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_48: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_49: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_50: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_51: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_52: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_53: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_54: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_55: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_56: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_57: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_58: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_59: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_60: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_61: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_62: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_63: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_64: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_65: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_66: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_67: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_68: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_69: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_70: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_71: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_72: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_73: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_74: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_75: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_76: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_77: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_78: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_79: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_80: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_81: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_82: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_83: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_84: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_85: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_86: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_87: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_88: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_89: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_90: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_91: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_92: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_93: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_94: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_95: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_96: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_97: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_98: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_99: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_100: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_101: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_102: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_103: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_104: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_105: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_106: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_107: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_108: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_109: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_110: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_111: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_112: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_113: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_114: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_115: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_116: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_117: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_118: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_119: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_120: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_121: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_122: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_123: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_124: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_125: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_126: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_127: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_128: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_129: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_130: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_131: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_132: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_133: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_134: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_135: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_136: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_137: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_138: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_139: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_140: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_141: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_142: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_143: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_144: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_145: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_146: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_147: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_148: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_149: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_150: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_151: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_152: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_153: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_154: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_155: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_156: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_157: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_158: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_159: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_160: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_161: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_162: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_163: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_164: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_165: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_166: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_167: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_168: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_169: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_170: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_171: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_172: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_173: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_174: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_175: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_176: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_177: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_178: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_179: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_180: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_181: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_182: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_183: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_184: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_185: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_186: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_187: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_188: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_189: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_190: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_191: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_192: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_193: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_194: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_195: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_196: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_197: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_198: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_199: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_200: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_201: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_202: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_203: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_204: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_205: survived
+  xǁSimuladorEmprestimoǁsimular__mutmut_206: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_207: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_208: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_209: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_210: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_211: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_212: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_213: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_214: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_215: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_216: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_217: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_218: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_219: killed
+  xǁSimuladorEmprestimoǁsimular__mutmut_220: killed

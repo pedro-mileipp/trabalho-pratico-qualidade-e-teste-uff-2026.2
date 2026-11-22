@@ -344,7 +344,7 @@ Como a suíte alcançou **87,25% de mutação**, acima da meta de 80%, e **100% 
 | Campo | Valor |
 |---|---|
 | Responsável | Vinicius Sales Felinto |
-| Issues | #41 (unitários + cobertura estrutural todas-arestas) |
+| Issues | #41 (unitários + cobertura estrutural todas-arestas) · #46 (mutação) |
 | Arquivo de testes | `tests/unit/test_emprestimo.py` |
 | Complexidade ciclomática (soma dos métodos, `radon cc`) | 26 |
 
@@ -418,6 +418,15 @@ A técnica de cada caso está identificada pelo prefixo do id do `pytest.param` 
    - `total_pago` igual à soma exata das parcelas arredondadas.
 3. **Ausência de defeitos no código de produção:** Todos os 118 casos foram validados e passaram com 100% de sucesso. Não foram detectados bugs em `app/dominio/emprestimo.py`, cuja lógica atende com fidelidade às especificações de domínio. Nenhuma issue de bug corretivo precisou ser aberta para a classe.
 
+### Mutação (baseada em defeitos) — #46
+
+**Ferramenta:** `mutmut` 3.8.0 engine (trampoline / AST / `libcst`), com isolamento de classe configurado em `[tool.mutmut]`:
+
+```toml
+only_mutate = ["app/dominio/emprestimo.py"]
+source_paths = ["app/dominio"]
+pytest_add_cli_args = ["-q"]
+pytest_add_cli_args_test_selection = ["tests/unit/test_emprestimo.py"]
 ---
 
 ## `TarifaBancaria` — `app/dominio/tarifas.py`
@@ -583,6 +592,49 @@ uv run mutmut show <mutante>
 ```
 
 **Resultado (22/11/2026)**
+
+| Métrica | 1ª execução — antes (suíte da #41, 118 casos) | 2ª execução — depois (suíte da #46, 125 casos) |
+|---|---|---|
+| Mutantes gerados | 301 | 301 |
+| Mutantes mortos | 278 | **299** |
+| Mutantes sobreviventes | 23 | **2** (ambos equivalentes) |
+| Timeouts / suspeitos | 0 | 0 |
+| **Escore de mutação (mortos / gerados)** | 92,36% | **99,34%** |
+| **Escore efetivo (mortos / não equivalentes)** | 278 / 299 = 92,98% | **299 / 299 = 100,00%** |
+| Evidência detalhada | [`emprestimo-execucao-1-antes.txt`](evidencias/mutacao/emprestimo-execucao-1-antes.txt) | [`emprestimo-execucao-2-depois.txt`](evidencias/mutacao/emprestimo-execucao-2-depois.txt) |
+
+**Meta da disciplina:** ≥ 80%. ✅ (Atingido: **99,34%** bruto / **100%** descontando equivalentes).
+
+### Triagem dos 23 sobreviventes da 1ª execução e novos testes adicionados
+
+Na 1ª execução com os 118 casos da issue #41, o escore já superava a meta com 92,36% (278 mortos de 301). A análise dos 23 mutantes sobreviventes guiou o acréscimo de 7 novos casos de teste focados em matar mutantes não equivalentes:
+
+| Mutante(s) | Código original → mutado | Classificação | Resolução / Caso adicionado |
+|---|---|---|---|
+| `__init____mutmut_2` | `teto_comprometimento: float = 0.30` → `1.3` | **Morto na 2ª execução** | `TestConstrutorCustomizado::test_default_valores_construtor` valida os atributos default do construtor. |
+| `teto_por_renda__mutmut_1` | `if renda <= 0:` → `if renda < 0:` | **Equivalente** | Para `renda == 0`, o mutante cai em `if renda < 2000: return renda * 0.15` resultando em `0 * 0.15 = 0.0`, idêntico ao `return 0.0`. |
+| `parcelas_price__mutmut_5`, `7`, `9` | `round(principal / meses, 2)` com taxa zero → `None`, `()`, `3` | **Mortos na 2ª execução** | `TestParcelas::test_parcelas_price_taxa_zero_divisao_com_dizima` com R$ 100 em 3 meses (dízima R$ 33,33) valida o arredondamento a 2 casas. |
+| `parcelas_sac__mutmut_15` | `parcelas.append(round(parcela, 2))` → `round(parcela, 3)` | **Morto na 2ª execução** | `TestParcelas::test_parcelas_sac_arredondamento_fracionario` valida arredondamento com dízima periódica no SAC (R$ 35.83, 35.00, 34.17). |
+| `simular__mutmut_80` | `if renda <= 0:` → `if renda <= 1:` | **Morto na 2ª execução** | `TestSimularValidacoes::test_vl_renda_um_real_valida_fronteira` valida que renda de R$ 1,00 é válida (rejeição é `acima_teto`, não `renda_invalida`). |
+| `simular__mutmut_144` a `147`, `157` a `159` (7 mutantes) | Retorno em `acima_teto`: alteração de `valor_parcela`, `numero_parcelas`, `total_pago` ou `parcelas` para `None` ou `1` | **Mortos na 2ª execução** | `TestSimularTabelaDecisao::test_td_r8_acima_teto_conferencia_campos_completos` valida todos os 6 atributos da tupla de retorno rejeitada. |
+| `simular__mutmut_179` | `if primeira > renda * teto:` → `if primeira >= renda * teto:` | **Morto na 2ª execução** | `TestSimularFronteirasNegocio::test_vl_primeira_parcela_exatamente_igual_teto_comprometimento` testa o limite exato (`primeira == 200.00` e `teto == 200.00`). |
+| `simular__mutmut_183` a `186`, `196` a `198` (7 mutantes) | Retorno em `comprometimento_acima`: alteração de atributos para `None` ou `1` | **Mortos na 2ª execução** | `TestSimularTabelaDecisao::test_td_r9_comprometimento_acima_conferencia_campos_completos` valida estritamente todos os atributos do retorno. |
+| `simular__mutmut_205` | `total = round(sum(parcelas), 2)` → `round(sum(parcelas), 3)` | **Equivalente** | Como todas as parcelas já foram individualmente arredondadas a duas casas (`round(parcela, 2)`), a soma de números com até duas casas decimais matematicamente termina em centésimos, sendo `round(x, 2) == round(x, 3)` para qualquer conjunto de parcelas. |
+
+### Justificativa dos mutantes equivalentes
+
+1. **`teto_por_renda__mutmut_1`:**
+   - No original: `if renda <= 0: return 0.0`.
+   - No mutante: `if renda < 0: return 0.0`.
+   - Para `renda == 0`: a condição falsa no mutante direciona a execução para o próximo ramo `if renda < 2000: return renda * 0.15`. Como `0.0 * 0.15 = 0.0`, o retorno final é rigorosamente idêntico. O `if renda <= 0` existe como salvaguarda e para manter a complexidade ciclomática da classe.
+2. **`simular__mutmut_205`:**
+   - No original: `total = round(sum(parcelas), 2)`.
+   - No mutante: `total = round(sum(parcelas), 3)`.
+   - Em todas as amortizações (Price e SAC), cada elemento de `parcelas` é previamente arredondado com `round(parcela, 2)`. A soma de números com no máximo 2 casas decimais nunca produz dígitos significativos a partir da 3ª casa decimal. Portanto, o arredondamento para 2 ou 3 casas decimais é indistinguível para qualquer entrada válida do domínio.
+
+### Conclusão e lições aprendidas
+
+A suíte unitária de `SimuladorEmprestimo` conta com **125 casos de teste** rigorosos, alcançando **100% de cobertura estrutural de comandos e ramos (todas-arestas)** e **99,34% de escore de mutação bruto** (100% descontando os 2 mutantes equivalentes). A técnica de mutação revelou a importância de conferir não apenas o status booleano e o motivo em cenários de recusa, mas a totalidade dos campos do objeto `ResultadoEmprestimo`, além de testar valores fracionários com dízimas para garantir o arredondamento monetário correto.
 
 | | Piloto da #36 (suíte da Entrega 1, 44 casos) | Execução 1 — antes (suíte da #40, 122 casos) | Execução 3 — depois (suíte da #45, 129 casos) |
 |---|---|---|---|
