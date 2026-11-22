@@ -1,0 +1,83 @@
+# Evidência dos defeitos (xfail desativado) — issue #40 — 22/11/2026 11:24
+$ uv run pytest tests/unit/test_tarifas.py -k defeito --runxfail
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\daniel.izu\Desktop\trabalho qualidade e teste\trabalho-pratico-qualidade-e-teste-uff-2026.2
+configfile: pyproject.toml
+plugins: cov-7.1.0, mock-3.15.1
+collected 98 items / 95 deselected / 3 selected
+
+tests\unit\test_tarifas.py FFF                                           [100%]
+
+================================== FAILURES ===================================
+__________ test_defeito_tarifa_anual_aplica_desconto_por_antiguidade __________
+
+tarifa = <app.dominio.tarifas.TarifaBancaria object at 0x000002790F3D5D90>
+
+    @pytest.mark.xfail(strict=True, reason="defeito: tarifa_anual não repassa antiguidade_meses")
+    def test_defeito_tarifa_anual_aplica_desconto_por_antiguidade(tarifa: TarifaBancaria):
+        # mensal com 36 meses = 30 * 0,8 = 24,00 -> anual = 24 * 12 = 288,00
+>       assert tarifa.tarifa_anual(TipoConta.CORRENTE, 1000.0, antiguidade_meses=36) == 288.0
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: TarifaBancaria.tarifa_anual() got an unexpected keyword argument 'antiguidade_meses'
+
+tests\unit\test_tarifas.py:418: TypeError
+_ test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_saldo_20000] _
+
+saldo = 20000.0, antiguidade_meses = 0
+tarifa = <app.dominio.tarifas.TarifaBancaria object at 0x000002790F3A6EA0>
+
+    @pytest.mark.xfail(strict=True, reason="defeito: meia tarifa do pacote premium usa a tarifa da corrente")
+    @pytest.mark.parametrize(
+        ("saldo", "antiguidade_meses"),
+        [
+            pytest.param(20000.0, 0, id="td_r3_premium_saldo_20000"),
+            pytest.param(1000.0, 24, id="td_r3_premium_antiguidade_24"),
+        ],
+    )
+    def test_defeito_pacote_premium_meia_tarifa_da_premium(
+        saldo: float, antiguidade_meses: int, tarifa: TarifaBancaria
+    ):
+        # meia tarifa da premium = 50 * 0,5 = 25,00 (o código devolve corrente * 0,5 = 15,00)
+>       assert (
+            tarifa.tarifa_mensal(TipoConta.PREMIUM, saldo, tem_pacote=True, antiguidade_meses=antiguidade_meses)
+            == 25.0
+        )
+E       AssertionError: assert 15.0 == 25.0
+E        +  where 15.0 = tarifa_mensal(<TipoConta.PREMIUM: 'premium'>, 20000.0, tem_pacote=True, antiguidade_meses=0)
+E        +    where tarifa_mensal = <app.dominio.tarifas.TarifaBancaria object at 0x000002790F3A6EA0>.tarifa_mensal
+E        +    and   <TipoConta.PREMIUM: 'premium'> = TipoConta.PREMIUM
+
+tests\unit\test_tarifas.py:433: AssertionError
+_ test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_antiguidade_24] _
+
+saldo = 1000.0, antiguidade_meses = 24
+tarifa = <app.dominio.tarifas.TarifaBancaria object at 0x000002790F3D6CC0>
+
+    @pytest.mark.xfail(strict=True, reason="defeito: meia tarifa do pacote premium usa a tarifa da corrente")
+    @pytest.mark.parametrize(
+        ("saldo", "antiguidade_meses"),
+        [
+            pytest.param(20000.0, 0, id="td_r3_premium_saldo_20000"),
+            pytest.param(1000.0, 24, id="td_r3_premium_antiguidade_24"),
+        ],
+    )
+    def test_defeito_pacote_premium_meia_tarifa_da_premium(
+        saldo: float, antiguidade_meses: int, tarifa: TarifaBancaria
+    ):
+        # meia tarifa da premium = 50 * 0,5 = 25,00 (o código devolve corrente * 0,5 = 15,00)
+>       assert (
+            tarifa.tarifa_mensal(TipoConta.PREMIUM, saldo, tem_pacote=True, antiguidade_meses=antiguidade_meses)
+            == 25.0
+        )
+E       AssertionError: assert 15.0 == 25.0
+E        +  where 15.0 = tarifa_mensal(<TipoConta.PREMIUM: 'premium'>, 1000.0, tem_pacote=True, antiguidade_meses=24)
+E        +    where tarifa_mensal = <app.dominio.tarifas.TarifaBancaria object at 0x000002790F3D6CC0>.tarifa_mensal
+E        +    and   <TipoConta.PREMIUM: 'premium'> = TipoConta.PREMIUM
+
+tests\unit\test_tarifas.py:433: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/unit/test_tarifas.py::test_defeito_tarifa_anual_aplica_desconto_por_antiguidade
+FAILED tests/unit/test_tarifas.py::test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_saldo_20000]
+FAILED tests/unit/test_tarifas.py::test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_antiguidade_24]
+====================== 3 failed, 95 deselected in 0.28s =======================
