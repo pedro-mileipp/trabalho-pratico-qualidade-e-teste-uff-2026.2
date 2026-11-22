@@ -74,7 +74,7 @@ uv.lock                       # trava de dependências
 
 ## 4. Módulos de domínio
 
-Cada classe a seguir é **não-CRUD**, possui desvios/laços e **complexidade ciclomática ≥ 10** em pelo menos um método (medida com `radon cc`). É o alvo dos testes estrutural e de mutação da Entrega 2.
+Cada classe a seguir é **não-CRUD**, possui desvios/laços e **complexidade ciclomática ≥ 10** na classe (soma dos métodos, medida com `radon cc`), como exige o enunciado ("complexidade ciclomática de cada classe sob teste: 10"). É o alvo dos testes estrutural e de mutação da Entrega 2.
 
 ### 4.1 `TransacaoPix` (`app/dominio/pix.py`)
 
@@ -100,9 +100,9 @@ Juros compostos, faixas de taxa por prazo, mora e aportes.
 
 Cobrança de tarifas por tipo de conta, saldo, pacote e transações.
 
-- `tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes, antiguidade_meses)` — **CC 12**: poupança gratuita, pacote, isenção por faixa de saldo, desconto por antiguidade, taxa negativa e tarifa por transações excedentes.
+- `tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes, antiguidade_meses)` — **CC 7** (era 12 até a #50, que moveu o ramo com pacote para `_tarifa_com_pacote`, CC 6; a classe soma **21**): poupança gratuita, pacote, isenção por faixa de saldo, desconto por antiguidade, taxa negativa e tarifa por transações excedentes.
 - `tarifa_por_transacao_extra(quantidade)` — transações acima da cota gratuita.
-- `tarifa_anual(...)` — 12× a tarifa mensal.
+- `tarifa_anual(..., antiguidade_meses)` — 12× a tarifa mensal (repassa a antiguidade desde a correção do #77).
 
 ### 4.4 `SimuladorEmprestimo` (`app/dominio/emprestimo.py`)
 
@@ -221,7 +221,7 @@ uv run ruff check app/        # lint (PLR1730/DTZ005 ignorados com justificativa
 uv run radon cc app/dominio -s  # complexidade ciclomática por método/classe
 ```
 
-Todos os 5 módulos de domínio possuem método com CC ≥ 10, atendendo ao requisito do enunciado.
+Todas as 5 classes de domínio têm CC ≥ 10 (soma dos métodos), atendendo ao requisito do enunciado. Quatro delas também têm um método com CC ≥ 10; em `TarifaBancaria`, a correção do apontamento `python:S3776` do Sonar (#50) dividiu `tarifa_mensal` em dois métodos (CC 7 e 6), e a classe continua com CC 21.
 
 ## 11. Notas de implementação
 

@@ -98,7 +98,10 @@ def test_tem_isencao(tipo: TipoConta, saldo: float, esperado: bool, tarifa: Tari
     ("tipo", "saldo", "esperado"),
     [
         pytest.param(TipoConta.CORRENTE, 3000.0, 30.0, id="corrente_sem_pacote"),
-        pytest.param(TipoConta.CORRENTE, 6000.0, 30.0, id="corrente_pacote_base"),
+        # Na #50, _tarifa_com_pacote deixou de ser código morto e passou a ter a regra real
+        # usada por tarifa_mensal: saldo >= 5000 dá meia tarifa (30 * 0,5 = 15,00). A versão
+        # antiga do método devolvia 30,00, divergindo da tarifa cobrada na tela.
+        pytest.param(TipoConta.CORRENTE, 6000.0, 15.0, id="corrente_pacote_base"),
         pytest.param(TipoConta.PREMIUM, 60000.0, 0.0, id="premium_isento"),
         pytest.param(TipoConta.PREMIUM, 4000.0, 35.0, id="premium_pacote"),
     ],
@@ -519,9 +522,8 @@ def test_custom_arredondamento_tarifa_mensal(
     assert tarifa.tarifa_mensal(tipo, saldo, tem_pacote=tem_pacote, antiguidade_meses=antiguidade_meses) == esperado
 
 
-# _tarifa_com_pacote é código morto (nunca chamado por tarifa_mensal; apontado na #40
-# para a #50). Os casos abaixo matam os mutantes desse método, mas, se a #50 remover
-# o método, eles devem ser removidos junto e o escore de mutação recalculado.
+# _tarifa_com_pacote era código morto na #45; na #50 passou a ser chamado por
+# tarifa_mensal (ramo com pacote). Os casos abaixo continuam válidos para a regra real.
 @pytest.mark.parametrize(
     ("base", "saldo", "esperado"),
     [
@@ -550,14 +552,25 @@ def test_custom_anual_arredonda_centavos():
 
 # --- Defeitos revelados (issue #40) -> bugs #77 e #78 -----------------------
 # Os casos abaixo afirmam o comportamento esperado pela especificação
-# (docs/aplicacao.md, seção 4.3). Falham com o código atual e ficam marcados
-# como xfail(strict=True) até a correção, para não bloquear o mutmut (#45).
+# (docs/aplicacao.md, seção 4.3). Enquanto o defeito existe, ficam marcados como
+# xfail(strict=True), para não bloquear o mutmut (#45).
 # Ao corrigir o defeito, remova o xfail (strict=True acusa XPASS).
+# #77 foi corrigido na #50: os casos abaixo passaram a ser testes de regressão.
 
 
-def test_defeito_tarifa_anual_aplica_desconto_por_antiguidade(tarifa: TarifaBancaria):
-    # mensal com 36 meses = 30 * 0,8 = 24,00 -> anual = 24 * 12 = 288,00
-    assert tarifa.tarifa_anual(TipoConta.CORRENTE, 1000.0, antiguidade_meses=36) == 288.0
+@pytest.mark.parametrize(
+    ("antiguidade_meses", "esperado"),
+    [
+        # mensal com 35 meses = 30,00 (sem desconto) -> anual = 30 * 12 = 360,00
+        pytest.param(35, 360.0, id="vl_anual_antiguidade_35"),
+        # mensal com 36 meses = 30 * 0,8 = 24,00 -> anual = 24 * 12 = 288,00
+        pytest.param(36, 288.0, id="vl_anual_antiguidade_36"),
+    ],
+)
+def test_defeito_tarifa_anual_aplica_desconto_por_antiguidade(
+    antiguidade_meses: int, esperado: float, tarifa: TarifaBancaria
+):
+    assert tarifa.tarifa_anual(TipoConta.CORRENTE, 1000.0, antiguidade_meses=antiguidade_meses) == esperado
 
 
 @pytest.mark.xfail(strict=True, reason="#78: meia tarifa do pacote premium usa a tarifa da corrente")

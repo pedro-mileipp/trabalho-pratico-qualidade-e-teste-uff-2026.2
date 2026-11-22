@@ -1,0 +1,44 @@
+# Solução final (após revisão) — issue #50 — 22/11/2026 16:09
+$ uv run pytest tests/unit/test_tarifas.py --cov=app.dominio.tarifas --cov-branch --cov-report=term-missing -rxX
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\daniel.izu\Desktop\trabalho qualidade e teste\trabalho-pratico-qualidade-e-teste-uff-2026.2
+configfile: pyproject.toml
+plugins: cov-7.1.0, mock-3.15.1
+collected 130 items
+tests\unit\test_tarifas.py ............................................. [ 34%]
+........................................................................ [ 90%]
+..........xxx                                                            [100%]
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.12.14-final-0 _______________
+Name                     Stmts   Miss Branch BrPart  Cover   Missing
+--------------------------------------------------------------------
+app\dominio\tarifas.py      50      0     20      0   100%
+--------------------------------------------------------------------
+TOTAL                       50      0     20      0   100%
+Required test coverage of 80.0% reached. Total coverage: 100.00%
+=========================== short test summary info ===========================
+XFAIL tests/unit/test_tarifas.py::test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_saldo_20000] - #78: meia tarifa do pacote premium usa a tarifa da corrente
+XFAIL tests/unit/test_tarifas.py::test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_antiguidade_24] - #78: meia tarifa do pacote premium usa a tarifa da corrente
+XFAIL tests/unit/test_tarifas.py::test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_saldo_20000_antiguidade_24] - #78: meia tarifa do pacote premium usa a tarifa da corrente
+======================= 127 passed, 3 xfailed in 0.68s ========================
+
+$ uv run pytest tests/unit tests/integration tests/rnf -q
+FAILED tests/unit/test_pix.py::test_validar_chave[email_dois_arroba] - Assert...
+FAILED tests/unit/test_pix.py::test_solicitar_chargeback[chargeback_bloqueada_dias_30_valor_alto]
+2 failed, 541 passed, 3 xfailed in 18.97s
+
+$ uv run pytest tests/system -q
+31 passed in 30.67s
+
+$ uv run radon cc app/dominio/tarifas.py -s   (antes: tarifa_mensal C (12); soma 24)
+app/dominio/tarifas.py
+    M 27:4 TarifaBancaria.tarifa_mensal - B (7)
+    M 48:4 TarifaBancaria._tarifa_com_pacote - B (6)
+    C 23:0 TarifaBancaria - A (4)
+    M 57:4 TarifaBancaria._tem_isencao - A (3)
+    M 24:4 TarifaBancaria.__init__ - A (2)
+    M 64:4 TarifaBancaria.tarifa_por_transacao_extra - A (2)
+    C 7:0 TipoConta - A (1)
+    C 14:0 TarifasBase - A (1)
+    M 69:4 TarifaBancaria.tarifa_anual - A (1)
