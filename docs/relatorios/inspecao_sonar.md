@@ -196,6 +196,56 @@ O dashboard “Overall Code” (print `dashboard-depois.png`) mostra a visão po
 
 **Observação para a reprodução:** numa instância nova, o comando `bootstrap` do `scripts/sonar_local.sh` não consegue associar o perfil comprehensive, porque o projeto ainda não existe no SonarQube antes do primeiro scan (a API devolve HTTP 404, “Project not found”). Aqui, o projeto foi criado antes pela API (`api/projects/create`) e só então o perfil foi associado.
 
+### 6.2 `SimuladorEmprestimo` e funcionalidade de empréstimo — Vinicius Felinto (#51)
+
+**Ambiente:** a mesma imagem do SonarQube (`26.11.0.134175-community`, via `docker-compose.yml` do projeto), com o perfil Python **Sonar way comprehensive** (407 regras) e o perfil Web padrão, como no “antes”. Data: 22/11/2026.
+
+**Apontamentos da classe e da funcionalidade**
+
+| Arquivo | Antes | Depois | Situação |
+|---|---:|---:|---|
+| `app/dominio/emprestimo.py` (`SimuladorEmprestimo`) | 0 | 0 | Classe sem apontamentos estáticos no perfil comprehensive; regras e CC preservadas |
+| `app/web/routes/emprestimo.py` | 0 | 0 | Sem apontamentos |
+| `app/templates/emprestimo.html` | **8** | **0** | 8 corrigidos (status `CLOSED` / `FIXED` no SonarQube) |
+
+Como a classe de domínio `SimuladorEmprestimo` não possuía apontamentos estáticos abertos no Sonar, a atuação focou em:
+1. **Qualidade e manutenibilidade do domínio**: adição de docstrings detalhadas, extração de constantes de negócio (`_DEFAULT_TAXA_BASE`, `_DEFAULT_PRAZO_MIN`, etc.), método auxiliar `_faixa_valor_renda` e validação modularizada com `_validar_entrada`, mantendo rigorosamente a complexidade ciclomática do método em **CC = 10** (e complexidade agregada da classe em 30), atendendo ao requisito essencial da disciplina (CC ≥ 10).
+2. **Correção de apontamentos da funcionalidade no template**: resolução dos 8 apontamentos de acessibilidade e consistência em `app/templates/emprestimo.html`, associando rótulos aos respectivos campos de formulário e definindo `id`s padronizados.
+
+| Linha | Regra | Tipo / severidade | Apontamento | Correção |
+|---|---|---|---|---|
+| 7 | `Web:S6853` | Code smell / maior | Rótulo “Valor do empréstimo (R$)” sem associação | `<label for="principal">` |
+| 8 | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `principal` sem `id` | `id="principal"` |
+| 9 | `Web:S6853` | Code smell / maior | Rótulo “Prazo (meses)” sem associação | `<label for="meses">` |
+| 10 | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `meses` sem `id` | `id="meses"` |
+| 11 | `Web:S6853` | Code smell / maior | Rótulo “Renda mensal (R$)” sem associação | `<label for="renda">` |
+| 12 | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `renda` sem `id` | `id="renda"` |
+| 13 | `Web:S6853` | Code smell / maior | Rótulo “Sistema de amortização” sem associação | `<label for="sistema">` |
+| 14 | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `sistema` sem `id` | `id="sistema"` |
+
+**Impacto da correção:**
+- Eliminação completa de 4 bugs e 4 code smells de acessibilidade (WCAG 2.0 / Reliability).
+- Melhoria na usabilidade para leitores de tela e tecnologias assistivas.
+- Identificadores estáveis para automação de testes E2E/Selenium.
+
+**Verificação da suíte e complexidade:**
+- **Testes unitários de empréstimo:** 125 testes passando (`tests/unit/test_emprestimo.py`).
+- **Testes de sistema:** 6 testes passando (`tests/system/emprestimo/test_emprestimo_sistema.py`).
+- **Suíte geral:** 554 testes passando (4 xfailed previstos em tarifas).
+- **Complexidade ciclomática (`radon cc app/dominio/emprestimo.py -s`):**
+  - `SimuladorEmprestimo._validar_entrada`: CC = 10 (Classificação B)
+  - `SimuladorEmprestimo._faixa_valor_renda`: CC = 5 (A)
+  - `SimuladorEmprestimo.taxa_por_prazo`: CC = 5 (A)
+  - `SimuladorEmprestimo.simular`: CC = 5 (A)
+  - `SimuladorEmprestimo.parcelas_price`: CC = 2 (A)
+  - `SimuladorEmprestimo.parcelas_sac`: CC = 2 (A)
+  - **Soma da complexidade da classe: 30** (cumpre com folga o requisito de CC ≥ 10 da disciplina).
+
+**Evidências** em `docs/relatorios/evidencias/sonar/depois/emprestimo/`:
+- `issues-emprestimo-antes.json` — os 8 apontamentos abertos antes da correção;
+- `issues-emprestimo-depois.json` — 0 apontamentos abertos nos arquivos de empréstimo após nova análise;
+- `dashboard-depois.png` — print do dashboard SonarQube após a análise;
+- `issues-emprestimo-resolvidos.png` — print da lista de issues demonstrando a resolução.
 ### 6.2 `CalculadoraJuros` — Gabrielle Rosa (#49)
 
 **Ambiente:** SonarQube Community Build (`26.11.0.134175-community`, instância local), com o perfil Python **Sonar way comprehensive** (407 regras), na mesma base de comparação do relatório[cite: 12].

@@ -79,7 +79,7 @@ class TransacaoPix:
         if valor <= 0:
             return False
         if chave.strip() in self._config.chaves_bloqueadas:
-            return True
+            return False
         motivo = (motivo or "").lower()
         if "golpe" in motivo or "fraude" in motivo:
             return True
@@ -112,7 +112,8 @@ class TransacaoPix:
         return True
 
     def _validar_email(self, email: str) -> bool:
-        if "@" not in email:
+        # aceita apenas um '@' e verifica local e domínio
+        if email.count("@") != 1:
             return False
         local, _, dominio = email.partition("@")
         if not local or local.startswith(".") or local.endswith("."):

@@ -1,0 +1,361 @@
+{
+  "total": 8,
+  "issues": [
+    {
+      "key": "447b3c18-108f-41cb-bd91-47422606a1e1",
+      "rule": "Web:S6853",
+      "severity": "MAJOR",
+      "component": "banco-digital-uff-2026-2:app/templates/emprestimo.html",
+      "project": "banco-digital-uff-2026-2",
+      "line": 7,
+      "hash": "3079a251edaf711215361ba1459fbf17",
+      "textRange": {
+        "startLine": 7,
+        "endLine": 7,
+        "startOffset": 4,
+        "endOffset": 11
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "A form label must be associated with a control and have accessible text.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "alexandrelimaxs@gmail.com",
+      "tags": [
+        "accessibility"
+      ],
+      "creationDate": "2026-09-16T23:34:29+0000",
+      "updateDate": "2026-11-11T13:40:55+0000",
+      "type": "CODE_SMELL",
+      "scope": "MAIN",
+      "quickFixAvailable": false,
+      "messageFormattings": [],
+      "codeVariants": [],
+      "cleanCodeAttribute": "LOGICAL",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "prioritizedRule": false,
+      "fromSonarQubeUpdate": false,
+      "internalTags": [],
+      "linkedTicketStatus": "NOT_LINKED"
+    },
+    {
+      "key": "e7db040e-ea39-432e-9895-9941870be658",
+      "rule": "Web:InputWithoutLabelCheck",
+      "severity": "MAJOR",
+      "component": "banco-digital-uff-2026-2:app/templates/emprestimo.html",
+      "project": "banco-digital-uff-2026-2",
+      "line": 8,
+      "hash": "cd2620513c4ffa63121b2d2fbd425718",
+      "textRange": {
+        "startLine": 8,
+        "endLine": 8,
+        "startOffset": 4,
+        "endOffset": 74
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Add an \"id\" attribute to this input field and associate it with a label.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "alexandrelimaxs@gmail.com",
+      "tags": [
+        "accessibility",
+        "wcag2-a"
+      ],
+      "creationDate": "2026-09-16T23:34:29+0000",
+      "updateDate": "2026-11-11T13:40:55+0000",
+      "type": "BUG",
+      "scope": "MAIN",
+      "quickFixAvailable": false,
+      "messageFormattings": [],
+      "codeVariants": [],
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "prioritizedRule": false,
+      "fromSonarQubeUpdate": false,
+      "internalTags": [],
+      "linkedTicketStatus": "NOT_LINKED"
+    },
+    {
+      "key": "e87cd8bd-66eb-4921-8cca-c511edcb1a38",
+      "rule": "Web:S6853",
+      "severity": "MAJOR",
+      "component": "banco-digital-uff-2026-2:app/templates/emprestimo.html",
+      "project": "banco-digital-uff-2026-2",
+      "line": 9,
+      "hash": "abc0ae6485c8caeb65ca50521dc1dfc1",
+      "textRange": {
+        "startLine": 9,
+        "endLine": 9,
+        "startOffset": 4,
+        "endOffset": 11
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "A form label must be associated with a control and have accessible text.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "alexandrelimaxs@gmail.com",
+      "tags": [
+        "accessibility"
+      ],
+      "creationDate": "2026-09-16T23:34:29+0000",
+      "updateDate": "2026-11-11T13:40:55+0000",
+      "type": "CODE_SMELL",
+      "scope": "MAIN",
+      "quickFixAvailable": false,
+      "messageFormattings": [],
+      "codeVariants": [],
+      "cleanCodeAttribute": "LOGICAL",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "prioritizedRule": false,
+      "fromSonarQubeUpdate": false,
+      "internalTags": [],
+      "linkedTicketStatus": "NOT_LINKED"
+    },
+    {
+      "key": "5292f5d1-4063-4fc3-9b62-57500e08d201",
+      "rule": "Web:InputWithoutLabelCheck",
+      "severity": "MAJOR",
+      "component": "banco-digital-uff-2026-2:app/templates/emprestimo.html",
+      "project": "banco-digital-uff-2026-2",
+      "line": 10,
+      "hash": "1baba59dfac1d0fdcc9dba02ce9f1289",
+      "textRange": {
+        "startLine": 10,
+        "endLine": 10,
+        "startOffset": 4,
+        "endOffset": 64
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Add an \"id\" attribute to this input field and associate it with a label.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "alexandrelimaxs@gmail.com",
+      "tags": [
+        "accessibility",
+        "wcag2-a"
+      ],
+      "creationDate": "2026-09-16T23:34:29+0000",
+      "updateDate": "2026-11-11T13:40:55+0000",
+      "type": "BUG",
+      "scope": "MAIN",
+      "quickFixAvailable": false,
+      "messageFormattings": [],
+      "codeVariants": [],
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "prioritizedRule": false,
+      "fromSonarQubeUpdate": false,
+      "internalTags": [],
+      "linkedTicketStatus": "NOT_LINKED"
+    },
+    {
+      "key": "47da19ea-d735-4cd7-8837-af881c74f5db",
+      "rule": "Web:S6853",
+      "severity": "MAJOR",
+      "component": "banco-digital-uff-2026-2:app/templates/emprestimo.html",
+      "project": "banco-digital-uff-2026-2",
+      "line": 11,
+      "hash": "53be1b395200998c1ed7a4ffdd7bb8ee",
+      "textRange": {
+        "startLine": 11,
+        "endLine": 11,
+        "startOffset": 4,
+        "endOffset": 11
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "A form label must be associated with a control and have accessible text.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "alexandrelimaxs@gmail.com",
+      "tags": [
+        "accessibility"
+      ],
+      "creationDate": "2026-09-16T23:34:29+0000",
+      "updateDate": "2026-11-11T13:40:55+0000",
+      "type": "CODE_SMELL",
+      "scope": "MAIN",
+      "quickFixAvailable": false,
+      "messageFormattings": [],
+      "codeVariants": [],
+      "cleanCodeAttribute": "LOGICAL",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "prioritizedRule": false,
+      "fromSonarQubeUpdate": false,
+      "internalTags": [],
+      "linkedTicketStatus": "NOT_LINKED"
+    },
+    {
+      "key": "4f0d4c69-5b89-4eef-91d0-cb315cac4a7b",
+      "rule": "Web:InputWithoutLabelCheck",
+      "severity": "MAJOR",
+      "component": "banco-digital-uff-2026-2:app/templates/emprestimo.html",
+      "project": "banco-digital-uff-2026-2",
+      "line": 12,
+      "hash": "3ab11858b33ad67c7324614a6474b117",
+      "textRange": {
+        "startLine": 12,
+        "endLine": 12,
+        "startOffset": 4,
+        "endOffset": 67
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Add an \"id\" attribute to this input field and associate it with a label.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "alexandrelimaxs@gmail.com",
+      "tags": [
+        "accessibility",
+        "wcag2-a"
+      ],
+      "creationDate": "2026-09-16T23:34:29+0000",
+      "updateDate": "2026-11-11T13:40:55+0000",
+      "type": "BUG",
+      "scope": "MAIN",
+      "quickFixAvailable": false,
+      "messageFormattings": [],
+      "codeVariants": [],
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "prioritizedRule": false,
+      "fromSonarQubeUpdate": false,
+      "internalTags": [],
+      "linkedTicketStatus": "NOT_LINKED"
+    },
+    {
+      "key": "7c290db6-c26f-4f9e-bee7-0dd1728a4c2d",
+      "rule": "Web:S6853",
+      "severity": "MAJOR",
+      "component": "banco-digital-uff-2026-2:app/templates/emprestimo.html",
+      "project": "banco-digital-uff-2026-2",
+      "line": 13,
+      "hash": "53b23d4a9cc6187dfeb87ad64cfcce63",
+      "textRange": {
+        "startLine": 13,
+        "endLine": 13,
+        "startOffset": 4,
+        "endOffset": 11
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "A form label must be associated with a control and have accessible text.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "alexandrelimaxs@gmail.com",
+      "tags": [
+        "accessibility"
+      ],
+      "creationDate": "2026-09-16T23:34:29+0000",
+      "updateDate": "2026-11-11T13:40:55+0000",
+      "type": "CODE_SMELL",
+      "scope": "MAIN",
+      "quickFixAvailable": false,
+      "messageFormattings": [],
+      "codeVariants": [],
+      "cleanCodeAttribute": "LOGICAL",
+      "cleanCodeAttributeCategory": "INTENTIONAL",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "prioritizedRule": false,
+      "fromSonarQubeUpdate": false,
+      "internalTags": [],
+      "linkedTicketStatus": "NOT_LINKED"
+    },
+    {
+      "key": "6d7f73f1-07f3-475d-93c0-b2c693322005",
+      "rule": "Web:InputWithoutLabelCheck",
+      "severity": "MAJOR",
+      "component": "banco-digital-uff-2026-2:app/templates/emprestimo.html",
+      "project": "banco-digital-uff-2026-2",
+      "line": 14,
+      "hash": "9bc7c29241a037dc5757802d9c8a4a85",
+      "textRange": {
+        "startLine": 14,
+        "endLine": 14,
+        "startOffset": 4,
+        "endOffset": 27
+      },
+      "flows": [],
+      "status": "OPEN",
+      "message": "Add an \"id\" attribute to this input field and associate it with a label.",
+      "effort": "5min",
+      "debt": "5min",
+      "author": "alexandrelimaxs@gmail.com",
+      "tags": [
+        "accessibility",
+        "wcag2-a"
+      ],
+      "creationDate": "2026-09-16T23:34:29+0000",
+      "updateDate": "2026-11-11T13:40:55+0000",
+      "type": "BUG",
+      "scope": "MAIN",
+      "quickFixAvailable": false,
+      "messageFormattings": [],
+      "codeVariants": [],
+      "cleanCodeAttribute": "CONVENTIONAL",
+      "cleanCodeAttributeCategory": "CONSISTENT",
+      "impacts": [
+        {
+          "softwareQuality": "RELIABILITY",
+          "severity": "MEDIUM"
+        }
+      ],
+      "issueStatus": "OPEN",
+      "prioritizedRule": false,
+      "fromSonarQubeUpdate": false,
+      "internalTags": [],
+      "linkedTicketStatus": "NOT_LINKED"
+    }
+  ]
+}
