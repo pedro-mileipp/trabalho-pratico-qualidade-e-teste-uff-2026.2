@@ -462,7 +462,7 @@ Os casos afirmam o comportamento esperado e estão marcados com `@pytest.mark.xf
 
 ### Revisão da solução gerada por IA
 
-Os casos foram gerados com apoio do Claude Code ([sessão 17 do AI-LOG](../ai/prompts/sessao-17-cobertura-tarifas.md)) em duas rodadas. Cada rodada teve a solução da IA gravada sem revisão e depois revisada:
+Os casos foram gerados com apoio do Claude Code ([sessão 18 do AI-LOG](../ai/prompts/sessao-18-cobertura-tarifas.md)) em duas rodadas. Cada rodada teve a solução da IA gravada sem revisão e depois revisada:
 
 | Rodada | Solução inicial (IA) | Solução final (revisada) |
 |---|---|---|

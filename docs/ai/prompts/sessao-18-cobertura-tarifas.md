@@ -1,4 +1,4 @@
-# Sessão 17 — Testes unitários e cobertura estrutural de `TarifaBancaria` (issue #40)
+# Sessão 18 — Testes unitários e cobertura estrutural de `TarifaBancaria` (issue #40)
 
 | Campo | Valor |
 |---|---|
@@ -28,7 +28,7 @@ A sessão teve duas rodadas. Na **rodada 1**, a IA planejou e executou a issue a
 
 ## Solução inicial (gerada pela IA) vs. solução final (após validação)
 
-Exigência do enunciado: preservar a solução inicial, a final e descrever as alterações quando a IA é usada na geração de testes. Em cada rodada, a solução da IA foi gravada em commit **antes** de qualquer revisão. Os diffs entre inicial e final estão em [`sessao-17-diff-solucao-inicial-final.diff`](sessao-17-diff-solucao-inicial-final.diff) (rodada 1) e [`sessao-17-diff-prompt-tecnico-inicial-final.diff`](sessao-17-diff-prompt-tecnico-inicial-final.diff) (rodada 2).
+Exigência do enunciado: preservar a solução inicial, a final e descrever as alterações quando a IA é usada na geração de testes. Em cada rodada, a solução da IA foi gravada em commit **antes** de qualquer revisão. Os diffs entre inicial e final estão em [`sessao-18-diff-solucao-inicial-final.diff`](sessao-18-diff-solucao-inicial-final.diff) (rodada 1) e [`sessao-18-diff-prompt-tecnico-inicial-final.diff`](sessao-18-diff-prompt-tecnico-inicial-final.diff) (rodada 2).
 
 | Solução inicial | Solução final | Alterações realizadas |
 |---|---|---|
@@ -51,7 +51,7 @@ Exigência do enunciado: preservar a solução inicial, a final e descrever as a
 4. Preparada a revisão pelo responsável: aplicação executada (`uv run flask --app app:create_app run`, com banco temporário) e roteiro de casos para conferir na tela de tarifas e no interpretador Python.
 5. Rodada 2 (prompt técnico): completadas as combinações `pe_` de tipo × pacote × saldo, a faixa 999,99/1000 em `tarifa_mensal` e as duas tabelas de decisão completas; solução gravada sem revisão (`eaafc09`).
 6. Revisada a rodada 2: recuperados os 3 cenários da premium perdidos na troca das tabelas; solução gravada (`3809dcc`).
-7. Reexecutada a suíte completa (`118 passed, 4 xfailed`, 100%) e atualizados `docs/relatorios/cobertura_mutacao.md` (seção `TarifaBancaria`), `docs/plano_de_teste.md` (v1.12, seção 6.6) e o AI-LOG.
+7. Reexecutada a suíte completa (`118 passed, 4 xfailed`, 100%) e atualizados `docs/relatorios/cobertura_mutacao.md` (seção `TarifaBancaria`), `docs/plano_de_teste.md` (v1.13, seção 6.7) e o AI-LOG.
 
 ## Resultado
 
