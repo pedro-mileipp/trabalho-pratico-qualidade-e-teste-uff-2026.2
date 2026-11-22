@@ -1,0 +1,17 @@
+Mapeamento mutante -> teste que o mata (issue #45) — 22/11/2026 15:20
+Cada mutante aplicado sozinho (mutmut apply) na cópia de execução (WSL), rodando só os testes novos da #45;
+tarifas.py restaurado após cada mutante.
+
+tarifa_mensal__mutmut_26 -> test_custom_arredondamento_tarifa_mensal[custom_pacote_premium_arredonda_centavos] 
+tarifa_mensal__mutmut_28 -> test_custom_arredondamento_tarifa_mensal[custom_pacote_premium_arredonda_centavos] 
+tarifa_mensal__mutmut_29 -> test_custom_arredondamento_tarifa_mensal[custom_pacote_premium_arredonda_centavos] 
+tarifa_mensal__mutmut_44 -> test_custom_arredondamento_tarifa_mensal[custom_antiguidade_desconto_com_centavos] 
+tarifa_mensal__mutmut_46 -> test_custom_arredondamento_tarifa_mensal[custom_antiguidade_desconto_com_centavos] 
+tarifa_mensal__mutmut_62 -> test_custom_arredondamento_tarifa_mensal[custom_saldo_negativo_arredonda_resultado_final] 
+_tarifa_com_pacote__mutmut_3 -> test_tarifa_com_pacote_mutacao[vl_tarifa_com_pacote_premium_limite_50000] 
+_tarifa_com_pacote__mutmut_8 -> test_tarifa_com_pacote_mutacao[custom_tarifa_com_pacote_premium_centavos] 
+_tarifa_com_pacote__mutmut_10 -> test_tarifa_com_pacote_mutacao[custom_tarifa_com_pacote_premium_centavos] 
+_tarifa_com_pacote__mutmut_13 -> test_tarifa_com_pacote_mutacao[custom_tarifa_com_pacote_premium_centavos] 
+tarifa_anual__mutmut_1 -> test_pe_anual_premium_com_valores_padrao 
+tarifa_anual__mutmut_4 -> test_custom_anual_arredonda_centavos 
+tarifa_anual__mutmut_6 -> test_custom_anual_arredonda_centavos 
