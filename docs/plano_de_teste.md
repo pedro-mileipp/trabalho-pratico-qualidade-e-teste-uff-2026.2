@@ -420,21 +420,21 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 
 | Item | Issue | Situação | Resultado |
 |---|---|---|---|
-| Unitários ampliados + cobertura estrutural (todas-arestas) | [#40](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/40) | Concluído | 97 casos em 22/11/2026 (antes: 44): 94 passam e 3 `xfail` que documentam defeitos; **100%** de cobertura de arestas (antes: 97%, linha 49 não coberta) |
+| Unitários ampliados + cobertura estrutural (todas-arestas) | [#40](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/40) | Concluído | 122 casos em 22/11/2026 (antes: 44): 118 passam e 4 `xfail` que documentam defeitos; **100%** de cobertura de arestas (antes: 97%, linha 49 não coberta) |
 | Defeito: `tarifa_anual` ignora a antiguidade | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | Aberto | Revelado na #40; teste com `xfail(strict=True)` |
 | Defeito: meia tarifa do pacote premium usa a tarifa da corrente | [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | Aberto (a confirmar pelo grupo) | Revelado na tabela de decisão (regra R3); teste com `xfail(strict=True)` |
 
 **Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_tarifas.py`):
 
-- **Partição de equivalência (`pe_`)**: poupança sempre gratuita, antiguidade negativa/nova/média/alta, saldo negativo na premium e `tarifa_anual`.
-- **Análise de valor-limite (`vl_`)**: antiguidade 35/36/37 sem pacote e 23/24/25 com pacote, saldo nas faixas de isenção (4999,99/5000/5000,01 e 49999,99), saldo -0,01/0 e 9/10/11 transações.
-- **Tabela de decisão (`td_`)**: as 8 regras de `tarifa_mensal` e as precedências quando mais de uma condição vale (ex.: antiguidade ≥ 36 com saldo negativo dá 24,00, sem sobretaxa).
+- **Partição de equivalência (`pe_`, 21 casos)**: as 18 combinações de tipo de conta × pacote × saldo (negativo / zero / positivo), antiguidade negativa/nova/média/alta e `tarifa_anual`.
+- **Análise de valor-limite (`vl_`, 25 casos)**: faixas de isenção (999,99/1000, 4999,99/5000/5000,01, 49999,99/50000), antiguidade 35/36/37 sem pacote e 23/24/25 com pacote, saldo -0,01/0 e 9/10/11 transações.
+- **Tabela de decisão (`td_`, 29 casos)**: sem pacote, isenção × antiguidade ≥ 36 × saldo negativo × extras (12 combinações possíveis, precedência isenção > antiguidade > saldo negativo); com pacote, tipo × saldo ≥ 50000 × saldo ≥ 5000 × antiguidade ≥ 24 (12 combinações).
 - **Teste de laços**: não se aplica, a classe não possui laços.
 
 **Defeitos e decisões:**
 
 - Os defeitos #77 e #78 ficam com o teste marcado como `xfail(strict=True)` para não bloquear o mutmut (#45); a correção remove a marcação.
-- `_tarifa_com_pacote` é código morto (nunca chamado); fica como entrada para a #50 (Sonar).
-- A solução inicial dos testes foi gerada com IA e revisada: 2 duplicados removidos, 1 partição inválida acrescentada, oráculo de `tarifa_anual` corrigido (comprovado por mutação manual) e `xfail` restrito a `TypeError`. Detalhes em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md) e na sessão 17 do [AI-LOG](ai/AI-LOG.md).
+- `_tarifa_com_pacote` é código morto (nunca chamado), e a faixa de isenção da poupança (1000) nunca é consultada por `tarifa_mensal`; ficam como entrada para a #50 (Sonar).
+- Os testes foram gerados com IA em duas rodadas, cada uma com a solução inicial preservada e revisada: 2 duplicados removidos, 1 partição inválida acrescentada, oráculo de `tarifa_anual` corrigido (comprovado por mutação manual), `xfail` restrito a `TypeError` e 3 cenários da premium recuperados na tabela de decisão. Detalhes em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md) e na sessão 17 do [AI-LOG](ai/AI-LOG.md).
 
 ---
