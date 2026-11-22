@@ -22,6 +22,7 @@
 | 1.11 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes de sistema com Selenium — Autenticação/RF01 e RF02 (issue #57) na seção 6.2 |
 | 1.12 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de sistema com Selenium — Empréstimo/RF05 (issue #59) nas seções 6.2 e 6.6 |
 | 1.13 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de integração das rotas Flask com test_client (seção 6.7) |
+| 1.14 | 22/11/2026 | Daniel Izu | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `TarifaBancaria` (issue #40), defeitos #77 e #78, na seção 6.8; antiguidade passa a ser coberta por testes unitários (seção 1.1.2) |
 
 ---
 
@@ -82,7 +83,7 @@ Esses recursos não foram testados porque não estão expostos na interface ou n
 | Requisito | Justificativa |
 |----------|----------------|
 | Chargeback de PIX pela interface | Não exposto na UI na Entrega 1 (regra de domínio, coberta por testes unitários) |
-| Antiguidade e saldo negativo de tarifas | Campos não expostos no formulário web; saldo negativo coberto por testes unitários, antiguidade a cobrir na Entrega 2 |
+| Antiguidade e saldo negativo de tarifas | Campos não expostos no formulário web; saldo negativo e antiguidade cobertos por testes unitários (antiguidade na Entrega 2, issue #40) |
 | Integrações com sistemas externos | Não fazem parte da versão atual |
 
 ### Requisitos Não Funcionais Fora do Escopo
@@ -461,5 +462,26 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 | Encerramento de Sessão (`/logout`) | Chamada a `/logout` limpando `cliente_id` da sessão Flask e bloqueando novos acessos subsequentes a rotas autenticadas | 2 | ✅ |
 
 **Resultado (22/11/2026):** **28 testes de integração aprovados** (`uv run pytest tests/integration -q` em 20.54s). Assegura que todas as rotas da aplicação web foram exercitadas de ponta a ponta com banco limpo e isolado entre cada execução.
+
+### 6.8 `TarifaBancaria` — Daniel Izu
+
+| Item | Issue | Situação | Resultado |
+|---|---|---|---|
+| Unitários ampliados + cobertura estrutural (todas-arestas) | [#40](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/40) | Concluído | 122 casos em 22/11/2026 (antes: 44): 118 passam e 4 `xfail` que documentam defeitos; **100%** de cobertura de arestas (antes: 97%, linha 49 não coberta) |
+| Defeito: `tarifa_anual` ignora a antiguidade | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | Aberto | Revelado na #40; teste com `xfail(strict=True)` |
+| Defeito: meia tarifa do pacote premium usa a tarifa da corrente | [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | Aberto (a confirmar pelo grupo) | Revelado na tabela de decisão (regra R3); teste com `xfail(strict=True)` |
+
+**Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_tarifas.py`):
+
+- **Partição de equivalência (`pe_`, 21 casos)**: as 18 combinações de tipo de conta × pacote × saldo (negativo / zero / positivo), antiguidade negativa/nova/média/alta e `tarifa_anual`.
+- **Análise de valor-limite (`vl_`, 25 casos)**: faixas de isenção (999,99/1000, 4999,99/5000/5000,01, 49999,99/50000), antiguidade 35/36/37 sem pacote e 23/24/25 com pacote, saldo -0,01/0 e 9/10/11 transações.
+- **Tabela de decisão (`td_`, 29 casos)**: sem pacote, isenção × antiguidade ≥ 36 × saldo negativo × extras (12 combinações possíveis, precedência isenção > antiguidade > saldo negativo); com pacote, tipo × saldo ≥ 50000 × saldo ≥ 5000 × antiguidade ≥ 24 (12 combinações).
+- **Teste de laços**: não se aplica, a classe não possui laços.
+
+**Defeitos e decisões:**
+
+- Os defeitos #77 e #78 ficam com o teste marcado como `xfail(strict=True)` para não bloquear o mutmut (#45); a correção remove a marcação.
+- `_tarifa_com_pacote` é código morto (nunca chamado), e a faixa de isenção da poupança (1000) nunca é consultada por `tarifa_mensal`; ficam como entrada para a #50 (Sonar).
+- Os testes foram gerados com IA em duas rodadas, cada uma com a solução inicial preservada e revisada: 2 duplicados removidos, 1 partição inválida acrescentada, oráculo de `tarifa_anual` corrigido (comprovado por mutação manual), `xfail` restrito a `TypeError` e 3 cenários da premium recuperados na tabela de decisão. Detalhes em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md) e na sessão 20 do [AI-LOG](ai/AI-LOG.md).
 
 ---

@@ -415,3 +415,150 @@ A técnica de cada caso está identificada pelo prefixo do id do `pytest.param` 
    - `parcelas` (lista completa com cada valor periódico);
    - `total_pago` igual à soma exata das parcelas arredondadas.
 3. **Ausência de defeitos no código de produção:** Todos os 118 casos foram validados e passaram com 100% de sucesso. Não foram detectados bugs em `app/dominio/emprestimo.py`, cuja lógica atende com fidelidade às especificações de domínio. Nenhuma issue de bug corretivo precisou ser aberta para a classe.
+
+---
+
+## `TarifaBancaria` — `app/dominio/tarifas.py`
+
+| Campo | Valor |
+|---|---|
+| Responsável | Daniel Izu (`danielcamposs`) |
+| Issues | #40 (unitários + cobertura estrutural) · #45 (mutação) |
+| Arquivo de testes | `tests/unit/test_tarifas.py` |
+| Complexidade ciclomática (`radon cc`) | `tarifa_mensal` = 12; soma dos métodos da classe = 24 |
+
+### Cobertura estrutural (todas-arestas) — #40
+
+**Comando**
+
+```bash
+uv run pytest tests/unit/test_tarifas.py --cov=app.dominio.tarifas --cov-branch --cov-report=term-missing
+```
+
+**Antes × depois**
+
+| | Antes (Entrega 1) | Depois (22/11/2026) |
+|---|---|---|
+| Casos de teste | 44 | 122 |
+| Resultado | 44 passam | 118 passam · 4 `xfail` (defeitos #77 e #78) |
+| Cobertura de arestas | 97% | **100%** |
+| Linhas não cobertas | 49 | nenhuma |
+
+**Saída (depois)**
+
+```text
+Name                     Stmts   Miss Branch BrPart  Cover   Missing
+--------------------------------------------------------------------
+app\dominio\tarifas.py      54      0     24      0   100%
+--------------------------------------------------------------------
+TOTAL                       54      0     24      0   100%
+118 passed, 4 xfailed
+```
+
+Evidências em [`evidencias/cobertura/`](evidencias/cobertura/): [`tarifas-4-prompt-tecnico-final.txt`](evidencias/cobertura/tarifas-4-prompt-tecnico-final.txt) (versão final) e [`tarifas-defeitos-runxfail.txt`](evidencias/cobertura/tarifas-defeitos-runxfail.txt) (falha real dos defeitos). As versões intermediárias geradas pela IA estão nos arquivos `tarifas-1` a `tarifas-3` (ver "Revisão da solução gerada por IA").
+
+**Arestas que faltavam e os casos que passaram a cobri-las**
+
+| Linha | Aresta | Casos |
+|---|---|---|
+| 48 → 49 | sem pacote, sem isenção, `antiguidade_meses >= 36` → desconto de 20% | `vl_antiguidade_36_com_desconto`, `vl_antiguidade_37_com_desconto`, `vl_premium_antiguidade_36`, `pe_corrente_antiguidade_alta`, `td_sp_07`, `td_sp_08`, `td_sp_11`, `td_sp_12`, `td_sp_premium_*` |
+| 40 (condição) | com pacote, `antiguidade_meses >= 24` → meia tarifa | `vl_pacote_antiguidade_23/24/25`, `td_cp_corrente_1000_antig_24`, `td_cp_pacote_ignora_transacoes` |
+
+A condição da linha 40 não aparecia como faltando porque o `coverage` mede arestas, não condições: a aresta já era coberta pela parte `saldo >= 5000`. Mesmo assim, nenhum teste exercitava a parte da antiguidade, que foi incluída para completar a tabela de decisão.
+
+Na Entrega 1, os casos de antiguidade tinham sido removidos porque a rota web não expõe `antiguidade_meses`.
+
+### Técnicas funcionais aplicadas
+
+A técnica de cada caso novo está no prefixo do id do `pytest.param`. Os 44 casos da Entrega 1 foram mantidos como estavam (apenas o id `premium_pacote_isencao_5x5` foi renomeado para `premium_pacote_isento_saldo_limite_50000`).
+
+| Técnica | Prefixo | Casos novos | Onde |
+|---|---|---|---|
+| Partição de equivalência | `pe_` | 21 | as 18 combinações de tipo de conta × pacote × saldo (negativo / zero / positivo), completando as da Entrega 1; antiguidade negativa (inválida), nova, média e alta; `tarifa_anual` com valores explícitos |
+| Análise de valor-limite | `vl_` | 25 | faixas de isenção 999,99/1000, 4999,99/5000/5000,01, 49999,99/50000; antiguidade 35/36/37 (sem pacote) e 23/24/25 (com pacote); saldo -0,01/0; transações 9/10/11 combinadas com o desconto; `_tem_isencao` nas fronteiras |
+| Tabela de decisão | `td_` | 29 | tabela sem pacote (12 combinações + 3 na premium), tabela com pacote (11 casos) e 3 casos da premium na regra R3, que revelaram o defeito #78 |
+| Parâmetros personalizados | `custom_` | 2 | desconto por antiguidade e sobretaxa com `TarifasBase` alterada |
+| Defeito (sem prefixo) | — | 1 | `test_defeito_tarifa_anual_aplica_desconto_por_antiguidade` (#77) |
+| Teste de laços | — | 0 | **Não se aplica:** `TarifaBancaria` não possui laços |
+
+**Tabela de decisão 1 — `tarifa_mensal` sem pacote** (conta corrente, base 30,00; 12 transações = +5,00 de extras)
+
+C1 (saldo ≥ 5000) e C3 (saldo < 0) não podem ser verdadeiras juntas, por isso há 12 combinações possíveis, e não 16. A precedência do `if/elif` é isenção > antiguidade > saldo negativo; as extras somam em todas.
+
+| Caso | C1 isenção | C2 antig. ≥ 36 | C3 saldo < 0 | C4 extras | Resultado |
+|---|---|---|---|---|---|
+| `td_sp_01` | V | F | F | F | 0,00 |
+| `td_sp_02` | V | F | F | V | 5,00 |
+| `td_sp_03` | V | V | F | F | 0,00 |
+| `td_sp_04` | V | V | F | V | 5,00 |
+| `td_sp_05` | F | F | F | F | 30,00 |
+| `td_sp_06` | F | F | F | V | 35,00 |
+| `td_sp_07` | F | V | F | F | 24,00 |
+| `td_sp_08` | F | V | F | V | 29,00 |
+| `td_sp_09` | F | F | V | F | 36,00 |
+| `td_sp_10` | F | F | V | V | 41,00 |
+| `td_sp_11` | F | V | V | F | 24,00 |
+| `td_sp_12` | F | V | V | V | 29,00 |
+
+Na premium (base 50,00, isenção a partir de 50000) foram acrescentadas 3 linhas: `td_sp_premium_isento_limite_com_antiguidade` (0,00), `td_sp_premium_antiguidade_prevalece_negativo` (40,00) e `td_sp_premium_antiguidade_extras` (52,50). Algumas linhas coincidem com casos `vl_` ou da Entrega 1; elas foram mantidas para que a tabela fique completa sozinha.
+
+**Tabela de decisão 2 — `tarifa_mensal` com pacote** (tipo × saldo ≥ 50000 × saldo ≥ 5000 × antiguidade ≥ 24)
+
+Como saldo ≥ 50000 implica saldo ≥ 5000, há 3 faixas de saldo (1000 / 20000 / 60000). São 2 tipos × 3 faixas × 2 antiguidades = 12 combinações. A poupança decide antes (R1, `td_cp_r1_poupanca_prevalece_sobre_tudo`: 0,00).
+
+| Tipo | Saldo | Antig. 0 | Antig. 24 |
+|---|---|---|---|
+| corrente | 1000 | 30,00 | 15,00 |
+| corrente | 20000 | 15,00 | 15,00 |
+| corrente | 60000 | 15,00 | 15,00 |
+| premium | 1000 | 35,00 | 15,00 → esperado 25,00 (**#78**) |
+| premium | 20000 | 15,00 → esperado 25,00 (**#78**) | 15,00 → esperado 25,00 (**#78**) |
+| premium | 60000 | 0,00 | 0,00 |
+
+Com pacote, as transações extras são ignoradas (`td_cp_pacote_ignora_transacoes`) e não há sobretaxa de saldo negativo (`pe_corrente_pacote_saldo_negativo`: 30,00).
+
+**Precedências fixadas** (a especificação não as define; o comportamento atual foi mantido e documentado):
+
+| Combinação | Resultado | Caso |
+|---|---|---|
+| poupança com pacote, saldo negativo, 20 transações, 40 meses | 0,00 | `td_cp_r1_poupanca_prevalece_sobre_tudo` |
+| corrente com saldo 6000 e 36 meses | 0,00 (isenção prevalece sobre o desconto) | `td_sp_03_isento_antiguidade` |
+| corrente com saldo negativo e 36 meses | 24,00 (desconto prevalece; a sobretaxa não é cobrada) | `td_sp_11_antiguidade_prevalece_negativo` |
+| premium com pacote, saldo 60000 e 24 meses | 0,00 (isenção total prevalece sobre a meia tarifa) | `td_cp_premium_60000_isento_prevalece_antiguidade` |
+
+### Defeitos revelados
+
+| Issue | Defeito | Esperado × atual | Caso |
+|---|---|---|---|
+| [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | `tarifa_anual` não recebe nem repassa `antiguidade_meses` | 288,00 × `TypeError` (sempre 360,00) | `test_defeito_tarifa_anual_aplica_desconto_por_antiguidade` |
+| [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | meia tarifa do pacote premium usa a tarifa da corrente (suspeito, a confirmar pelo grupo) | 25,00 × 15,00 | `test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_*]` (3 casos) |
+
+Os casos afirmam o comportamento esperado e estão marcados com `@pytest.mark.xfail(strict=True)`, para a suíte continuar verde e não bloquear o mutmut (#45). O caso do #77 usa `raises=TypeError`, para que só a falha do defeito seja aceita. Ao corrigir, o `xfail` deve ser removido (com `strict=True`, o pytest acusa XPASS).
+
+**Outras observações (sem issue de bug):**
+
+- `_tarifa_com_pacote` (linhas 54–59) **nunca é chamado** por `tarifa_mensal`, que reimplementa a regra do pacote de forma diferente. É código morto; fica como entrada para a #50 (Sonar). Os testes da Entrega 1 sobre esse método foram mantidos.
+- A faixa de isenção da poupança (`faixas_isencao[0]` = 1000) **nunca é consultada por `tarifa_mensal`**, que devolve 0 para a poupança antes de verificar a isenção (`vl_poupanca_mensal_999_99` e `vl_poupanca_mensal_1000` dão 0,00). A linha 66 de `_tem_isencao` só é coberta porque os testes chamam o método privado diretamente. Também é entrada para a #50.
+- `antiguidade_meses` negativa não é validada e é tratada como conta nova (`pe_antiguidade_negativa_sem_validacao`). A especificação não define validação; o comportamento ficou fixado no teste.
+
+### Revisão da solução gerada por IA
+
+Os casos foram gerados com apoio do Claude Code ([sessão 20 do AI-LOG](../ai/prompts/sessao-20-cobertura-tarifas.md)) em duas rodadas. Cada rodada teve a solução da IA gravada sem revisão e depois revisada:
+
+| Rodada | Solução inicial (IA) | Solução final (revisada) |
+|---|---|---|
+| 1 — plano da issue | `70ccd5c`: 95 passed, 3 xfailed ([`tarifas-1`](evidencias/cobertura/tarifas-1-solucao-inicial.txt)) | `ee613a6`: 94 passed, 3 xfailed ([`tarifas-2`](evidencias/cobertura/tarifas-2-solucao-final.txt)) |
+| 2 — prompt técnico do responsável | `eaafc09`: 115 passed, 4 xfailed ([`tarifas-3`](evidencias/cobertura/tarifas-3-prompt-tecnico-inicial.txt)) | `3809dcc`: 118 passed, 4 xfailed ([`tarifas-4`](evidencias/cobertura/tarifas-4-prompt-tecnico-final.txt)) |
+
+As duas soluções iniciais já tinham 100% de cobertura de arestas. Os problemas abaixo **não apareciam na execução**:
+
+| Rodada | Problema na solução inicial | Como foi identificado | Correção |
+|---|---|---|---|
+| 1 | 2 casos `pe_` duplicados | comparação dos parâmetros | removidos |
+| 1 | faltava a partição inválida (antiguidade negativa) | revisão das classes de equivalência | `pe_antiguidade_negativa_sem_validacao` |
+| 1 | `tarifa_anual` testada com oráculo calculado pelo próprio código | mutação manual temporária (`corrente * 0.5` → `0.6`): o teste inicial **continuou passando**, o final falhou ([evidência](evidencias/cobertura/tarifas-verificacao-oraculo-anual.txt)) | valores esperados explícitos |
+| 1 | `xfail` do #77 aceitava qualquer exceção | saída com `--runxfail` (a falha real era `TypeError`) | `raises=TypeError` |
+| 2 | ao substituir a tabela de decisão antiga, 3 cenários da premium sem pacote foram perdidos (isenção no limite 50000 com antiguidade, antiguidade com saldo negativo, antiguidade com extras) | comparação dos casos removidos com os novos | tabela sem pacote passou a receber o tipo, com 3 linhas `td_sp_premium_*` |
+| 2 | o relatório e o plano citavam ids que deixaram de existir (`td_r1_*`, `td_r5_*`, `td_r6_*`) | conferência das referências nos documentos | documentação atualizada |
+
+Todos os valores esperados foram conferidos à mão contra o código e a seção 4.3 de `docs/aplicacao.md` (ex.: 30 + 30 × 0,2 + 5 = 41,00; 50 × 0,8 + 5 × 2,50 = 52,50).

@@ -1,0 +1,23 @@
+# Solução final (após revisão) — issue #40 — 22/11/2026 11:26
+$ uv run pytest tests/unit/test_tarifas.py --cov=app.dominio.tarifas --cov-branch --cov-report=term-missing -rxX
+============================= test session starts =============================
+platform win32 -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\daniel.izu\Desktop\trabalho qualidade e teste\trabalho-pratico-qualidade-e-teste-uff-2026.2
+configfile: pyproject.toml
+plugins: cov-7.1.0, mock-3.15.1
+collected 97 items
+tests\unit\test_tarifas.py ............................................. [ 46%]
+.................................................xxx                     [100%]
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.12.14-final-0 _______________
+Name                     Stmts   Miss Branch BrPart  Cover   Missing
+--------------------------------------------------------------------
+app\dominio\tarifas.py      54      0     24      0   100%
+--------------------------------------------------------------------
+TOTAL                       54      0     24      0   100%
+Required test coverage of 80.0% reached. Total coverage: 100.00%
+=========================== short test summary info ===========================
+XFAIL tests/unit/test_tarifas.py::test_defeito_tarifa_anual_aplica_desconto_por_antiguidade - #77: tarifa_anual não repassa antiguidade_meses
+XFAIL tests/unit/test_tarifas.py::test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_saldo_20000] - #78: meia tarifa do pacote premium usa a tarifa da corrente
+XFAIL tests/unit/test_tarifas.py::test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_premium_antiguidade_24] - #78: meia tarifa do pacote premium usa a tarifa da corrente
+======================== 94 passed, 3 xfailed in 0.77s ========================
