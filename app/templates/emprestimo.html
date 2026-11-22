@@ -4,14 +4,14 @@
 <div class="cartao">
   <h2>Simulação de Empréstimo</h2>
   <form method="post">
-    <label>Valor do empréstimo (R$)</label>
-    <input type="number" name="principal" step="0.01" min="0.01" required>
-    <label>Prazo (meses)</label>
-    <input type="number" name="meses" min="2" max="60" required>
-    <label>Renda mensal (R$)</label>
-    <input type="number" name="renda" step="0.01" min="0" required>
-    <label>Sistema de amortização</label>
-    <select name="sistema">
+    <label for="principal">Valor do empréstimo (R$)</label>
+    <input type="number" id="principal" name="principal" step="0.01" min="0.01" required>
+    <label for="meses">Prazo (meses)</label>
+    <input type="number" id="meses" name="meses" min="2" max="60" required>
+    <label for="renda">Renda mensal (R$)</label>
+    <input type="number" id="renda" name="renda" step="0.01" min="0" required>
+    <label for="sistema">Sistema de amortização</label>
+    <select id="sistema" name="sistema">
       <option value="price">Price</option>
       <option value="sac">SAC</option>
     </select>

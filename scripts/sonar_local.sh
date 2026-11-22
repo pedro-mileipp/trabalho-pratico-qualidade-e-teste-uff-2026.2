@@ -177,10 +177,19 @@ run_scanner() {
     warn "sonar-scanner não encontrado; usando a imagem oficial via Docker."
     local host_url="$SONAR_URL"
     host_url="${host_url/localhost/host.docker.internal}"
+
+    # Converte o ROOT_DIR para formato Windows (C:\...) para o volume do Docker.
+    # No Git Bash/MSYS o pwd retorna /c/Users/...; o Docker Desktop no Windows
+    # aceita C:/Users/... mas o MSYS converte caminhos internos do container
+    # (ex.: /usr/src) para caminhos do host, quebrando o -w. A variável
+    # MSYS_NO_PATHCONV=1 desliga essa conversão automática.
+    local win_root
+    win_root="$(cd "$ROOT_DIR" && cmd //c cd 2>/dev/null || cygpath -w "$ROOT_DIR" 2>/dev/null || echo "$ROOT_DIR")"
+
     local -a docker_cmd=(
         docker run --rm
-        -v "$ROOT_DIR:/usr/src"
-        -w /usr/src
+        -v "${win_root}:/usr/src"
+        -w //usr/src
         -e "SONAR_HOST_URL=$host_url"
         -e "SONAR_TOKEN=$token"
     )
@@ -188,7 +197,7 @@ run_scanner() {
         docker_cmd+=(--add-host=host.docker.internal:host-gateway)
     fi
     docker_cmd+=(sonarsource/sonar-scanner-cli:latest)
-    "${docker_cmd[@]}"
+    MSYS_NO_PATHCONV=1 "${docker_cmd[@]}"
 }
 
 cmd_scan() {
