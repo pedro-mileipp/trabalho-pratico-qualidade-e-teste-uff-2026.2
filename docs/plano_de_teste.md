@@ -20,6 +20,7 @@
 | 1.9 | 20/11/2026 | Gabrielle Rosa | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `CalculadoraJuros` (issue #39) na seção 6.4 |
 | 1.10 | 20/11/2026 | Gabrielle Rosa | Entrega 2: teste de mutação de `CalculadoraJuros` com `mutmut` (escore 87,25%, issue #44) na seção 6.4 |
 | 1.11 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes de sistema com Selenium — Autenticação/RF01 e RF02 (issue #57) na seção 6.2 |
+| 1.12 | 22/11/2026 | Daniel Izu | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `TarifaBancaria` (issue #40), defeitos #77 e #78, na seção 6.6; antiguidade passa a ser coberta por testes unitários (seção 1.1.2) |
 
 ---
 
@@ -80,7 +81,7 @@ Esses recursos não foram testados porque não estão expostos na interface ou n
 | Requisito | Justificativa |
 |----------|----------------|
 | Chargeback de PIX pela interface | Não exposto na UI na Entrega 1 (regra de domínio, coberta por testes unitários) |
-| Antiguidade e saldo negativo de tarifas | Campos não expostos no formulário web; saldo negativo coberto por testes unitários, antiguidade a cobrir na Entrega 2 |
+| Antiguidade e saldo negativo de tarifas | Campos não expostos no formulário web; saldo negativo e antiguidade cobertos por testes unitários (antiguidade na Entrega 2, issue #40) |
 | Integrações com sistemas externos | Não fazem parte da versão atual |
 
 ### Requisitos Não Funcionais Fora do Escopo
@@ -414,5 +415,26 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 | Item | Issue | Situação | Resultado |
 |---|---|---|---|
 | Testes unitários com mock do repositório (`AuthService` e `TransacaoService`) | [#53](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/53) | Concluído | 16 casos passando em 20/11/2026 (`tests/unit/test_auth_service.py` com 12 casos e `tests/unit/test_transacao_service.py` com 4 casos), isolando `Repositorio` via `pytest-mock` sem acesso a SQLite ou Flask |
+
+### 6.6 `TarifaBancaria` — Daniel Izu
+
+| Item | Issue | Situação | Resultado |
+|---|---|---|---|
+| Unitários ampliados + cobertura estrutural (todas-arestas) | [#40](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/40) | Concluído | 97 casos em 22/11/2026 (antes: 44): 94 passam e 3 `xfail` que documentam defeitos; **100%** de cobertura de arestas (antes: 97%, linha 49 não coberta) |
+| Defeito: `tarifa_anual` ignora a antiguidade | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | Aberto | Revelado na #40; teste com `xfail(strict=True)` |
+| Defeito: meia tarifa do pacote premium usa a tarifa da corrente | [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | Aberto (a confirmar pelo grupo) | Revelado na tabela de decisão (regra R3); teste com `xfail(strict=True)` |
+
+**Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_tarifas.py`):
+
+- **Partição de equivalência (`pe_`)**: poupança sempre gratuita, antiguidade negativa/nova/média/alta, saldo negativo na premium e `tarifa_anual`.
+- **Análise de valor-limite (`vl_`)**: antiguidade 35/36/37 sem pacote e 23/24/25 com pacote, saldo nas faixas de isenção (4999,99/5000/5000,01 e 49999,99), saldo -0,01/0 e 9/10/11 transações.
+- **Tabela de decisão (`td_`)**: as 8 regras de `tarifa_mensal` e as precedências quando mais de uma condição vale (ex.: antiguidade ≥ 36 com saldo negativo dá 24,00, sem sobretaxa).
+- **Teste de laços**: não se aplica, a classe não possui laços.
+
+**Defeitos e decisões:**
+
+- Os defeitos #77 e #78 ficam com o teste marcado como `xfail(strict=True)` para não bloquear o mutmut (#45); a correção remove a marcação.
+- `_tarifa_com_pacote` é código morto (nunca chamado); fica como entrada para a #50 (Sonar).
+- A solução inicial dos testes foi gerada com IA e revisada: 2 duplicados removidos, 1 partição inválida acrescentada, oráculo de `tarifa_anual` corrigido (comprovado por mutação manual) e `xfail` restrito a `TypeError`. Detalhes em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md) e na sessão 17 do [AI-LOG](ai/AI-LOG.md).
 
 ---

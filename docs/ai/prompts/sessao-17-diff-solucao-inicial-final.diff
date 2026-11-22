@@ -1,0 +1,78 @@
+diff --git a/tests/unit/test_tarifas.py b/tests/unit/test_tarifas.py
+index bb38a4c..f8622c0 100644
+--- a/tests/unit/test_tarifas.py
++++ b/tests/unit/test_tarifas.py
+@@ -239,13 +239,12 @@ def test_tarifa_mensal_valor_limite(
+     ("tipo", "saldo", "tem_pacote", "quantidade_transacoes", "antiguidade_meses", "esperado"),
+     [
+         pytest.param(TipoConta.POUPANCA, -500.0, True, 20, 50, 0.0, id="pe_poupanca_sempre_gratuita"),
+-        pytest.param(TipoConta.CORRENTE, 0.0, False, 0, 0, 30.0, id="pe_corrente_saldo_zero"),
++        pytest.param(TipoConta.CORRENTE, 2500.0, False, 0, -12, 30.0, id="pe_antiguidade_negativa_sem_validacao"),
+         pytest.param(TipoConta.CORRENTE, 2500.0, False, 0, 0, 30.0, id="pe_corrente_antiguidade_nova"),
+         pytest.param(TipoConta.CORRENTE, 2500.0, False, 0, 12, 30.0, id="pe_corrente_antiguidade_media"),
+         pytest.param(TipoConta.CORRENTE, 2500.0, False, 0, 60, 24.0, id="pe_corrente_antiguidade_alta"),
+         pytest.param(TipoConta.PREMIUM, 20000.0, False, 0, 60, 40.0, id="pe_premium_antiguidade_alta"),
+         pytest.param(TipoConta.PREMIUM, -100.0, False, 0, 0, 56.0, id="pe_premium_saldo_negativo"),
+-        pytest.param(TipoConta.CORRENTE, 1000.0, True, 0, 0, 30.0, id="pe_corrente_pacote_antiguidade_nova"),
+         pytest.param(TipoConta.CORRENTE, 1000.0, True, 0, 30, 15.0, id="pe_corrente_pacote_antiguidade_media"),
+     ],
+ )
+@@ -377,23 +376,26 @@ def test_tarifa_mensal_tabela_decisao(
+ 
+ 
+ @pytest.mark.parametrize(
+-    ("tipo", "saldo", "tem_pacote", "quantidade_transacoes"),
++    ("tipo", "saldo", "tem_pacote", "quantidade_transacoes", "esperado"),
+     [
+-        pytest.param(TipoConta.POUPANCA, 100.0, False, 30, id="pe_anual_poupanca"),
+-        pytest.param(TipoConta.CORRENTE, 6000.0, True, 0, id="pe_anual_corrente_pacote_meia_tarifa"),
+-        pytest.param(TipoConta.PREMIUM, 4000.0, True, 0, id="pe_anual_premium_pacote"),
+-        pytest.param(TipoConta.CORRENTE, -100.0, False, 11, id="pe_anual_saldo_negativo_com_extra"),
++        pytest.param(TipoConta.POUPANCA, 100.0, False, 30, 0.0, id="pe_anual_poupanca"),
++        # 15,00 * 12
++        pytest.param(TipoConta.CORRENTE, 6000.0, True, 0, 180.0, id="pe_anual_corrente_pacote_meia_tarifa"),
++        # 35,00 * 12
++        pytest.param(TipoConta.PREMIUM, 4000.0, True, 0, 420.0, id="pe_anual_premium_pacote"),
++        # (30 + 6 + 2,50) * 12 = 38,50 * 12
++        pytest.param(TipoConta.CORRENTE, -100.0, False, 11, 462.0, id="pe_anual_saldo_negativo_com_extra"),
+     ],
+ )
+-def test_tarifa_anual_igual_a_doze_mensais(
++def test_tarifa_anual_particao_equivalencia(
+     tipo: TipoConta,
+     saldo: float,
+     tem_pacote: bool,
+     quantidade_transacoes: int,
++    esperado: float,
+     tarifa: TarifaBancaria,
+ ):
+-    mensal = tarifa.tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes)
+-    assert tarifa.tarifa_anual(tipo, saldo, tem_pacote, quantidade_transacoes) == round(mensal * 12, 2)
++    assert tarifa.tarifa_anual(tipo, saldo, tem_pacote, quantidade_transacoes) == esperado
+ 
+ 
+ def test_custom_desconto_antiguidade_usa_base_personalizada():
+@@ -406,19 +408,20 @@ def test_custom_sobretaxa_premium_usa_tarifa_da_corrente():
+     assert tarifa.tarifa_mensal(TipoConta.PREMIUM, -1.0) == 78.0
+ 
+ 
+-# --- Defeitos revelados (issue #40) ----------------------------------------
++# --- Defeitos revelados (issue #40) -> bugs #77 e #78 -----------------------
+ # Os casos abaixo afirmam o comportamento esperado pela especificação
+ # (docs/aplicacao.md, seção 4.3). Falham com o código atual e ficam marcados
+ # como xfail(strict=True) até a correção, para não bloquear o mutmut (#45).
++# Ao corrigir o defeito, remova o xfail (strict=True acusa XPASS).
+ 
+ 
+-@pytest.mark.xfail(strict=True, reason="defeito: tarifa_anual não repassa antiguidade_meses")
++@pytest.mark.xfail(strict=True, raises=TypeError, reason="#77: tarifa_anual não repassa antiguidade_meses")
+ def test_defeito_tarifa_anual_aplica_desconto_por_antiguidade(tarifa: TarifaBancaria):
+     # mensal com 36 meses = 30 * 0,8 = 24,00 -> anual = 24 * 12 = 288,00
+     assert tarifa.tarifa_anual(TipoConta.CORRENTE, 1000.0, antiguidade_meses=36) == 288.0
+ 
+ 
+-@pytest.mark.xfail(strict=True, reason="defeito: meia tarifa do pacote premium usa a tarifa da corrente")
++@pytest.mark.xfail(strict=True, reason="#78: meia tarifa do pacote premium usa a tarifa da corrente")
+ @pytest.mark.parametrize(
+     ("saldo", "antiguidade_meses"),
+     [
