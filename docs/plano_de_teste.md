@@ -20,6 +20,7 @@
 | 1.9 | 20/11/2026 | Gabrielle Rosa | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `CalculadoraJuros` (issue #39) na seção 6.4 |
 | 1.10 | 20/11/2026 | Gabrielle Rosa | Entrega 2: teste de mutação de `CalculadoraJuros` com `mutmut` (escore 87,25%, issue #44) na seção 6.4 |
 | 1.11 | 20/11/2026 | Gabrielle Rosa | Entrega 2: testes de sistema com Selenium — Autenticação/RF01 e RF02 (issue #57) na seção 6.2 |
+| 1.12 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: testes de sistema com Selenium — Empréstimo/RF05 (issue #59) nas seções 6.2 e 6.6 |
 
 ---
 
@@ -372,6 +373,21 @@ Pasta: `tests/system/auth/` (testes em `test_auth_sistema.py`, page object em `p
 
 **Resultado (20/11/2026):** 12 cenários de autenticação (25 testes no total da suíte `tests/system`), todos passando (`.venv/bin/pytest tests/system -q`), em execuções seguidas com o mesmo resultado. Cada teste utiliza e-mails únicos e cookies limpos entre execuções, garantindo independência total; evidências geradas em `tests/system/auth/evidencias/` com `EVIDENCIAS=1` (screenshots numerados das etapas registradas e da tela final).
 
+#### Empréstimo (RF05) — Vinicius Sales Felinto, issue [#59](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/59)
+
+Pasta: `tests/system/emprestimo/` (testes em `test_emprestimo_sistema.py`, page object em `pagina_emprestimo.py`). Os cenários automatizam os casos manuais de empréstimo (`tests/testes_manuais/emprestimo/caso_emprestimo.md`) e acrescentam a validação de rota protegida sem autenticação (`/emprestimo` redirecionando para `/login`).
+
+| Id | Cenário | Entrada (principal / meses / renda / sistema) | Resultado esperado |
+|---|---|---|---|
+| TC-01 | Simulação válida com Tabela Price | 1000 / 12 / 5000 / Price | Aprovado · 1ª parcela R$ 100.46 · Total R$ 1205.52 · 12 parcelas |
+| TC-02 | Simulação válida com Tabela SAC | 1000 / 12 / 5000 / SAC | Aprovado · 1ª parcela R$ 113.33 · Total R$ 1194.96 · 12 parcelas |
+| TC-03 | Recusa por valor solicitado abaixo do mínimo (R$ 100,00) | 50 / 12 / 5000 / Price | Não aprovado · `valor_abaixo_minimo` |
+| TC-04 | Prazo abaixo do mínimo permitido (2 meses) | 1000 / 1 / 5000 / Price | Validação HTML5 (`min="2"` / `rangeUnderflow`) impede o envio na interface |
+| TC-05 | Recusa por principal acima do teto de renda (15% para renda < 2000) | 200 / 2 / 1000 / Price | Não aprovado · `acima_teto` |
+| — | Acesso à tela de empréstimo sem login | — | Redireciona para `/login` |
+
+**Resultado (22/11/2026):** 6 cenários de empréstimo (31 testes no total da suíte `tests/system`), todos passando (`uv run pytest tests/system -q`), em execuções repetidas obtendo o mesmo resultado verde (49.36s e 53.05s). Cada teste utiliza um cliente com e-mail único cadastrado via fixture `cliente_logado`, garantindo independência total e banco SQLite limpo por sessão; evidências geradas em `tests/system/emprestimo/evidencias/` com `EVIDENCIAS=1` (screenshots numerados do formulário preenchido, resultado e tela final).
+
 ### 6.3 Requisito não funcional — segurança da autenticação (RNF06)
 
 Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/61). Relatório completo em [`docs/relatorios/rnf_seguranca.md`](relatorios/rnf_seguranca.md).
@@ -414,5 +430,16 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 | Item | Issue | Situação | Resultado |
 |---|---|---|---|
 | Testes unitários com mock do repositório (`AuthService` e `TransacaoService`) | [#53](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/53) | Concluído | 16 casos passando em 20/11/2026 (`tests/unit/test_auth_service.py` com 12 casos e `tests/unit/test_transacao_service.py` com 4 casos), isolando `Repositorio` via `pytest-mock` sem acesso a SQLite ou Flask |
+
+### 6.6 `SimuladorEmprestimo` — Vinicius Sales Felinto
+
+| Item | Issue | Situação | Resultado |
+|---|---|---|---|
+| Testes de sistema (Selenium) — Empréstimo, RF05 | [#59](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/59) | Concluído | 6 cenários automatizados em Chrome headless, todos passando (ver seção 6.2); evidências em `tests/system/emprestimo/evidencias/` |
+
+**Decisões e particularidades:**
+
+- **Precedência de validação (TC-05):** A verificação de teto proporcional à faixa de renda (`principal > teto_por_renda(renda)`) é executada antes da análise de comprometimento da parcela no método `simular()`. Para renda de R$ 1.000,00 (< 2000), o teto é R$ 150,00 (15%), fazendo com que o valor solicitado de R$ 200,00 seja recusado por `acima_teto` (comportamento registrado e comprovado na evidência manual original da issue #11).
+- **Validação nativa de formulário (TC-04):** O campo `meses` no template `emprestimo.html` possui o atributo nativo `min="2"`. O Chrome headless bloqueia o envio via `rangeUnderflow` antes de submeter a requisição POST (evidência `evidenciastc04-prazo-invalido.png`), comportamento verificado pelo método `campo_abaixo_do_minimo("meses")` do Page Object.
 
 ---
