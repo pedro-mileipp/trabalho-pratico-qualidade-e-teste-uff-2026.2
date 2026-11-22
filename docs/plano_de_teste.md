@@ -25,7 +25,8 @@
 | 1.14 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: teste de mutação de `SimuladorEmprestimo` com `mutmut` (escore 99,34%, issue #46) na seção 6.6 |
 | 1.14 | 22/11/2026 | Daniel Izu | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `TarifaBancaria` (issue #40), defeitos #77 e #78, na seção 6.8; antiguidade passa a ser coberta por testes unitários (seção 1.1.2) |
 | 1.15 | 22/11/2026 | Daniel Izu | Entrega 2: teste de mutação de `TarifaBancaria` com `mutmut` (escore 94,3%; 100% descontando equivalentes, issue #45) na seção 6.8 |
-| 1.16 | 22/11/2026 | Daniel Izu | Entrega 2: correção dos apontamentos do Sonar em `TarifaBancaria` e `tarifas.html` (7 → 0) e do defeito #77 (issue #50) na seção 6.8 |
+| 1.16 | 22/11/2026 | Gabrielle Rosa | Entrega 2: inspeção estática SonarQube em `CalculadoraJuros` — 0 apontamentos e evidência pós-correção (issue #49) nas seções 6.4 e registro de mudanças |
+| 1.17 | 22/11/2026 | Daniel Izu | Entrega 2: correção dos apontamentos do Sonar em `TarifaBancaria` e `tarifas.html` (7 → 0) e do defeito #77 (issue #50) na seção 6.8 |
 
 ---
 
@@ -419,6 +420,7 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 | Correção de defeito (desconto de IR no mês 12) | [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) | Concluído | Laço ajustado para `range(1, meses + 1)` em `montante_com_aportes`; 36 casos passando em `tests/unit/test_juros.py` em 20/11/2026 (evidências antes/depois em `docs/relatorios/evidencias/bug/`) |
 | Unitários ampliados + cobertura estrutural (todas-arestas) | [#39](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/39) | Concluído | 68 casos passando em 20/11/2026 (`0.40s`); **100.00%** de cobertura de linhas e ramos (`67` statements, `0` missed, `36` branches, `0` partial) com `pe_`, `vl_`, `td_` e `laco_`[cite: 7] |
 | Mutação (escore ≥ 80%) | [#44](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/44) | Concluído | 149 mutantes gerados, 130 mortos e 19 sobreviventes em 20/11/2026: **87,25%** de escore (meta ≥ 80% atingida); evidência em [`docs/relatorios/evidencias/mutacao/juros-mutacao.txt`](relatorios/evidencias/mutacao/juros-mutacao.txt) |
+| Inspeção estática (SonarQube — sem apontamentos + bug #20) | [#49](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/49) | Concluído | 0 apontamentos estáticos em `app/dominio/juros.py`; bug #20 corrigido; CC verificada com `radon cc` e evidência em `docs/relatorios/evidencias/sonar/depois/juros/` |
 
 
 **Defeitos e decisões:**
@@ -476,7 +478,7 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 | Defeito: `tarifa_anual` ignora a antiguidade | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | Corrigido na #50 | Revelado na #40; `tarifa_anual` passou a repassar `antiguidade_meses`; o teste virou regressão (`vl_anual_antiguidade_35/36`) |
 | Defeito: meia tarifa do pacote premium usa a tarifa da corrente | [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | Aberto (a confirmar pelo grupo) | Revelado na tabela de decisão (regra R3); teste com `xfail(strict=True)` |
 | Mutação (escore ≥ 80%) | [#45](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/45) | Concluído | 106 mutantes, 100 mortos: **94,3%** (antes: 82,1%; 100% descontando 6 equivalentes justificados); +7 casos (`custom_`, `vl_`, `pe_`) que exercitam os arredondamentos; mutmut executado no Ubuntu (WSL 2); evidências em [`docs/relatorios/evidencias/mutacao/`](relatorios/evidencias/mutacao/) |
-| Correções do Sonar | [#50](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/50) | Concluído | 7 apontamentos de tarifas corrigidos (`tarifas.py`: 1 → 0; `tarifas.html`: 6 → 0); projeto: 37 → 30. `tarifa_mensal` reescrita sem aninhamento: complexidade cognitiva ≤ 15 e CC 14 (antes 12). Detalhes na seção 6.2 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md) |
+| Correções do Sonar | [#50](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/50) | Concluído | 7 apontamentos de tarifas corrigidos (`tarifas.py`: 1 → 0; `tarifas.html`: 6 → 0); projeto: 37 → 30. `tarifa_mensal` reescrita sem aninhamento: complexidade cognitiva ≤ 15 e CC 14 (antes 12). Detalhes na seção 6.3 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md) |
 
 **Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_tarifas.py`):
 

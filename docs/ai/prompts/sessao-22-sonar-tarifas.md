@@ -48,7 +48,7 @@ Exigência do enunciado: preservar a solução inicial, a final e descrever as a
 5. Análise "antes" da `main`: 37 apontamentos, 7 de tarifas.
 6. Ajuste pedido pelo responsável (CC ≥ 10 num método): `tarifa_mensal` plana com CC 14; `_tarifa_com_pacote` removido; testes redirecionados; análise da cópia de trabalho no SonarQube confirmando 0 apontamentos em tarifas; nova mutação e caso para a meia tarifa; commit `359f74b`.
 7. Análise "depois" do commit `359f74b`: 30 apontamentos, 0 em tarifas, 7 `FIXED`; prints do dashboard e das listas de issues (com um usuário local só de leitura, porque a interface exige trocar a senha padrão do `admin`).
-8. Atualizados `docs/relatorios/inspecao_sonar.md` (seção 6.2), `docs/relatorios/cobertura_mutacao.md`, `docs/plano_de_teste.md` (v1.16), `docs/aplicacao.md` e o AI-LOG.
+8. Atualizados `docs/relatorios/inspecao_sonar.md` (seção 6.3), `docs/relatorios/cobertura_mutacao.md`, `docs/plano_de_teste.md` (v1.17), `docs/aplicacao.md` e o AI-LOG.
 
 ## Resultado
 
