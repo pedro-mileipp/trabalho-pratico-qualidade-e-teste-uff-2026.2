@@ -337,6 +337,87 @@ Como a suíte alcançou **87,25% de mutação**, acima da meta de 80%, e **100% 
 
 ---
 
+## `SimuladorEmprestimo` — `app/dominio/emprestimo.py`
+
+| Campo | Valor |
+|---|---|
+| Responsável | Vinicius Sales Felinto |
+| Issues | #41 (unitários + cobertura estrutural todas-arestas) |
+| Arquivo de testes | `tests/unit/test_emprestimo.py` |
+| Complexidade ciclomática (soma dos métodos, `radon cc`) | 26 |
+
+### Cobertura estrutural (todas-arestas) — #41
+
+**Comando**
+
+```bash
+uv run pytest tests/unit/test_emprestimo.py --cov=app.dominio.emprestimo --cov-branch --cov-report=term-missing
+```
+
+**Antes × depois**
+
+| Métrica | Antes (Entrega 1) | Depois (22/11/2026 — #41) |
+|---|---|---|
+| Casos de teste | 40 | 118 |
+| Resultado | 40 passam | 118 passam |
+| Cobertura de linhas e ramos | 100% | **100%** |
+| Linhas / ramos não cobertos | nenhuma (82 stmts, 38 branches) | nenhuma (82 stmts, 0 miss, 38 branches, 0 partial) |
+
+**Saída (22/11/2026)**
+
+```text
+Name                        Stmts   Miss Branch BrPart  Cover   Missing
+-----------------------------------------------------------------------
+app/dominio/emprestimo.py      82      0     38      0   100%
+-----------------------------------------------------------------------
+TOTAL                          82      0     38      0   100%
+Required test coverage of 80.0% reached. Total coverage: 100.00%
+118 passed in 0.88s
+```
+
+### Técnicas aplicadas
+
+A técnica de cada caso está identificada pelo prefixo do id do `pytest.param` ou pelo nome do teste em `tests/unit/test_emprestimo.py`.
+
+| Técnica | Prefixo | Casos | Onde |
+|---|---|---|---|
+| Partição de equivalência | `pe_` | 26 | Faixas de prazo em `taxa_por_prazo`; faixas salariais em `teto_por_renda`; taxa zero e prazos em `parcelas_price`/`sac`; classes de entradas válidas/inválidas de `simular` |
+| Análise de valor-limite | `vl_` | 52 | Fronteiras de prazos (0, 1, 2, 5, 6, 7, 11, 12, 13, 35, 36, 37, 60); fronteiras de renda (-0.01, 0.0, 0.01, 1999.99, 2000.0, 2000.01, 4999.99, 5000.0, 5000.01, 9999.99, 10000.0, 10000.01); fronteiras de entrada de `simular` (principal 0, 0.01, 99.99, 100; meses 0, 1, 2, 60, 61; score 398, 399, 400, 401, 1000); fronteiras exatas de teto por renda (no teto e logo acima) e comprometimento de renda |
+| Tabela de decisão | `td_` | 24 | As 11 regras canônicas de `simular` (R1 a R11) e todas as combinações de conflito/precedência entre validações simultâneas |
+| Teste de laços | `laco_` | 8 | Variações de iterações em `parcelas_sac`: 0 (divisão por zero), 1, 2 (piso), 4 e 12 (n típico), 59 (max-1), 60 (max) e 61 (max+1) |
+| Parâmetros do construtor | `custom_` | 4 | Configurações personalizadas de `taxa_base`, `valor_minimo`, `prazo_min`, `prazo_max` e `teto_comprometimento` |
+| Conferência numérica completa | — | 4 | Conferência estrita de cada parcela individual, número de parcelas e total acumulado para amortizações Price e SAC |
+
+**Tabela de decisão de `simular`** (condições na ordem em que o código as avalia)
+
+| Regra | C1 P ≤ 0 | C2 P < min | C3 M < min | C4 M > max | C5 R ≤ 0 | C6 Inadimplente | C7 Score < 400 | C8 P > Teto | C9 Parcela > Comp | Sistema | Resultado | Motivo |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| R1 | V | — | — | — | — | — | — | — | — | — | NEGADO | `valor_invalido` |
+| R2 | F | V | — | — | — | — | — | — | — | — | NEGADO | `valor_abaixo_minimo` |
+| R3 | F | F | V | — | — | — | — | — | — | — | NEGADO | `prazo_curto` |
+| R4 | F | F | F | V | — | — | — | — | — | — | NEGADO | `prazo_longo` |
+| R5 | F | F | F | F | V | — | — | — | — | — | NEGADO | `renda_invalida` |
+| R6 | F | F | F | F | F | V | — | — | — | — | NEGADO | `inadimplente` |
+| R7 | F | F | F | F | F | F | V | — | — | — | NEGADO | `score_baixo` |
+| R8 | F | F | F | F | F | F | F | V | — | — | NEGADO | `acima_teto` |
+| R9 | F | F | F | F | F | F | F | F | V | — | NEGADO | `comprometimento_acima` |
+| R10 | F | F | F | F | F | F | F | F | F | PRICE | APROVADO | `aprovado` |
+| R11 | F | F | F | F | F | F | F | F | F | SAC | APROVADO | `aprovado` |
+
+"—" indica condição irrelevante (curto-circuito pela regra anterior).
+
+### Decisão de projeto: precedência e avaliação estrita de parcelas
+
+1. **Precedência de validação:** O método `simular()` avalia as restrições em pipeline estrito: primeiro o valor do empréstimo (positivo e acima do mínimo), depois os prazos, em seguida a renda e o cliente (inadimplência e score), depois a capacidade patrimonial (`principal > teto_por_renda`) e, por fim, o comprometimento da primeira parcela. Foram adicionados 13 casos de teste exercitando combinações onde múltiplos critérios falham simultaneamente, garantindo a estabilidade da interface e o motivo retornado.
+2. **Cálculos numéricos e mutação:** Para mitigar mutantes aritméticos gerados em cálculos financeiros (como alterações nos operadores de amortização, fator exponencial de juros ou cálculo do total pago), os testes não se limitam a checar `aprovado == True`. Cada caso aprovado valida:
+   - `valor_parcela` exato com arredondamento a duas casas decimais;
+   - `numero_parcelas` correspondente;
+   - `parcelas` (lista completa com cada valor periódico);
+   - `total_pago` igual à soma exata das parcelas arredondadas.
+3. **Ausência de defeitos no código de produção:** Todos os 118 casos foram validados e passaram com 100% de sucesso. Não foram detectados bugs em `app/dominio/emprestimo.py`, cuja lógica atende com fidelidade às especificações de domínio. Nenhuma issue de bug corretivo precisou ser aberta para a classe.
+
+---
+
 ## `TarifaBancaria` — `app/dominio/tarifas.py`
 
 | Campo | Valor |
@@ -462,7 +543,7 @@ Os casos afirmam o comportamento esperado e estão marcados com `@pytest.mark.xf
 
 ### Revisão da solução gerada por IA
 
-Os casos foram gerados com apoio do Claude Code ([sessão 19 do AI-LOG](../ai/prompts/sessao-19-cobertura-tarifas.md)) em duas rodadas. Cada rodada teve a solução da IA gravada sem revisão e depois revisada:
+Os casos foram gerados com apoio do Claude Code ([sessão 20 do AI-LOG](../ai/prompts/sessao-20-cobertura-tarifas.md)) em duas rodadas. Cada rodada teve a solução da IA gravada sem revisão e depois revisada:
 
 | Rodada | Solução inicial (IA) | Solução final (revisada) |
 |---|---|---|
