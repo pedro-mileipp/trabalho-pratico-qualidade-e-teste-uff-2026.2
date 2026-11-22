@@ -1,0 +1,268 @@
+[1;34m[sonar][0m Gerando token em http://localhost:9000 (usuário: admin)...
+[1;34m[sonar][0m Token salvo em /home/danielizu/sonar/.sonar/token (ignorado pelo Git).
+[1;34m[sonar][0m Gerando coverage.xml...
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/danielizu/sonar
+configfile: pyproject.toml
+plugins: cov-7.1.0, mock-3.15.1
+collected 495 items
+
+tests/unit/test_auth_service.py ............                             [  2%]
+tests/unit/test_credito.py ............................................. [ 11%]
+...................................................                      [ 21%]
+tests/unit/test_emprestimo.py .......................................... [ 30%]
+........................................................................ [ 44%]
+....                                                                     [ 45%]
+tests/unit/test_juros.py ............................................... [ 55%]
+.....................                                                    [ 59%]
+tests/unit/test_pix.py ..............F..............................F... [ 69%]
+...................                                                      [ 73%]
+tests/unit/test_tarifas.py ............................................. [ 82%]
+........................................................................ [ 96%]
+........xxxx                                                             [ 99%]
+tests/unit/test_transacao_service.py ....                                [100%]
+
+=================================== FAILURES ===================================
+____________________ test_validar_chave[email_dois_arroba] _____________________
+
+pix = <app.dominio.pix.TransacaoPix object at 0x761a93bc2b70>
+chave = 'a@b@c.com', tipo = <ChaveTipo.EMAIL: 'email'>, esperado = False
+
+    @pytest.mark.parametrize(
+        ("chave", "tipo", "esperado"),
+        [
+            pytest.param("52998224725", ChaveTipo.CPF, True, id="cpf_valido"),
+            pytest.param("11111111111", ChaveTipo.CPF, False, id="cpf_todos_digitos_iguais"),
+            pytest.param("12345678901", ChaveTipo.CPF, False, id="cpf_dv_invalido"),
+            pytest.param("123", ChaveTipo.CPF, False, id="cpf_poucos_digitos"),
+            pytest.param("529982247250", ChaveTipo.CPF, False, id="cpf_digitos_demais"),
+            pytest.param("abc", ChaveTipo.CPF, False, id="cpf_sem_digitos"),
+            pytest.param("user@example.com", ChaveTipo.EMAIL, True, id="email_valido"),
+            pytest.param("usuario.com", ChaveTipo.EMAIL, False, id="email_sem_arroba"),
+            pytest.param("@example.com", ChaveTipo.EMAIL, False, id="email_local_vazio"),
+            pytest.param(".user@example.com", ChaveTipo.EMAIL, False, id="email_local_ponto_inicio"),
+            pytest.param("user.@example.com", ChaveTipo.EMAIL, False, id="email_local_ponto_fim"),
+            pytest.param("user@example", ChaveTipo.EMAIL, False, id="email_dominio_sem_ponto"),
+            pytest.param("user@.example.com", ChaveTipo.EMAIL, False, id="email_dominio_ponto_inicio"),
+            pytest.param("user@example.com.", ChaveTipo.EMAIL, False, id="email_dominio_ponto_fim"),
+            pytest.param("a@b@c.com", ChaveTipo.EMAIL, False, id="email_dois_arroba"),
+            pytest.param("  user@example.com  ", ChaveTipo.EMAIL, True, id="email_com_espacos"),
+            pytest.param(None, ChaveTipo.EMAIL, False, id="email_none"),
+            pytest.param("2122223333", ChaveTipo.TELEFONE, True, id="telefone_10_digitos"),
+            pytest.param("21988887777", ChaveTipo.TELEFONE, True, id="telefone_11_digitos"),
+            pytest.param("212223333", ChaveTipo.TELEFONE, False, id="telefone_9_digitos"),
+            pytest.param("212222333344", ChaveTipo.TELEFONE, False, id="telefone_12_digitos"),
+            pytest.param("(21) 2222-3333", ChaveTipo.TELEFONE, True, id="telefone_formatado"),
+            pytest.param("a" * 32, ChaveTipo.ALEATORIA, True, id="aleatoria_32_chars"),
+            pytest.param("a" * 31, ChaveTipo.ALEATORIA, False, id="aleatoria_31_chars"),
+            pytest.param("a" * 33, ChaveTipo.ALEATORIA, False, id="aleatoria_33_chars"),
+            pytest.param("", ChaveTipo.EMAIL, False, id="chave_vazia"),
+            pytest.param("x", None, False, id="tipo_invalido"),
+        ],
+    )
+    def test_validar_chave(pix, chave, tipo, esperado):
+>       assert pix.validar_chave(chave, tipo) is esperado
+E       AssertionError: assert True is False
+E        +  where True = validar_chave('a@b@c.com', <ChaveTipo.EMAIL: 'email'>)
+E        +    where validar_chave = <app.dominio.pix.TransacaoPix object at 0x761a93bc2b70>.validar_chave
+
+tests/unit/test_pix.py:50: AssertionError
+______ test_solicitar_chargeback[chargeback_bloqueada_dias_30_valor_alto] ______
+
+chave = 'bloq@x.com', valor = 999999, dias = 30, motivo = None
+bloqueadas = ['bloq@x.com'], esperado = False
+
+    @pytest.mark.parametrize(
+        ("chave", "valor", "dias", "motivo", "bloqueadas", "esperado"),
+        [
+            pytest.param(VALID_EMAIL, 100, -1, None, [], False, id="chargeback_dias_negativo"),
+            pytest.param(VALID_EMAIL, 100, 91, None, [], False, id="chargeback_dias_91"),
+            pytest.param(VALID_EMAIL, 100, 90, None, [], False, id="chargeback_dias_90"),
+            pytest.param(VALID_EMAIL, 0, 30, None, [], False, id="chargeback_valor_zero"),
+            pytest.param(VALID_EMAIL, -5, 30, None, [], False, id="chargeback_valor_negativo"),
+            pytest.param("bloq@x.com", 999999, 30, None, BLOQUEADAS, False, id="chargeback_bloqueada_dias_30_valor_alto"),
+            pytest.param(VALID_EMAIL, 100, 60, "golpe", [], True, id="chargeback_motivo_golpe"),
+            pytest.param(VALID_EMAIL, 100, 60, "FRAUDE", [], True, id="chargeback_motivo_fraude_maiusculo"),
+            pytest.param(VALID_EMAIL, 100, 60, "", [], False, id="chargeback_motivo_vazio"),
+            pytest.param(VALID_EMAIL, 100, 0, None, [], True, id="chargeback_dias_zero"),
+            pytest.param(VALID_EMAIL, 100, 7, None, [], True, id="chargeback_dias_7"),
+            pytest.param(VALID_EMAIL, 100, 8, None, [], True, id="chargeback_dias_8_valor_baixo"),
+            pytest.param(VALID_EMAIL, 6000, 8, None, [], False, id="chargeback_dias_8_valor_alto"),
+            pytest.param(VALID_EMAIL, 5000, 30, None, [], True, id="chargeback_dias_30_valor_exato"),
+            pytest.param(VALID_EMAIL, 5000.01, 30, None, [], False, id="chargeback_dias_30_valor_alto"),
+            pytest.param(VALID_EMAIL, 100, 31, None, [], False, id="chargeback_dias_31"),
+        ],
+    )
+    def test_solicitar_chargeback(chave, valor, dias, motivo, bloqueadas, esperado):
+        pix = TransacaoPix(ConfiguracaoPix(chaves_bloqueadas=bloqueadas))
+>       assert pix.solicitar_chargeback(chave, valor, dias, motivo) is esperado
+E       AssertionError: assert True is False
+E        +  where True = solicitar_chargeback('bloq@x.com', 999999, 30, None)
+E        +    where solicitar_chargeback = <app.dominio.pix.TransacaoPix object at 0x761a937e40b0>.solicitar_chargeback
+
+tests/unit/test_pix.py:99: AssertionError
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.16-final-0 _______________
+
+Coverage XML written to file coverage.xml
+=========================== short test summary info ============================
+FAILED tests/unit/test_pix.py::test_validar_chave[email_dois_arroba] - Assert...
+FAILED tests/unit/test_pix.py::test_solicitar_chargeback[chargeback_bloqueada_dias_30_valor_alto]
+=================== 2 failed, 489 passed, 4 xfailed in 3.78s ===================
+[1;33m[sonar][0m sonar-scanner não encontrado; usando a imagem oficial via Docker.
+Unable to find image 'sonarsource/sonar-scanner-cli:latest' locally
+latest: Pulling from sonarsource/sonar-scanner-cli
+4f4fb700ef54: Pulling fs layer
+a2d3e70dc398: Pulling fs layer
+956050a19aa3: Pulling fs layer
+3a696a103395: Pulling fs layer
+36d0e51e1ea5: Pulling fs layer
+b2f9c80894dc: Pulling fs layer
+3adf2b735ab9: Pulling fs layer
+4f4fb700ef54: Already exists
+4f4fb700ef54: Pull complete
+3adf2b735ab9: Download complete
+956050a19aa3: Download complete
+b2f9c80894dc: Download complete
+3a696a103395: Download complete
+36d0e51e1ea5: Download complete
+36d0e51e1ea5: Pull complete
+a2d3e70dc398: Download complete
+956050a19aa3: Pull complete
+a2d3e70dc398: Pull complete
+b2f9c80894dc: Pull complete
+3adf2b735ab9: Pull complete
+3a696a103395: Pull complete
+Digest: sha256:6e6eca4d552695a98fb7dab84f0c1bd0885ebbfe272654d1552e24bd7f452d51
+Status: Downloaded newer image for sonarsource/sonar-scanner-cli:latest
+19:37:22.963 INFO  Scanner configuration file: /opt/sonar-scanner/conf/sonar-scanner.properties
+19:37:22.965 INFO  Project root configuration file: /usr/src/sonar-project.properties
+19:37:22.979 INFO  SonarScanner CLI 8.4.0.16527
+19:37:22.986 INFO  Linux 6.18.58.1-microsoft-standard-WSL2 amd64
+19:37:23.796 INFO  Communicating with SonarQube Community Build 26.11.0.134175
+19:37:23.797 INFO  JRE provisioning: os[linux], arch[x86_64]
+19:37:26.112 INFO  Starting SonarScanner Engine...
+19:37:26.113 INFO  Java 21.0.13 Eclipse Adoptium (64-bit)
+19:37:27.206 INFO  Load global settings
+19:37:27.365 INFO  Load global settings (done) | time=159ms
+19:37:27.370 INFO  Server id: 147B411E-AaIEveSaS7z1gWwXOgfK
+19:37:27.687 INFO  Loading required plugins
+19:37:27.688 INFO  Load plugins index
+19:37:27.757 INFO  Load plugins index (done) | time=68ms
+19:37:27.758 INFO  Load/download plugins
+19:37:28.054 INFO  Load/download plugins (done) | time=296ms
+19:37:28.357 INFO  Load project settings for component key: 'banco-digital-uff-2026-2'
+19:37:28.394 INFO  Load project settings for component key: 'banco-digital-uff-2026-2' (done) | time=37ms
+19:37:28.409 INFO  Process project properties
+19:37:28.422 INFO  Process project properties (done) | time=13ms
+19:37:28.432 INFO  Project key: banco-digital-uff-2026-2
+19:37:28.433 INFO  Base dir: /usr/src
+19:37:28.433 INFO  Working dir: /tmp/.scannerwork
+19:37:28.553 INFO  Load quality profiles
+19:37:28.657 INFO  Load quality profiles (done) | time=104ms
+19:37:28.683 INFO  Load active rules
+19:37:29.024 INFO  Load active rules (done) | time=341ms
+19:37:29.035 INFO  Load analysis cache
+19:37:29.053 INFO  Load analysis cache (404) | time=19ms
+19:37:29.135 INFO  Preprocessing files...
+19:37:29.296 INFO  2 languages detected in 168 preprocessed files (done) | time=160ms
+19:37:29.297 INFO  0 files ignored because of inclusion/exclusion patterns
+19:37:29.298 INFO  5 directories skipped because of exclusion patterns (content not counted)
+19:37:29.299 INFO  0 files ignored because of scm ignore settings
+19:37:29.300 INFO  Loading plugins for detected languages
+19:37:29.301 INFO  Load/download plugins
+19:37:30.202 INFO  Load/download plugins (done) | time=902ms
+19:37:30.406 INFO  Load project repositories
+19:37:30.529 INFO  Load project repositories (done) | time=122ms
+19:37:30.565 INFO  Indexing files...
+19:37:30.565 INFO  Project configuration:
+19:37:30.565 INFO    Excluded sources: **/__pycache__/**, **/*.pyc
+19:37:30.566 INFO    Excluded tests: **/__pycache__/**, **/*.pyc
+19:37:30.617 INFO  168 files indexed (done) | time=52ms
+19:37:30.618 INFO  Quality profile for py: Sonar way comprehensive
+19:37:30.619 INFO  Quality profile for web: Sonar way core
+19:37:30.619 INFO  ------------- Run sensors on module Banco Digital - UFF 2026.2
+19:37:30.696 INFO  Load metrics repository
+19:37:30.756 INFO  Load metrics repository (done) | time=57ms
+19:37:31.601 INFO  Reflections took 102 ms to scan 1 urls, producing 30 keys and 313 values
+19:37:31.713 INFO  Sensor IaC YAML File Type Classification Sensor [iac]
+19:37:31.717 INFO  Sensor IaC YAML File Type Classification Sensor [iac] (done) | time=3ms
+19:37:31.717 INFO  Sensor IaC hadolint report Sensor [iac]
+19:37:31.717 INFO  Sensor IaC hadolint report Sensor [iac] (done) | time=0ms
+19:37:31.717 INFO  Sensor Java Config Sensor [iac]
+19:37:31.718 INFO  There are no files to be analyzed for the Java language
+19:37:31.718 INFO  Sensor Java Config Sensor [iac] (done) | time=0ms
+19:37:31.718 INFO  Sensor IaC Docker Sensor [iac]
+19:37:31.721 INFO  There are no files to be analyzed for the Docker language
+19:37:31.722 INFO  Sensor IaC Docker Sensor [iac] (done) | time=3ms
+19:37:31.722 INFO  Sensor Python Sensor [python]
+19:37:32.689 INFO  Starting global symbols computation
+19:37:32.693 INFO  44 source files to be analyzed
+19:37:33.828 INFO  44/44 source files have been analyzed
+19:37:33.829 INFO  Finished step global symbols computation in 1138ms
+19:37:33.892 INFO  Starting rules execution
+19:37:33.893 INFO  44 source files to be analyzed
+19:37:35.153 INFO  44/44 source files have been analyzed
+19:37:35.153 INFO  Finished step rules execution in 1261ms
+19:37:35.154 INFO  The Python analyzer was able to leverage cached data from previous analyses for 0 out of 44 files. These files were not parsed.
+19:37:35.158 INFO  Sensor Python Sensor [python] (done) | time=3435ms
+19:37:35.158 INFO  Sensor Cobertura Sensor for Python coverage [python]
+19:37:35.199 INFO  Python test coverage
+19:37:35.201 INFO  Parsing report '/usr/src/coverage.xml'
+19:37:35.290 INFO  Sensor Cobertura Sensor for Python coverage [python] (done) | time=132ms
+19:37:35.290 INFO  Sensor PythonXUnitSensor [python]
+19:37:35.330 INFO  Sensor PythonXUnitSensor [python] (done) | time=39ms
+19:37:35.330 INFO  Sensor Python Dependency Sensor [python]
+19:37:35.336 INFO  Sensor Python Dependency Sensor [python] (done) | time=5ms
+19:37:35.336 INFO  Sensor HTML [web]
+19:37:35.467 INFO  Sensor HTML [web] (done) | time=130ms
+19:37:35.467 INFO  Sensor TextAndSecretsSensor [text]
+19:37:35.518 INFO  Available processors: 8
+19:37:35.518 INFO  Using 8 threads for analysis.
+19:37:35.853 INFO  Start fetching files for the text and secrets analysis
+19:37:35.866 INFO  Using Git CLI to retrieve dirty files
+19:37:35.874 INFO  Retrieving language associated files and files included via "sonar.text.inclusions" that are tracked by git
+19:37:35.883 INFO  Starting the text and secrets analysis
+19:37:35.886 INFO  52 source files to be analyzed for the text and secrets analysis
+19:37:35.982 INFO  52/52 source files have been analyzed for the text and secrets analysis
+19:37:35.985 INFO  Sensor TextAndSecretsSensor [text] (done) | time=517ms
+19:37:35.988 INFO  ------------- Run sensors on project
+19:37:36.198 INFO  Sensor JavaScript/TypeScript/CSS analysis [javascript]
+19:37:36.440 INFO  Detected os: Linux arch: amd64 alpine: false. Platform: LINUX_X64
+19:37:36.441 INFO  Deploy location /opt/sonar-scanner/.sonar/js/node-runtime, tagetRuntime: /opt/sonar-scanner/.sonar/js/node-runtime/node,  version: /opt/sonar-scanner/.sonar/js/node-runtime/version.txt
+19:37:39.144 INFO  Using embedded Node.js runtime.
+19:37:39.144 INFO  Using Node.js executable: '/opt/sonar-scanner/.sonar/js/node-runtime/node'.
+19:37:41.177 INFO  Memory configuration: OS (15867 MB), Node.js (4288 MB).
+19:37:41.188 INFO  gRPC analyze-project server listening on 127.0.0.1:43997
+19:37:41.345 INFO  Plugin version: [14.3.0.46350]
+19:37:43.890 INFO  Found 0 tsconfig.json file(s): []
+19:37:44.010 INFO  8 source files to be analyzed
+19:37:44.010 INFO  8/8 source files have been analyzed
+19:37:44.027 INFO  Hit the cache for 0 out of 8
+19:37:44.028 INFO  Miss the cache for 8 out of 8: ANALYSIS_MODE_INELIGIBLE [8/8]
+19:37:44.028 INFO  Sensor JavaScript/TypeScript/CSS analysis [javascript] (done) | time=7829ms
+19:37:44.028 INFO  Sensor IaC Project Sensor [iac]
+19:37:44.030 INFO  Sensor IaC Project Sensor [iac] (done) | time=1ms
+19:37:44.031 INFO  Sensor Zero Coverage Sensor
+19:37:44.031 INFO  Sensor Zero Coverage Sensor (done) | time=0ms
+19:37:44.031 INFO  ------------- Gather SCA dependencies on project
+19:37:44.039 INFO  Dependency analysis skipped
+19:37:44.043 INFO  SCM Publisher SCM provider for this project is: git
+19:37:44.044 INFO  SCM Publisher 47 source files to be analyzed
+19:37:44.625 INFO  SCM Publisher 47/47 source files have been analyzed (done) | time=581ms
+19:37:44.633 INFO  CPD Executor 6 files had no CPD blocks
+19:37:44.633 INFO  CPD Executor Calculating CPD for 28 files
+19:37:44.650 INFO  CPD Executor CPD calculation finished (done) | time=17ms
+19:37:44.657 INFO  SCM revision ID '68d4f53ac6447beee02d0809eb50330aab8a2871'
+19:37:44.773 INFO  Analysis report generated in 116ms, dir size=611.4 kB
+19:37:44.880 INFO  Analysis report compressed in 106ms, zip size=255.9 kB
+19:37:44.952 INFO  Analysis report uploaded in 71ms
+19:37:44.954 INFO  ANALYSIS SUCCESSFUL, you can find the results at: http://host.docker.internal:9000/dashboard?id=banco-digital-uff-2026-2
+19:37:44.954 INFO  Note that you will be able to access the updated dashboard once the server has processed the submitted analysis report
+19:37:44.955 INFO  More about the report processing at http://host.docker.internal:9000/api/ce/task?id=289a3c5b-2265-4826-ae45-1ce4e3d4b0a4
+19:37:45.068 INFO  Analysis total time: 18.898 s
+19:37:45.070 INFO  SonarScanner Engine completed successfully
+19:37:45.094 INFO  EXECUTION SUCCESS
+19:37:45.095 INFO  Total time: 22.134s
+[1;33m[sonar][0m A análise foi enviada, mas o pytest terminou com código 1 (falhas registradas).

@@ -98,16 +98,16 @@ def test_tem_isencao(tipo: TipoConta, saldo: float, esperado: bool, tarifa: Tari
     ("tipo", "saldo", "esperado"),
     [
         pytest.param(TipoConta.CORRENTE, 3000.0, 30.0, id="corrente_sem_pacote"),
-        # Na #50, _tarifa_com_pacote deixou de ser código morto e passou a ter a regra real
-        # usada por tarifa_mensal: saldo >= 5000 dá meia tarifa (30 * 0,5 = 15,00). A versão
-        # antiga do método devolvia 30,00, divergindo da tarifa cobrada na tela.
+        # Até a #50 estes casos chamavam _tarifa_com_pacote, código morto com regra própria
+        # (corrente com saldo 6000 dava 30,00). O método foi removido na #50 e os casos passaram
+        # a verificar a regra real, via tarifa_mensal com pacote: saldo >= 5000 dá 30 * 0,5 = 15,00.
         pytest.param(TipoConta.CORRENTE, 6000.0, 15.0, id="corrente_pacote_base"),
         pytest.param(TipoConta.PREMIUM, 60000.0, 0.0, id="premium_isento"),
         pytest.param(TipoConta.PREMIUM, 4000.0, 35.0, id="premium_pacote"),
     ],
 )
 def test_tarifa_com_pacote(tipo: TipoConta, saldo: float, esperado: float, tarifa: TarifaBancaria):
-    assert tarifa._tarifa_com_pacote(tipo, saldo) == esperado
+    assert tarifa.tarifa_mensal(tipo, saldo, tem_pacote=True) == esperado
 
 
 @pytest.mark.parametrize(
@@ -508,6 +508,12 @@ def test_custom_sobretaxa_premium_usa_tarifa_da_corrente():
             TarifasBase(corrente=30.01), TipoConta.CORRENTE, -1.0, False, 0, 36.01,
             id="custom_saldo_negativo_arredonda_resultado_final",
         ),
+        # meia tarifa do pacote (#50 separou essa regra numa linha própria): 31 * 0,5 = 15,50
+        # mata round(corrente * 0.5, 2) -> round(..., None) / round(...), que dariam 16
+        pytest.param(
+            TarifasBase(corrente=31.0), TipoConta.CORRENTE, 6000.0, True, 0, 15.5,
+            id="custom_pacote_meia_tarifa_com_centavos",
+        ),
     ],
 )
 def test_custom_arredondamento_tarifa_mensal(
@@ -522,20 +528,20 @@ def test_custom_arredondamento_tarifa_mensal(
     assert tarifa.tarifa_mensal(tipo, saldo, tem_pacote=tem_pacote, antiguidade_meses=antiguidade_meses) == esperado
 
 
-# _tarifa_com_pacote era código morto na #45; na #50 passou a ser chamado por
-# tarifa_mensal (ramo com pacote). Os casos abaixo continuam válidos para a regra real.
+# Na #45 estes casos mataram mutantes de _tarifa_com_pacote (código morto). Na #50 o
+# método foi removido e a regra do pacote ficou só em tarifa_mensal; os casos passaram
+# a verificá-la por tarifa_mensal com pacote (mesmos valores esperados).
 @pytest.mark.parametrize(
     ("base", "saldo", "esperado"),
     [
-        # limite exato da isenção da premium: mata saldo >= 50000 -> saldo > 50000 (_tarifa_com_pacote__mutmut_3)
+        # limite exato da isenção da premium com pacote: mata saldo >= 50000 -> saldo > 50000
         pytest.param(TarifasBase(), 50000.0, 0.0, id="vl_tarifa_com_pacote_premium_limite_50000"),
         # 50,01 * 0,7 = 35,007 -> 35,01: mata round(..., 2) -> round(..., None) / round(...) / round(..., 3)
-        # (_tarifa_com_pacote__mutmut_8, 10, 13)
         pytest.param(TarifasBase(premium=50.01), 1000.0, 35.01, id="custom_tarifa_com_pacote_premium_centavos"),
     ],
 )
 def test_tarifa_com_pacote_mutacao(base: TarifasBase, saldo: float, esperado: float):
-    assert TarifaBancaria(base)._tarifa_com_pacote(TipoConta.PREMIUM, saldo) == esperado
+    assert TarifaBancaria(base).tarifa_mensal(TipoConta.PREMIUM, saldo, tem_pacote=True) == esperado
 
 
 def test_pe_anual_premium_com_valores_padrao(tarifa: TarifaBancaria):
