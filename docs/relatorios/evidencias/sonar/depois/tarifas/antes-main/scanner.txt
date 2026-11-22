@@ -1,6 +1,6 @@
-[1;34m[sonar][0m Gerando token em http://localhost:9000 (usuário: admin)...
-[1;34m[sonar][0m Token salvo em /home/danielizu/sonar/.sonar/token (ignorado pelo Git).
-[1;34m[sonar][0m Gerando coverage.xml...
+[sonar] Gerando token em http://localhost:9000 (usuário: admin)...
+[sonar] Token salvo em /home/danielizu/sonar/.sonar/token (ignorado pelo Git).
+[sonar] Gerando coverage.xml...
 ============================= test session starts ==============================
 platform linux -- Python 3.12.16, pytest-9.1.1, pluggy-1.6.0
 rootdir: /home/danielizu/sonar
@@ -110,7 +110,7 @@ Coverage XML written to file coverage.xml
 FAILED tests/unit/test_pix.py::test_validar_chave[email_dois_arroba] - Assert...
 FAILED tests/unit/test_pix.py::test_solicitar_chargeback[chargeback_bloqueada_dias_30_valor_alto]
 =================== 2 failed, 489 passed, 4 xfailed in 3.78s ===================
-[1;33m[sonar][0m sonar-scanner não encontrado; usando a imagem oficial via Docker.
+[sonar] sonar-scanner não encontrado; usando a imagem oficial via Docker.
 Unable to find image 'sonarsource/sonar-scanner-cli:latest' locally
 latest: Pulling from sonarsource/sonar-scanner-cli
 4f4fb700ef54: Pulling fs layer
@@ -265,4 +265,4 @@ Status: Downloaded newer image for sonarsource/sonar-scanner-cli:latest
 19:37:45.070 INFO  SonarScanner Engine completed successfully
 19:37:45.094 INFO  EXECUTION SUCCESS
 19:37:45.095 INFO  Total time: 22.134s
-[1;33m[sonar][0m A análise foi enviada, mas o pytest terminou com código 1 (falhas registradas).
+[sonar] A análise foi enviada, mas o pytest terminou com código 1 (falhas registradas).

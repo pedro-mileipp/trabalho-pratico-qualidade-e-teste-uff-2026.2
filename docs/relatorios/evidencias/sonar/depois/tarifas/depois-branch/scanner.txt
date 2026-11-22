@@ -1,0 +1,241 @@
+[sonar] Gerando coverage.xml...
+============================= test session starts ==============================
+platform linux -- Python 3.12.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/danielizu/sonar
+configfile: pyproject.toml
+plugins: cov-7.1.0, mock-3.15.1
+collected 497 items
+
+tests/unit/test_auth_service.py ............                             [  2%]
+tests/unit/test_credito.py ............................................. [ 11%]
+...................................................                      [ 21%]
+tests/unit/test_emprestimo.py .......................................... [ 30%]
+........................................................................ [ 44%]
+....                                                                     [ 45%]
+tests/unit/test_juros.py ............................................... [ 54%]
+.....................                                                    [ 59%]
+tests/unit/test_pix.py ..............F..............................F... [ 69%]
+...................                                                      [ 72%]
+tests/unit/test_tarifas.py ............................................. [ 81%]
+........................................................................ [ 96%]
+...........xxx                                                           [ 99%]
+tests/unit/test_transacao_service.py ....                                [100%]
+
+=================================== FAILURES ===================================
+____________________ test_validar_chave[email_dois_arroba] _____________________
+
+pix = <app.dominio.pix.TransacaoPix object at 0x73140171c440>
+chave = 'a@b@c.com', tipo = <ChaveTipo.EMAIL: 'email'>, esperado = False
+
+    @pytest.mark.parametrize(
+        ("chave", "tipo", "esperado"),
+        [
+            pytest.param("52998224725", ChaveTipo.CPF, True, id="cpf_valido"),
+            pytest.param("11111111111", ChaveTipo.CPF, False, id="cpf_todos_digitos_iguais"),
+            pytest.param("12345678901", ChaveTipo.CPF, False, id="cpf_dv_invalido"),
+            pytest.param("123", ChaveTipo.CPF, False, id="cpf_poucos_digitos"),
+            pytest.param("529982247250", ChaveTipo.CPF, False, id="cpf_digitos_demais"),
+            pytest.param("abc", ChaveTipo.CPF, False, id="cpf_sem_digitos"),
+            pytest.param("user@example.com", ChaveTipo.EMAIL, True, id="email_valido"),
+            pytest.param("usuario.com", ChaveTipo.EMAIL, False, id="email_sem_arroba"),
+            pytest.param("@example.com", ChaveTipo.EMAIL, False, id="email_local_vazio"),
+            pytest.param(".user@example.com", ChaveTipo.EMAIL, False, id="email_local_ponto_inicio"),
+            pytest.param("user.@example.com", ChaveTipo.EMAIL, False, id="email_local_ponto_fim"),
+            pytest.param("user@example", ChaveTipo.EMAIL, False, id="email_dominio_sem_ponto"),
+            pytest.param("user@.example.com", ChaveTipo.EMAIL, False, id="email_dominio_ponto_inicio"),
+            pytest.param("user@example.com.", ChaveTipo.EMAIL, False, id="email_dominio_ponto_fim"),
+            pytest.param("a@b@c.com", ChaveTipo.EMAIL, False, id="email_dois_arroba"),
+            pytest.param("  user@example.com  ", ChaveTipo.EMAIL, True, id="email_com_espacos"),
+            pytest.param(None, ChaveTipo.EMAIL, False, id="email_none"),
+            pytest.param("2122223333", ChaveTipo.TELEFONE, True, id="telefone_10_digitos"),
+            pytest.param("21988887777", ChaveTipo.TELEFONE, True, id="telefone_11_digitos"),
+            pytest.param("212223333", ChaveTipo.TELEFONE, False, id="telefone_9_digitos"),
+            pytest.param("212222333344", ChaveTipo.TELEFONE, False, id="telefone_12_digitos"),
+            pytest.param("(21) 2222-3333", ChaveTipo.TELEFONE, True, id="telefone_formatado"),
+            pytest.param("a" * 32, ChaveTipo.ALEATORIA, True, id="aleatoria_32_chars"),
+            pytest.param("a" * 31, ChaveTipo.ALEATORIA, False, id="aleatoria_31_chars"),
+            pytest.param("a" * 33, ChaveTipo.ALEATORIA, False, id="aleatoria_33_chars"),
+            pytest.param("", ChaveTipo.EMAIL, False, id="chave_vazia"),
+            pytest.param("x", None, False, id="tipo_invalido"),
+        ],
+    )
+    def test_validar_chave(pix, chave, tipo, esperado):
+>       assert pix.validar_chave(chave, tipo) is esperado
+E       AssertionError: assert True is False
+E        +  where True = validar_chave('a@b@c.com', <ChaveTipo.EMAIL: 'email'>)
+E        +    where validar_chave = <app.dominio.pix.TransacaoPix object at 0x73140171c440>.validar_chave
+
+tests/unit/test_pix.py:50: AssertionError
+______ test_solicitar_chargeback[chargeback_bloqueada_dias_30_valor_alto] ______
+
+chave = 'bloq@x.com', valor = 999999, dias = 30, motivo = None
+bloqueadas = ['bloq@x.com'], esperado = False
+
+    @pytest.mark.parametrize(
+        ("chave", "valor", "dias", "motivo", "bloqueadas", "esperado"),
+        [
+            pytest.param(VALID_EMAIL, 100, -1, None, [], False, id="chargeback_dias_negativo"),
+            pytest.param(VALID_EMAIL, 100, 91, None, [], False, id="chargeback_dias_91"),
+            pytest.param(VALID_EMAIL, 100, 90, None, [], False, id="chargeback_dias_90"),
+            pytest.param(VALID_EMAIL, 0, 30, None, [], False, id="chargeback_valor_zero"),
+            pytest.param(VALID_EMAIL, -5, 30, None, [], False, id="chargeback_valor_negativo"),
+            pytest.param("bloq@x.com", 999999, 30, None, BLOQUEADAS, False, id="chargeback_bloqueada_dias_30_valor_alto"),
+            pytest.param(VALID_EMAIL, 100, 60, "golpe", [], True, id="chargeback_motivo_golpe"),
+            pytest.param(VALID_EMAIL, 100, 60, "FRAUDE", [], True, id="chargeback_motivo_fraude_maiusculo"),
+            pytest.param(VALID_EMAIL, 100, 60, "", [], False, id="chargeback_motivo_vazio"),
+            pytest.param(VALID_EMAIL, 100, 0, None, [], True, id="chargeback_dias_zero"),
+            pytest.param(VALID_EMAIL, 100, 7, None, [], True, id="chargeback_dias_7"),
+            pytest.param(VALID_EMAIL, 100, 8, None, [], True, id="chargeback_dias_8_valor_baixo"),
+            pytest.param(VALID_EMAIL, 6000, 8, None, [], False, id="chargeback_dias_8_valor_alto"),
+            pytest.param(VALID_EMAIL, 5000, 30, None, [], True, id="chargeback_dias_30_valor_exato"),
+            pytest.param(VALID_EMAIL, 5000.01, 30, None, [], False, id="chargeback_dias_30_valor_alto"),
+            pytest.param(VALID_EMAIL, 100, 31, None, [], False, id="chargeback_dias_31"),
+        ],
+    )
+    def test_solicitar_chargeback(chave, valor, dias, motivo, bloqueadas, esperado):
+        pix = TransacaoPix(ConfiguracaoPix(chaves_bloqueadas=bloqueadas))
+>       assert pix.solicitar_chargeback(chave, valor, dias, motivo) is esperado
+E       AssertionError: assert True is False
+E        +  where True = solicitar_chargeback('bloq@x.com', 999999, 30, None)
+E        +    where solicitar_chargeback = <app.dominio.pix.TransacaoPix object at 0x73140171d790>.solicitar_chargeback
+
+tests/unit/test_pix.py:99: AssertionError
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.16-final-0 _______________
+
+Coverage XML written to file coverage.xml
+=========================== short test summary info ============================
+FAILED tests/unit/test_pix.py::test_validar_chave[email_dois_arroba] - Assert...
+FAILED tests/unit/test_pix.py::test_solicitar_chargeback[chargeback_bloqueada_dias_30_valor_alto]
+=================== 2 failed, 492 passed, 3 xfailed in 2.94s ===================
+[sonar] sonar-scanner não encontrado; usando a imagem oficial via Docker.
+19:44:27.179 INFO  Scanner configuration file: /opt/sonar-scanner/conf/sonar-scanner.properties
+19:44:27.183 INFO  Project root configuration file: /usr/src/sonar-project.properties
+19:44:27.195 INFO  SonarScanner CLI 8.4.0.16527
+19:44:27.203 INFO  Linux 6.18.58.1-microsoft-standard-WSL2 amd64
+19:44:27.960 INFO  Communicating with SonarQube Community Build 26.11.0.134175
+19:44:27.961 INFO  JRE provisioning: os[linux], arch[x86_64]
+19:44:30.077 INFO  Starting SonarScanner Engine...
+19:44:30.078 INFO  Java 21.0.13 Eclipse Adoptium (64-bit)
+19:44:30.897 INFO  Load global settings
+19:44:30.994 INFO  Load global settings (done) | time=97ms
+19:44:30.997 INFO  Server id: 147B411E-AaIEveSaS7z1gWwXOgfK
+19:44:31.297 INFO  Loading required plugins
+19:44:31.298 INFO  Load plugins index
+19:44:31.318 INFO  Load plugins index (done) | time=19ms
+19:44:31.319 INFO  Load/download plugins
+19:44:31.612 INFO  Load/download plugins (done) | time=293ms
+19:44:31.915 INFO  Load project settings for component key: 'banco-digital-uff-2026-2'
+19:44:31.935 INFO  Load project settings for component key: 'banco-digital-uff-2026-2' (done) | time=19ms
+19:44:31.948 INFO  Process project properties
+19:44:31.961 INFO  Process project properties (done) | time=12ms
+19:44:31.970 INFO  Project key: banco-digital-uff-2026-2
+19:44:31.970 INFO  Base dir: /usr/src
+19:44:31.970 INFO  Working dir: /tmp/.scannerwork
+19:44:32.087 INFO  Load quality profiles
+19:44:32.136 INFO  Load quality profiles (done) | time=48ms
+19:44:32.162 INFO  Load active rules
+19:44:32.360 INFO  Load active rules (done) | time=197ms
+19:44:32.367 INFO  Load analysis cache
+19:44:32.384 INFO  Load analysis cache | time=18ms
+19:44:32.453 INFO  Preprocessing files...
+19:44:32.611 INFO  2 languages detected in 168 preprocessed files (done) | time=157ms
+19:44:32.612 INFO  0 files ignored because of inclusion/exclusion patterns
+19:44:32.612 INFO  5 directories skipped because of exclusion patterns (content not counted)
+19:44:32.613 INFO  0 files ignored because of scm ignore settings
+19:44:32.614 INFO  Loading plugins for detected languages
+19:44:32.615 INFO  Load/download plugins
+19:44:33.688 INFO  Load/download plugins (done) | time=1072ms
+19:44:34.017 INFO  Load project repositories
+19:44:34.191 INFO  Load project repositories (done) | time=174ms
+19:44:34.236 INFO  Indexing files...
+19:44:34.237 INFO  Project configuration:
+19:44:34.238 INFO    Excluded sources: **/__pycache__/**, **/*.pyc
+19:44:34.239 INFO    Excluded tests: **/__pycache__/**, **/*.pyc
+19:44:34.322 INFO  168 files indexed (done) | time=85ms
+19:44:34.325 INFO  Quality profile for py: Sonar way comprehensive
+19:44:34.326 INFO  Quality profile for web: Sonar way core
+19:44:34.326 INFO  ------------- Run sensors on module Banco Digital - UFF 2026.2
+19:44:34.396 INFO  Load metrics repository
+19:44:34.497 INFO  Load metrics repository (done) | time=87ms
+19:44:35.954 INFO  Reflections took 124 ms to scan 1 urls, producing 30 keys and 313 values
+19:44:36.123 INFO  Sensor IaC YAML File Type Classification Sensor [iac]
+19:44:36.129 INFO  Sensor IaC YAML File Type Classification Sensor [iac] (done) | time=6ms
+19:44:36.130 INFO  Sensor IaC hadolint report Sensor [iac]
+19:44:36.133 INFO  Sensor IaC hadolint report Sensor [iac] (done) | time=2ms
+19:44:36.134 INFO  Sensor Java Config Sensor [iac]
+19:44:36.135 INFO  There are no files to be analyzed for the Java language
+19:44:36.136 INFO  Sensor Java Config Sensor [iac] (done) | time=1ms
+19:44:36.136 INFO  Sensor IaC Docker Sensor [iac]
+19:44:36.142 INFO  There are no files to be analyzed for the Docker language
+19:44:36.143 INFO  Sensor IaC Docker Sensor [iac] (done) | time=7ms
+19:44:36.143 INFO  Sensor Python Sensor [python]
+19:44:37.037 INFO  Starting global symbols computation
+19:44:37.043 INFO  44 source files to be analyzed
+19:44:38.520 INFO  44/44 source files have been analyzed
+19:44:38.522 INFO  Finished step global symbols computation in 1479ms
+19:44:38.601 INFO  Starting rules execution
+19:44:38.602 INFO  44 source files to be analyzed
+19:44:40.717 INFO  44/44 source files have been analyzed
+19:44:40.718 INFO  Finished step rules execution in 2115ms
+19:44:40.718 INFO  The Python analyzer was able to leverage cached data from previous analyses for 0 out of 44 files. These files were not parsed.
+19:44:40.723 INFO  Sensor Python Sensor [python] (done) | time=4580ms
+19:44:40.723 INFO  Sensor Cobertura Sensor for Python coverage [python]
+19:44:40.819 INFO  Python test coverage
+19:44:40.826 INFO  Parsing report '/usr/src/coverage.xml'
+19:44:41.001 INFO  Sensor Cobertura Sensor for Python coverage [python] (done) | time=278ms
+19:44:41.002 INFO  Sensor PythonXUnitSensor [python]
+19:44:41.115 INFO  Sensor PythonXUnitSensor [python] (done) | time=113ms
+19:44:41.115 INFO  Sensor Python Dependency Sensor [python]
+19:44:41.122 INFO  Sensor Python Dependency Sensor [python] (done) | time=7ms
+19:44:41.123 INFO  Sensor HTML [web]
+19:44:41.261 INFO  Sensor HTML [web] (done) | time=138ms
+19:44:41.262 INFO  Sensor TextAndSecretsSensor [text]
+19:44:41.319 INFO  Available processors: 8
+19:44:41.322 INFO  Using 8 threads for analysis.
+19:44:41.784 INFO  Start fetching files for the text and secrets analysis
+19:44:41.795 INFO  Using Git CLI to retrieve dirty files
+19:44:41.853 INFO  Retrieving language associated files and files included via "sonar.text.inclusions" that are tracked by git
+19:44:41.872 INFO  Starting the text and secrets analysis
+19:44:41.874 INFO  52 source files to be analyzed for the text and secrets analysis
+19:44:41.972 INFO  52/52 source files have been analyzed for the text and secrets analysis
+19:44:41.977 INFO  Sensor TextAndSecretsSensor [text] (done) | time=715ms
+19:44:41.979 INFO  ------------- Run sensors on project
+19:44:42.288 INFO  Sensor JavaScript/TypeScript/CSS analysis [javascript]
+19:44:42.613 INFO  Detected os: Linux arch: amd64 alpine: false. Platform: LINUX_X64
+19:44:42.614 INFO  Deploy location /opt/sonar-scanner/.sonar/js/node-runtime, tagetRuntime: /opt/sonar-scanner/.sonar/js/node-runtime/node,  version: /opt/sonar-scanner/.sonar/js/node-runtime/version.txt
+19:44:45.378 INFO  Using embedded Node.js runtime.
+19:44:45.379 INFO  Using Node.js executable: '/opt/sonar-scanner/.sonar/js/node-runtime/node'.
+19:44:48.061 INFO  Memory configuration: OS (15867 MB), Node.js (4288 MB).
+19:44:48.073 INFO  gRPC analyze-project server listening on 127.0.0.1:41293
+19:44:48.236 INFO  Plugin version: [14.3.0.46350]
+19:44:50.695 INFO  Found 0 tsconfig.json file(s): []
+19:44:50.822 INFO  8 source files to be analyzed
+19:44:50.822 INFO  8/8 source files have been analyzed
+19:44:50.834 INFO  Hit the cache for 0 out of 8
+19:44:50.835 INFO  Miss the cache for 8 out of 8: ANALYSIS_MODE_INELIGIBLE [8/8]
+19:44:50.835 INFO  Sensor JavaScript/TypeScript/CSS analysis [javascript] (done) | time=8546ms
+19:44:50.835 INFO  Sensor IaC Project Sensor [iac]
+19:44:50.837 INFO  Sensor IaC Project Sensor [iac] (done) | time=1ms
+19:44:50.837 INFO  Sensor Zero Coverage Sensor
+19:44:50.838 INFO  Sensor Zero Coverage Sensor (done) | time=1ms
+19:44:50.838 INFO  ------------- Gather SCA dependencies on project
+19:44:50.845 INFO  Dependency analysis skipped
+19:44:50.855 INFO  SCM Publisher SCM provider for this project is: git
+19:44:50.856 INFO  SCM Publisher 2 source files to be analyzed
+19:44:51.139 INFO  SCM Publisher 2/2 source files have been analyzed (done) | time=282ms
+19:44:51.148 INFO  CPD Executor 6 files had no CPD blocks
+19:44:51.149 INFO  CPD Executor Calculating CPD for 28 files
+19:44:51.170 INFO  CPD Executor CPD calculation finished (done) | time=21ms
+19:44:51.181 INFO  SCM revision ID '359f74bcb1cd413621a3dcfaf129f796597537e0'
+19:44:51.317 INFO  Analysis report generated in 135ms, dir size=602.6 kB
+19:44:51.427 INFO  Analysis report compressed in 109ms, zip size=251.1 kB
+19:44:51.486 INFO  Analysis report uploaded in 60ms
+19:44:51.488 INFO  ANALYSIS SUCCESSFUL, you can find the results at: http://host.docker.internal:9000/dashboard?id=banco-digital-uff-2026-2
+19:44:51.489 INFO  Note that you will be able to access the updated dashboard once the server has processed the submitted analysis report
+19:44:51.489 INFO  More about the report processing at http://host.docker.internal:9000/api/ce/task?id=0b2ce24e-cafd-49bb-9a6b-7cfbfd9d7613
+19:44:51.787 INFO  Analysis total time: 21.659 s
+19:44:51.791 INFO  SonarScanner Engine completed successfully
+19:44:51.871 INFO  EXECUTION SUCCESS
+19:44:51.873 INFO  Total time: 24.696s
+[sonar] A análise foi enviada, mas o pytest terminou com código 1 (falhas registradas).
