@@ -1,0 +1,254 @@
+Relatório de Mutação — SimuladorEmprestimo (app/dominio/emprestimo.py)
+Data: 22/11/2026 15:43:27
+Ferramenta: mutmut 3.8.0 engine (trampoline / libcst)
+Suíte de testes: tests/unit/test_emprestimo.py (118 testes — suíte da #41)
+
+Resumo:
+  Total gerados:      301
+  Mortos:             278
+  Sobreviventes:      23
+  Timeouts:           0
+  Escore de mutação:  92.36%
+  Tempo decorrido:    109.9s
+
+============================================================
+LISTA DE MUTANTES SOBREVIVENTES E SEUS DIFFS (1ª EXECUÇÃO)
+============================================================
+
+--- Sobrevivente #1: xǁSimuladorEmprestimoǁ__init____mutmut_2 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -1,7 +1,7 @@
+ def __init__(
+     self,
+     taxa_base: float = 0.03,
+-    teto_comprometimento: float = 0.30,
++    teto_comprometimento: float = 1.3,
+     prazo_min: int = 2,
+     prazo_max: int = 60,
+     valor_minimo: float = 100.0,
+
+--- Sobrevivente #2: xǁSimuladorEmprestimoǁteto_por_renda__mutmut_1 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -1,5 +1,5 @@
+ def teto_por_renda(self, renda: float) -> float:
+-    if renda <= 0:
++    if renda < 0:
+         return 0.0
+     if renda < 2000:
+         return renda * 0.15
+
+--- Sobrevivente #3: xǁSimuladorEmprestimoǁparcelas_price__mutmut_5 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -1,6 +1,6 @@
+ def parcelas_price(self, principal: float, taxa_mensal: float, meses: int) -> list[float]:
+     if taxa_mensal == 0:
+-        return [round(principal / meses, 2)] * meses
++        return [round(principal / meses, None)] * meses
+
+--- Sobrevivente #4: xǁSimuladorEmprestimoǁparcelas_price__mutmut_7 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -1,6 +1,6 @@
+ def parcelas_price(self, principal: float, taxa_mensal: float, meses: int) -> list[float]:
+     if taxa_mensal == 0:
+-        return [round(principal / meses, 2)] * meses
++        return [round(principal / meses, )] * meses
+
+--- Sobrevivente #5: xǁSimuladorEmprestimoǁparcelas_price__mutmut_9 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -1,6 +1,6 @@
+ def parcelas_price(self, principal: float, taxa_mensal: float, meses: int) -> list[float]:
+     if taxa_mensal == 0:
+-        return [round(principal / meses, 2)] * meses
++        return [round(principal / meses, 3)] * meses
+
+--- Sobrevivente #6: xǁSimuladorEmprestimoǁparcelas_sac__mutmut_15 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -5,6 +5,6 @@
+     for _ in range(meses):
+         juros = saldo * taxa_mensal
+         parcela = amortizacao + juros
+-        parcelas.append(round(parcela, 2))
++        parcelas.append(round(parcela, 3))
+         saldo -= amortizacao
+     return parcelas
+
+--- Sobrevivente #7: xǁSimuladorEmprestimoǁsimular__mutmut_80 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -15,7 +15,7 @@
+         return ResultadoEmprestimo(False, "prazo_curto", 0, 0, 0, [])
+     if meses > self._prazo_max:
+         return ResultadoEmprestimo(False, "prazo_longo", 0, 0, 0, [])
+-    if renda <= 0:
++    if renda <= 1:
+         return ResultadoEmprestimo(False, "renda_invalida", 0, 0, 0, [])
+     if inadimplente:
+         return ResultadoEmprestimo(False, "inadimplente", 0, 0, 0, [])
+
+--- Sobrevivente #8: xǁSimuladorEmprestimoǁsimular__mutmut_144 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -23,7 +23,7 @@
+         return ResultadoEmprestimo(False, "score_baixo", 0, 0, 0, [])
+     teto = self.teto_por_renda(renda)
+     if principal > teto:
+-        return ResultadoEmprestimo(False, "acima_teto", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "acima_teto", None, 0, 0, [])
+
+--- Sobrevivente #9: xǁSimuladorEmprestimoǁsimular__mutmut_145 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -23,7 +23,7 @@
+         return ResultadoEmprestimo(False, "score_baixo", 0, 0, 0, [])
+     teto = self.teto_por_renda(renda)
+     if principal > teto:
+-        return ResultadoEmprestimo(False, "acima_teto", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "acima_teto", 0, None, 0, [])
+
+--- Sobrevivente #10: xǁSimuladorEmprestimoǁsimular__mutmut_146 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -23,7 +23,7 @@
+         return ResultadoEmprestimo(False, "score_baixo", 0, 0, 0, [])
+     teto = self.teto_por_renda(renda)
+     if principal > teto:
+-        return ResultadoEmprestimo(False, "acima_teto", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "acima_teto", 0, 0, None, [])
+
+--- Sobrevivente #11: xǁSimuladorEmprestimoǁsimular__mutmut_147 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -23,7 +23,7 @@
+         return ResultadoEmprestimo(False, "score_baixo", 0, 0, 0, [])
+     teto = self.teto_por_renda(renda)
+     if principal > teto:
+-        return ResultadoEmprestimo(False, "acima_teto", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "acima_teto", 0, 0, 0, None)
+
+--- Sobrevivente #12: xǁSimuladorEmprestimoǁsimular__mutmut_157 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -23,7 +23,7 @@
+         return ResultadoEmprestimo(False, "score_baixo", 0, 0, 0, [])
+     teto = self.teto_por_renda(renda)
+     if principal > teto:
+-        return ResultadoEmprestimo(False, "acima_teto", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "acima_teto", 1, 0, 0, [])
+
+--- Sobrevivente #13: xǁSimuladorEmprestimoǁsimular__mutmut_158 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -23,7 +23,7 @@
+         return ResultadoEmprestimo(False, "score_baixo", 0, 0, 0, [])
+     teto = self.teto_por_renda(renda)
+     if principal > teto:
+-        return ResultadoEmprestimo(False, "acima_teto", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "acima_teto", 0, 1, 0, [])
+
+--- Sobrevivente #14: xǁSimuladorEmprestimoǁsimular__mutmut_159 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -23,7 +23,7 @@
+         return ResultadoEmprestimo(False, "score_baixo", 0, 0, 0, [])
+     teto = self.teto_por_renda(renda)
+     if principal > teto:
+-        return ResultadoEmprestimo(False, "acima_teto", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "acima_teto", 0, 0, 1, [])
+
+--- Sobrevivente #15: xǁSimuladorEmprestimoǁsimular__mutmut_179 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -30,7 +30,7 @@
+     else:
+         parcelas = self.parcelas_price(principal, taxa, meses)
+     primeira = parcelas[0]
+-    if primeira > renda * self._teto_comprometimento:
++    if primeira >= renda * self._teto_comprometimento:
+         return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, [])
+
+--- Sobrevivente #16: xǁSimuladorEmprestimoǁsimular__mutmut_183 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -31,6 +31,6 @@
+         parcelas = self.parcelas_price(principal, taxa, meses)
+     primeira = parcelas[0]
+     if primeira > renda * self._teto_comprometimento:
+-        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "comprometimento_acima", None, 0, 0, [])
+
+--- Sobrevivente #17: xǁSimuladorEmprestimoǁsimular__mutmut_184 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -31,6 +31,6 @@
+         parcelas = self.parcelas_price(principal, taxa, meses)
+     primeira = parcelas[0]
+     if primeira > renda * self._teto_comprometimento:
+-        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "comprometimento_acima", 0, None, 0, [])
+
+--- Sobrevivente #18: xǁSimuladorEmprestimoǁsimular__mutmut_185 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -31,6 +31,6 @@
+         parcelas = self.parcelas_price(principal, taxa, meses)
+     primeira = parcelas[0]
+     if primeira > renda * self._teto_comprometimento:
+-        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, None, [])
+
+--- Sobrevivente #19: xǁSimuladorEmprestimoǁsimular__mutmut_186 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -31,6 +31,6 @@
+         parcelas = self.parcelas_price(principal, taxa, meses)
+     primeira = parcelas[0]
+     if primeira > renda * self._teto_comprometimento:
+-        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, None)
+
+--- Sobrevivente #20: xǁSimuladorEmprestimoǁsimular__mutmut_196 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -31,6 +31,6 @@
+         parcelas = self.parcelas_price(principal, taxa, meses)
+     primeira = parcelas[0]
+     if primeira > renda * self._teto_comprometimento:
+-        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "comprometimento_acima", 1, 0, 0, [])
+
+--- Sobrevivente #21: xǁSimuladorEmprestimoǁsimular__mutmut_197 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -31,6 +31,6 @@
+         parcelas = self.parcelas_price(principal, taxa, meses)
+     primeira = parcelas[0]
+     if primeira > renda * self._teto_comprometimento:
+-        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 1, 0, [])
+
+--- Sobrevivente #22: xǁSimuladorEmprestimoǁsimular__mutmut_198 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -31,6 +31,6 @@
+         parcelas = self.parcelas_price(principal, taxa, meses)
+     primeira = parcelas[0]
+     if primeira > renda * self._teto_comprometimento:
+-        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, [])
++        return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 1, [])
+
+--- Sobrevivente #23: xǁSimuladorEmprestimoǁsimular__mutmut_205 ---
+--- app/dominio/emprestimo.py
++++ app/dominio/emprestimo.py
+@@ -32,5 +32,5 @@
+     primeira = parcelas[0]
+     if primeira > renda * self._teto_comprometimento:
+         return ResultadoEmprestimo(False, "comprometimento_acima", 0, 0, 0, [])
+-    total = round(sum(parcelas), 2)
++    total = round(sum(parcelas), 3)
+     return ResultadoEmprestimo(True, "aprovado", primeira, meses, total, parcelas)
