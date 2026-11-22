@@ -66,7 +66,7 @@ class PaginaTarifas:
         campo = self._navegador.find_element(By.ID, id_campo)
         return self._navegador.execute_script("return arguments[0].validity.rangeUnderflow;", campo)
 
-    def _preencher(self, localizador: tuple[str, str], valor: float | str | int) -> None:
+    def _preencher(self, localizador: tuple[str, str], valor: float | str) -> None:
         campo = self._navegador.find_element(*localizador)
         campo.clear()
         campo.send_keys(str(valor))
