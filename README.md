@@ -171,6 +171,7 @@ O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes n
 | `tests/unit/` | Testes unitários (1 arquivo por classe de domínio) |
 | [`tests/system/`](tests/system/) | Entrega 2 — testes de sistema com Selenium: fixtures compartilhadas em `conftest.py` e uma pasta por funcionalidade |
 | [`tests/system/credito/`](tests/system/credito/) | Testes de sistema — Crédito (RF06): [`test_credito_sistema.py`](tests/system/credito/test_credito_sistema.py), page object [`pagina_credito.py`](tests/system/credito/pagina_credito.py) e evidências em [`evidencias/`](tests/system/credito/evidencias/) |
+| [`tests/system/emprestimo/`](tests/system/emprestimo/) | Testes de sistema — Empréstimo (RF05): [`test_emprestimo_sistema.py`](tests/system/emprestimo/test_emprestimo_sistema.py), page object [`pagina_emprestimo.py`](tests/system/emprestimo/pagina_emprestimo.py) e evidências em [`evidencias/`](tests/system/emprestimo/evidencias/) |
 | [`tests/rnf/`](tests/rnf/) | Entrega 2 — testes de requisitos não funcionais: fixtures compartilhadas em `conftest.py` e uma pasta por requisito |
 | [`tests/rnf/seguranca/`](tests/rnf/seguranca/) | Segurança da autenticação (RNF06): [`test_seguranca_autenticacao.py`](tests/rnf/seguranca/test_seguranca_autenticacao.py) |
 | [`docs/relatorios/rnf_seguranca.md`](docs/relatorios/rnf_seguranca.md) | Entrega 2 — relatório do RNF de segurança: verificações, riscos identificados e avaliação ISO 25010 (Segurança) |
