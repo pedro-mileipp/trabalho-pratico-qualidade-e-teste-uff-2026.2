@@ -53,6 +53,7 @@ coverage.xml
 junit.xml
 
 # Ferramentas
+md-to-pdf.css
 .sonar/
 .scannerwork/
 
