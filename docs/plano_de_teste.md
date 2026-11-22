@@ -25,6 +25,7 @@
 | 1.14 | 22/11/2026 | Vinicius Sales Felinto | Entrega 2: teste de mutação de `SimuladorEmprestimo` com `mutmut` (escore 99,34%, issue #46) na seção 6.6 |
 | 1.14 | 22/11/2026 | Daniel Izu | Entrega 2: ampliação dos testes unitários e cobertura estrutural todas-arestas (100%) de `TarifaBancaria` (issue #40), defeitos #77 e #78, na seção 6.8; antiguidade passa a ser coberta por testes unitários (seção 1.1.2) |
 | 1.15 | 22/11/2026 | Daniel Izu | Entrega 2: teste de mutação de `TarifaBancaria` com `mutmut` (escore 94,3%; 100% descontando equivalentes, issue #45) na seção 6.8 |
+| 1.17 | 22/11/2026 | Daniel Izu | Entrega 2: issue #49 — `CalculadoraJuros` sem apontamentos no Sonar (justificado) e correção dos 12 apontamentos da autenticação (`login.html`, `registro.html`, `routes/auth.py`) na seção 6.4 |
 
 ---
 
@@ -418,6 +419,7 @@ Pedro Mileipp, issue [#61](https://github.com/pedro-mileipp/trabalho-pratico-qua
 | Correção de defeito (desconto de IR no mês 12) | [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) | Concluído | Laço ajustado para `range(1, meses + 1)` em `montante_com_aportes`; 36 casos passando em `tests/unit/test_juros.py` em 20/11/2026 (evidências antes/depois em `docs/relatorios/evidencias/bug/`) |
 | Unitários ampliados + cobertura estrutural (todas-arestas) | [#39](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/39) | Concluído | 68 casos passando em 20/11/2026 (`0.40s`); **100.00%** de cobertura de linhas e ramos (`67` statements, `0` missed, `36` branches, `0` partial) com `pe_`, `vl_`, `td_` e `laco_`[cite: 7] |
 | Mutação (escore ≥ 80%) | [#44](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/44) | Concluído | 149 mutantes gerados, 130 mortos e 19 sobreviventes em 20/11/2026: **87,25%** de escore (meta ≥ 80% atingida); evidência em [`docs/relatorios/evidencias/mutacao/juros-mutacao.txt`](relatorios/evidencias/mutacao/juros-mutacao.txt) |
+| Correções do Sonar (executado por Daniel Izu) | [#49](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/49) | Concluído | `CalculadoraJuros`: 0 apontamentos (sem tela nem rota; nada a corrigir). Corrigidos os 12 apontamentos da autenticação (`login.html` 4, `registro.html` 6, `routes/auth.py` 2): 37 → 25 no projeto. Detalhes na seção 6.3 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md) |
 
 
 **Defeitos e decisões:**

@@ -195,3 +195,64 @@ O dashboard “Overall Code” (print `dashboard-depois.png`) mostra a visão po
 - `dashboard-depois.png` — print do dashboard “Overall Code” depois da correção.
 
 **Observação para a reprodução:** numa instância nova, o comando `bootstrap` do `scripts/sonar_local.sh` não consegue associar o perfil comprehensive, porque o projeto ainda não existe no SonarQube antes do primeiro scan (a API devolve HTTP 404, “Project not found”). Aqui, o projeto foi criado antes pela API (`api/projects/create`) e só então o perfil foi associado.
+
+### 6.3 `CalculadoraJuros` e funcionalidade de autenticação — Daniel Izu (#49)
+
+> A issue #49 estava atribuída a Gabrielle Rosa; a execução abaixo foi feita por Daniel Izu.
+
+**Ambiente:** a mesma instância e o mesmo perfil da seção 6.2 (SonarQube `26.11.0.134175-community` no Docker do Ubuntu, WSL 2; perfil Python **Sonar way comprehensive**, 407 regras; perfil Web padrão). Para não sobrescrever as análises do projeto principal, que estavam sendo usadas nos prints da #50, a #49 foi analisada num projeto separado da mesma instância, `banco-digital-uff-2026-2-issue49`, com os mesmos perfis. Data: 22/11/2026.
+
+**`CalculadoraJuros` não tem apontamentos.** Tanto na análise original (seção 3) quanto na reprodução desta seção, `app/dominio/juros.py` tem **0 apontamentos** no perfil comprehensive. Diferente de tarifas e crédito, a classe **não tem tela nem rota**: nenhum arquivo de `app/web` ou `app/templates` usa a `CalculadoraJuros` (ela é testada só no nível de unidade, conforme o escopo do Plano de Teste). Não há, portanto, apontamento a corrigir na classe nem numa tela da mesma funcionalidade. O defeito funcional citado na #49 (#20, desconto de IR no mês 12) já tinha sido corrigido pela Gabrielle (seção 6.4 do Plano de Teste). A complexidade da classe não mudou (soma dos métodos 30; maior método 11).
+
+**Correção feita: a funcionalidade de autenticação**, que tinha 12 apontamentos e não estava atribuída a ninguém. É a mesma abordagem da #52 (seção 6.1), em que a classe não tinha apontamentos e foram corrigidos os da tela da funcionalidade.
+
+**Reprodução do “antes”** (`main`, commit `bbabd18`): 37 apontamentos no projeto (15 bugs, 21 code smells, 1 vulnerabilidade), 12 deles na autenticação.
+
+| Arquivo | Antes | Depois | Situação |
+|---|---:|---:|---|
+| `app/dominio/juros.py` (`CalculadoraJuros`) | 0 | 0 | Classe sem apontamentos; nada a corrigir |
+| `app/templates/login.html` | **4** | **0** | 4 corrigidos (`CLOSED` / `FIXED`) |
+| `app/templates/registro.html` | **6** | **0** | 6 corrigidos (`CLOSED` / `FIXED`) |
+| `app/web/routes/auth.py` | **2** | **0** | 2 corrigidos (`CLOSED` / `FIXED`) |
+
+| Linha | Regra | Tipo / severidade | Apontamento | Correção |
+|---|---|---|---|---|
+| `login.html:7`, `:9` | `Web:S6853` | Code smell / maior | Rótulos “E-mail” e “Senha” sem associação com os campos | `<label for="email">`, `<label for="senha">` |
+| `login.html:8`, `:10` | `Web:InputWithoutLabelCheck` | Bug / maior | Campos `email` e `senha` sem `id` | `id="email"`, `id="senha"` |
+| `registro.html:7`, `:9`, `:11` | `Web:S6853` | Code smell / maior | Rótulos “Nome”, “E-mail” e “Senha” sem associação | `<label for="nome">`, `for="email"`, `for="senha"` |
+| `registro.html:8`, `:10`, `:12` | `Web:InputWithoutLabelCheck` | Bug / maior | Campos `nome`, `email` e `senha` sem `id` | `id="nome"`, `id="email"`, `id="senha"` |
+| `auth.py:27` | `python:S1192` | Code smell / crítica | Literal `"registro.html"` repetido 3 vezes | Constante `TEMPLATE_REGISTRO` |
+| `auth.py:52` | `python:S6965` | Code smell / maior | Rota `/logout` sem os métodos HTTP declarados | `methods=["GET"]` |
+
+**Decisão sobre o `/logout`:** a regra pede declarar os métodos aceitos. Foi declarado só `GET`, porque a tela sai pelo link `<a href="{{ url_for('auth.logout') }}">` de `base.html`, e os testes de integração e de segurança usam `GET /logout`. Fica registrado, como risco conhecido, que logout por `GET` permite que outro site encerre a sessão do usuário por um link ou imagem (CSRF de logout); o impacto é baixo (não expõe dados) e mudar para `POST` exigiria trocar o link por um formulário, fora do escopo desta issue.
+
+As páginas de login e de registro passam a ter rótulos anunciados por leitores de tela, como nas telas de crédito e de tarifas. Os `id`s repetidos (`email`, `senha`) estão em páginas diferentes, sem conflito. O page object do Selenium de autenticação localiza os campos por `name`, então continua funcionando.
+
+**Projeto inteiro (projeto de análise da #49)**
+
+| Métrica | Antes (`main`) | Depois |
+|---|---:|---:|
+| Apontamentos abertos | 37 | **25** |
+| Bugs (tipo) | 15 | 10 |
+| Code smells (tipo) | 21 | 14 |
+| Vulnerabilidades (tipo) | 1 | 1 |
+| Security (impacto) | 1 | 1 |
+| Reliability (impacto) | 30 | **20** |
+| Maintainability (impacto) | 6 | **4** |
+| Cobertura | 69,9% | 69,8% |
+
+A queda foi de exatamente 12 apontamentos, então a correção não criou nenhum novo. A cobertura caiu 0,1 ponto porque a constante nova fica em `routes/auth.py`, que não é executado pelos testes unitários usados no `coverage.xml` do Sonar. Esta tabela não inclui as correções de tarifas da #50 (seção 6.2), feitas em outra branch; com as duas, o projeto vai de 37 para 18 apontamentos.
+
+**Verificação:** unitários, integração e segurança — 546 passando (as 2 falhas são os bugs de PIX #16 e #17, anteriores); sistema (Selenium) de autenticação — 12 passando; `ruff` sem apontamentos; `radon cc` da `CalculadoraJuros` inalterado.
+
+**Evidências** em `docs/relatorios/evidencias/sonar/depois/juros-auth/`:
+
+- `antes-main/issues-abertas.json` e `antes-main/scanner.txt` — reprodução do “antes” (37 apontamentos, 12 da autenticação, 0 de `juros.py`);
+- `depois-branch/issues-abertas.json` — 25 apontamentos, nenhum da autenticação nem de `juros.py`;
+- `depois-branch/issues-resolvidas.json` — os 12 apontamentos com status `CLOSED` / `FIXED`;
+- `depois-branch/scanner.txt` — log do scanner do “depois”;
+- `issues-juros.png` — lista de issues filtrada por `app/dominio/juros.py` (abertos e resolvidos): 0 issues;
+- `issues-auth-resolvidos.png` — lista filtrada por `login.html`, `registro.html` e `auth.py`, com os 12 corrigidos;
+- `issues-auth-abertos.png` — a mesma lista filtrada por abertos: 0 issues;
+- `dashboard-depois.png` — dashboard “Overall Code” do projeto de análise depois da correção;
+- `pytest-solucao-inicial.txt` — testes e `ruff` da solução.

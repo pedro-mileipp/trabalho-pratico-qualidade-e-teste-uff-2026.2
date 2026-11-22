@@ -1,0 +1,82 @@
+diff --git a/app/templates/login.html b/app/templates/login.html
+index 11dcf51..e4dbfc5 100644
+--- a/app/templates/login.html
++++ b/app/templates/login.html
+@@ -4,10 +4,10 @@
+ <div class="cartao" style="max-width:400px;margin:auto;">
+   <h2>Entrar</h2>
+   <form method="post">
+-    <label>E-mail</label>
+-    <input type="email" name="email" required>
+-    <label>Senha</label>
+-    <input type="password" name="senha" required>
++    <label for="email">E-mail</label>
++    <input type="email" id="email" name="email" required>
++    <label for="senha">Senha</label>
++    <input type="password" id="senha" name="senha" required>
+     <button type="submit">Entrar</button>
+   </form>
+   <p style="margin-top:16px;">Não tem conta? <a href="{{ url_for('auth.registro') }}">Cadastre-se</a></p>
+diff --git a/app/templates/registro.html b/app/templates/registro.html
+index 0989a05..cde46a4 100644
+--- a/app/templates/registro.html
++++ b/app/templates/registro.html
+@@ -4,12 +4,12 @@
+ <div class="cartao" style="max-width:400px;margin:auto;">
+   <h2>Criar conta</h2>
+   <form method="post">
+-    <label>Nome</label>
+-    <input type="text" name="nome" required>
+-    <label>E-mail</label>
+-    <input type="email" name="email" required>
+-    <label>Senha</label>
+-    <input type="password" name="senha" required>
++    <label for="nome">Nome</label>
++    <input type="text" id="nome" name="nome" required>
++    <label for="email">E-mail</label>
++    <input type="email" id="email" name="email" required>
++    <label for="senha">Senha</label>
++    <input type="password" id="senha" name="senha" required>
+     <button type="submit">Cadastrar</button>
+   </form>
+   <p style="margin-top:16px;">Já tem conta? <a href="{{ url_for('auth.login') }}">Entrar</a></p>
+diff --git a/app/web/routes/auth.py b/app/web/routes/auth.py
+index edbb2bb..69cff85 100644
+--- a/app/web/routes/auth.py
++++ b/app/web/routes/auth.py
+@@ -8,6 +8,8 @@ from app.servicos.auth import AuthService, CredenciaisInvalidas, EmailJaCadastra
+ 
+ bp = Blueprint("auth", __name__)
+ 
++TEMPLATE_REGISTRO = "registro.html"
++
+ 
+ def _repositorio() -> SqliteRepositorio:
+     return SqliteRepositorio(get_db)
+@@ -24,13 +26,13 @@ def registro():
+             )
+         except EmailJaCadastrado:
+             flash("Este e-mail já está cadastrado.", "erro")
+-            return render_template("registro.html")
++            return render_template(TEMPLATE_REGISTRO)
+         except CredenciaisInvalidas:
+             flash("Dados inválidos. Verifique os campos.", "erro")
+-            return render_template("registro.html")
++            return render_template(TEMPLATE_REGISTRO)
+         session["cliente_id"] = cliente.id
+         return redirect(url_for("dashboard.index"))
+-    return render_template("registro.html")
++    return render_template(TEMPLATE_REGISTRO)
+ 
+ 
+ @bp.route("/login", methods=["GET", "POST"])
+@@ -49,7 +51,7 @@ def login():
+     return render_template("login.html")
+ 
+ 
+-@bp.route("/logout")
++@bp.route("/logout", methods=["GET"])
+ def logout():
+     session.clear()
+     return redirect(url_for("auth.login"))
+\ No newline at end of file
