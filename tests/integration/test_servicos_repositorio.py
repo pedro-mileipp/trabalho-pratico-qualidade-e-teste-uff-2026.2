@@ -94,6 +94,23 @@ class TestAuthServiceComRepositorioReal:
         with pytest.raises(EmailJaCadastrado):
             servico.registrar("Outra Ana", email_repetido, SENHA)
 
+    @pytest.mark.parametrize(
+        ("nome", "email", "senha"),
+        [
+            pytest.param("   ", "ana@teste.com", SENHA, id="nome_vazio"),
+            pytest.param("Ana Souza", "   ", SENHA, id="email_vazio"),
+            pytest.param("Ana Souza", "ana@teste.com", "", id="senha_vazia"),
+            pytest.param("Ana Souza", "ana@teste.com", "12345", id="senha_5_caracteres"),
+        ],
+    )
+    def test_registro_invalido_nao_grava_cliente(
+        self, repositorio: Repositorio, nome: str, email: str, senha: str
+    ) -> None:
+        with pytest.raises(CredenciaisInvalidas):
+            AuthService(repositorio).registrar(nome, email, senha)
+
+        assert repositorio.buscar_cliente_por_email("ana@teste.com") is None
+
     def test_senha_errada_lanca_credenciais_invalidas(self, repositorio: Repositorio) -> None:
         servico = AuthService(repositorio)
         servico.registrar("Ana Souza", "ana@teste.com", SENHA)
