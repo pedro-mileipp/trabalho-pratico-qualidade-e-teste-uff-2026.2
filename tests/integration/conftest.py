@@ -10,6 +10,9 @@ from flask.testing import FlaskClient
 from app import create_app
 from app.config import Config
 from app.db import get_db
+from app.repositorios.memoria_repositorio import MemoriaRepositorio
+from app.repositorios.repositorio import Repositorio
+from app.repositorios.sqlite_repositorio import SqliteRepositorio
 
 
 @pytest.fixture
@@ -72,3 +75,25 @@ def definir_saldo(app: Flask):
             db.commit()
 
     return _ajustar
+
+
+# --- Fixtures da issue #54: integração serviços ↔ repositório (sem HTTP) ---
+
+
+@pytest.fixture
+def repo_sqlite(app: Flask) -> Generator[SqliteRepositorio, None, None]:
+    """SqliteRepositorio real sobre o banco temporário, usando get_db dentro do contexto da aplicação."""
+    with app.app_context():
+        yield SqliteRepositorio(get_db)
+
+
+@pytest.fixture
+def repo_memoria() -> MemoriaRepositorio:
+    """MemoriaRepositorio novo, isolado por teste."""
+    return MemoriaRepositorio()
+
+
+@pytest.fixture(params=["sqlite", "memoria"])
+def repositorio(request: pytest.FixtureRequest) -> Repositorio:
+    """Executa o mesmo teste nas duas implementações de Repositorio."""
+    return request.getfixturevalue(f"repo_{request.param}")
