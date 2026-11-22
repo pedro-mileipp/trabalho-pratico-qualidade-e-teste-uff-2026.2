@@ -466,8 +466,8 @@ Os casos foram gerados com apoio do Claude Code ([sessão 17 do AI-LOG](../ai/pr
 
 | Rodada | Solução inicial (IA) | Solução final (revisada) |
 |---|---|---|
-| 1 — plano da issue | `04f2296`: 95 passed, 3 xfailed ([`tarifas-1`](evidencias/cobertura/tarifas-1-solucao-inicial.txt)) | `bb5025b`: 94 passed, 3 xfailed ([`tarifas-2`](evidencias/cobertura/tarifas-2-solucao-final.txt)) |
-| 2 — prompt técnico do responsável | `a6601d2`: 115 passed, 4 xfailed ([`tarifas-3`](evidencias/cobertura/tarifas-3-prompt-tecnico-inicial.txt)) | `62a1590`: 118 passed, 4 xfailed ([`tarifas-4`](evidencias/cobertura/tarifas-4-prompt-tecnico-final.txt)) |
+| 1 — plano da issue | `70ccd5c`: 95 passed, 3 xfailed ([`tarifas-1`](evidencias/cobertura/tarifas-1-solucao-inicial.txt)) | `ee613a6`: 94 passed, 3 xfailed ([`tarifas-2`](evidencias/cobertura/tarifas-2-solucao-final.txt)) |
+| 2 — prompt técnico do responsável | `eaafc09`: 115 passed, 4 xfailed ([`tarifas-3`](evidencias/cobertura/tarifas-3-prompt-tecnico-inicial.txt)) | `3809dcc`: 118 passed, 4 xfailed ([`tarifas-4`](evidencias/cobertura/tarifas-4-prompt-tecnico-final.txt)) |
 
 As duas soluções iniciais já tinham 100% de cobertura de arestas. Os problemas abaixo **não apareciam na execução**:
 
