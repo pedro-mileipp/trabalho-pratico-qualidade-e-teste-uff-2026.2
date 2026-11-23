@@ -104,9 +104,9 @@ uv run pytest tests/integration/test_servicos_repositorio.py tests/integration/t
 uv run pytest tests/integration -v            # execução detalhada
 ```
 
-Testa a integração entre rotas HTTP Flask, templates Jinja2, gerenciamento de sessões, mensagens flash e banco de dados SQLite temporário por teste. As fixtures compartilhadas (`app`, `cliente`, `cliente_autenticado`, `definir_saldo`) estão em [`tests/integration/conftest.py`](tests/integration/conftest.py) e os testes em [`tests/integration/test_rotas.py`](tests/integration/test_rotas.py). Detalhes na seção 6.7 do [Plano de Teste](docs/plano_de_teste.md).
+Testa a integração entre rotas HTTP Flask, templates Jinja2, gerenciamento de sessões, mensagens flash e banco de dados SQLite temporário por teste. As fixtures compartilhadas (`app`, `cliente`, `cliente_autenticado`, `definir_saldo`) estão em [`tests/integration/conftest.py`](tests/integration/conftest.py) e os testes em [`tests/integration/test_rotas.py`](tests/integration/test_rotas.py). Fase descrita na seção 2.2 do [Plano de Teste](docs/plano_de_teste.md).
 
-A integração **serviços ↔ repositório** (#54) chama `AuthService` e `TransacaoService` diretamente, sem HTTP e sem mocks, sobre o `SqliteRepositorio` real (banco em `tmp_path`) e o `MemoriaRepositorio`, com a fixture `repositorio` parametrizada nas duas implementações. Testes em [`tests/integration/test_servicos_repositorio.py`](tests/integration/test_servicos_repositorio.py) e [`tests/integration/test_contrato_repositorio.py`](tests/integration/test_contrato_repositorio.py); cobertura em [`docs/relatorios/evidencias/integracao/servicos-repositorio.txt`](docs/relatorios/evidencias/integracao/servicos-repositorio.txt). Detalhes na seção 6.9 do [Plano de Teste](docs/plano_de_teste.md).
+A integração **serviços ↔ repositório** (#54) chama `AuthService` e `TransacaoService` diretamente, sem HTTP e sem mocks, sobre o `SqliteRepositorio` real (banco em `tmp_path`) e o `MemoriaRepositorio`, com a fixture `repositorio` parametrizada nas duas implementações. Testes em [`tests/integration/test_servicos_repositorio.py`](tests/integration/test_servicos_repositorio.py) e [`tests/integration/test_contrato_repositorio.py`](tests/integration/test_contrato_repositorio.py); cobertura em [`docs/relatorios/evidencias/integracao/servicos-repositorio.txt`](docs/relatorios/evidencias/integracao/servicos-repositorio.txt). Fase descrita na seção 2.2 do [Plano de Teste](docs/plano_de_teste.md).
 
 ### Testes de sistema (Selenium)
 
@@ -117,7 +117,7 @@ uv run pytest tests/system -v                 # roda os testes de sistema (Chrom
 EVIDENCIAS=1 uv run pytest tests/system       # salva prints de cada etapa em <funcionalidade>/evidencias/
 ```
 
-Cada funcionalidade tem a sua pasta em `tests/system/` — Auth ([`tests/system/auth/`](tests/system/auth/)), Crédito ([`tests/system/credito/`](tests/system/credito/)), Empréstimo ([`tests/system/emprestimo/`](tests/system/emprestimo/)), Tarifas ([`tests/system/tarifas/`](tests/system/tarifas/)) e PIX ([`tests/system/pix/`](tests/system/pix/)) — com os testes, o page object e as evidências. As fixtures compartilhadas (servidor Flask com banco temporário, navegador, cliente logado, `definir_saldo_sistema` e prints de etapas) estão em [`tests/system/conftest.py`](tests/system/conftest.py). Detalhes na seção 6.2 do [Plano de Teste](docs/plano_de_teste.md).
+Cada funcionalidade tem a sua pasta em `tests/system/` — Auth ([`tests/system/auth/`](tests/system/auth/)), Crédito ([`tests/system/credito/`](tests/system/credito/)), Empréstimo ([`tests/system/emprestimo/`](tests/system/emprestimo/)), Tarifas ([`tests/system/tarifas/`](tests/system/tarifas/)) e PIX ([`tests/system/pix/`](tests/system/pix/)) — com os testes, o page object e as evidências. As fixtures compartilhadas (servidor Flask com banco temporário, navegador, cliente logado, `definir_saldo_sistema` e prints de etapas) estão em [`tests/system/conftest.py`](tests/system/conftest.py). Fase descrita na seção 2.2 do [Plano de Teste](docs/plano_de_teste.md).
 
 ### Requisitos não funcionais
 
@@ -128,7 +128,7 @@ uv run pytest tests/rnf/seguranca -v          # só a segurança da autenticaç�
 
 Cada requisito não funcional tem a sua pasta em `tests/rnf/` (ex.: `tests/rnf/seguranca/`). As fixtures compartilhadas (aplicação com banco temporário, cliente HTTP e cliente cadastrado) estão em [`tests/rnf/conftest.py`](tests/rnf/conftest.py).
 
-Resultados e riscos identificados em [`docs/relatorios/rnf_seguranca.md`](docs/relatorios/rnf_seguranca.md). Detalhes na seção 6.3 do [Plano de Teste](docs/plano_de_teste.md).
+Resultados e riscos identificados em [`docs/relatorios/rnf_seguranca.md`](docs/relatorios/rnf_seguranca.md). Fase descrita na seção 2.2 do [Plano de Teste](docs/plano_de_teste.md).
 
 ## Inspeção com SonarQube local
 
@@ -204,7 +204,7 @@ O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes n
 | `docs/descricao_trabalho.md` | Enunciado do trabalho |
 | `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
 | `docs/aplicacao.md` | Documentação completa da aplicação e sua arquitetura |
-| `docs/plano_de_teste.md` | Plano de Teste da Entrega 1 (escopo, ferramentas, artefatos, responsabilidades) |
+| [`docs/plano_de_teste.md`](docs/plano_de_teste.md) | Plano de Teste oficial (Entregas 1 e 2): escopo, metodologia em cascata, entregáveis, ambiente e termos |
 | `tests/testes_manuais/` | Casos de teste manuais (Entrega 1) — PIX em [`tests/testes_manuais/pix/caso_pix.md`](tests/testes_manuais/pix/caso_pix.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/auth/` | Casos de teste manuais (Entrega 1) — Auth em [`tests/testes_manuais/auth/caso_auth.md`](tests/testes_manuais/auth/caso_auth.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/tarifas/` | Casos de teste manuais (Entrega 1) — Tarifas em [`tests/testes_manuais/tarifas/caso_tarifas.md`](tests/testes_manuais/tarifas/caso_tarifas.md) com evidências em `evidencias/` |
