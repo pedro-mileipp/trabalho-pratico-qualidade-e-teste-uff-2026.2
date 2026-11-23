@@ -37,6 +37,7 @@
 | 1.23 | 22/11/2026 | Alexandre Colmenero | Entrega 2: testes de sistema com Selenium — PIX/RF03 (issue #56) nas seções 6.2 e 6.10.5 |
 | 1.24 | 22/11/2026 | Daniel Izu | Entrega 2: avaliação ISO/IEC 25010:2023 das 9 características, com escala e evidências (issue #62), em `docs/relatorios/iso25010.md` |
 | 1.25 | 22/11/2026 | Daniel Izu | Entrega 2: correção do defeito #78 (meia tarifa do pacote sobre a tarifa do próprio tipo de conta: premium 25,00), decisão do grupo; 4 `xfail` viram regressão e 1 caso novo da corrente; mutação de `TarifaBancaria` 92,3%; estado atual e seções 6.2 e 6.8 |
+| 1.26 | 23/11/2026 | Pedro Mileipp | Entrega 2: inspeção Sonar consolidada das 5 classes (issue #63) na seção 6.11 |
 
 > Nota: as versões 1.14, 1.16 e 1.22 aparecem duplicadas por registros simultâneos de integrantes; a numeração histórica foi preservada porque o AI-LOG e os prompts a citam.
 
@@ -369,6 +370,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 | Requisito não funcional — segurança da autenticação, RNF06 | [#61](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/61) | Concluído | 22 testes, todos passando; 5 riscos documentados (ver seção 6.3) |
 | Mutação (escore ≥ 80%) | [#47](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/47) | Concluído | 184 mutantes, 179 mortos: **97,3%** (100% descontando 5 equivalentes justificados); +6 casos de valor-limite (96 no total) |
 | Correções do Sonar | [#52](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/52) | Concluído | `DecisorCredito` sem apontamentos (0 → 0); os 4 apontamentos da tela de crédito (`credito.html`) foram corrigidos (4 → 0). Projeto: 40 → 36 apontamentos. Detalhes na seção 6.1 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md) |
+| Relatório consolidado do Sonar | [#63](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/63) | Concluído | Análise final única das 5 classes: 26 apontamentos corrigidos, nenhum aberto nas classes; projeto 40 → 19 (ver seção 6.11) |
 
 **Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_credito.py`):
 
@@ -703,5 +705,19 @@ uv run pytest tests/system/pix -v   # e EVIDENCIAS=1 para os prints
 #### 6.10.5 Testes de sistema (Selenium) — issue #56
 
 **Resultado (22/11/2026):** `tests/system/pix/` criado com page object (`pagina_pix.py`, seletores por `id` definidos na #48) e 6 cenários automatizados: PIX aprovado com CPF válido; recusa por chave inválida; recusa por saldo insuficiente; regressão do defeito #16 (e-mail com dois `@`); valor zero barrado pelo HTML5 (`min="0.01"`); guarda de autenticação. Saldo inicial definido pela fixture `definir_saldo_sistema` (SQLite temporário), cenários independentes de horário. Resultado: 6/6 passando em execuções repetidas; suíte de sistema completa: 55 passed, 1 xfailed. Evidências em `tests/system/pix/evidencias/` (com `EVIDENCIAS=1`); tabela de cenários na seção 6.2.
+
+### 6.11 Inspeção Sonar consolidada — Pedro Mileipp, issue [#63](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/63)
+
+Análise final única da `main` (commit `74febcf`, 23/11/2026), na mesma instância e com o mesmo perfil (Sonar way comprehensive) da reprodução do “antes”. Detalhes na seção 7 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md).
+
+| Classe | Responsável | Na classe | Na funcionalidade |
+|---|---|---|---|
+| `TransacaoPix` | Alexandre Colmenero | 0 → 0 | 7 → 0 |
+| `CalculadoraJuros` | Gabrielle Rosa | 0 → 0 | — (sem tela) |
+| `TarifaBancaria` | Daniel Izu | 1 → 0 | 6 → 0 |
+| `SimuladorEmprestimo` | Vinicius Sales Felinto | 0 → 0 | 8 → 0 |
+| `DecisorCredito` | Pedro Mileipp | 0 → 0 | 4 → 0 |
+
+**Resultado:** 26 apontamentos corrigidos (status `CLOSED` / `FIXED` no SonarQube) e nenhum aberto nas 5 classes. O projeto passou de 40 para 19 apontamentos abertos (40 − 26 corrigidos + 5 novos em testes de integração). Os 19 restantes estão fora das classes sob teste: autenticação (13), ausência de proteção CSRF em `app/__init__.py` (1) e testes de integração (5). Cobertura do projeto: 60,6% → 69,7%.
 
 ---
