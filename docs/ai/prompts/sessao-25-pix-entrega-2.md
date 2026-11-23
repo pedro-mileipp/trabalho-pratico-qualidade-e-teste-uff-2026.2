@@ -13,66 +13,158 @@
 
 Linha de base: **638 passed, 3 xfailed** (os `xfail` eram o defeito #78, de Tarifas). O Plano de Teste estava na versão 1.18, sem seção de PIX, e ainda afirmava que a suíte tinha 2 falhas de PIX e que a mutação estava bloqueada — informação desatualizada. Os defeitos **#16 e #17 já estavam corrigidos** no commit `e7881bd` (PR #89), mas as issues seguiam abertas e sem evidência de antes/depois.
 
-Objetivo da sessão: **planejar antes de implementar** (o plano de teste como artefato de desenho, não como relatório retroativo), executar as issues #38, #43, #48 e #56 e atualizar a documentação da #64, fechando cada issue com evidência.
+Objetivo: **planejar antes de implementar**, executar as issues #38, #43, #48 e #56 e atualizar a documentação da #64, fechando cada issue com evidência.
 
-Regras definidas pelo responsável:
+## Conversa
 
-- o Plano de Teste deveria ser atualizado **antes** da implementação;
-- o escopo da atualização seria **global** (não só PIX);
-- as correções de Sonar ficariam atreladas à **#48**;
-- **uma PR por issue** (sem agrupar);
-- **commits curtos**, separados por contexto, mesmo que aumentassem a quantidade;
-- a ordem de execução **não** deveria ser refletida em nenhum artefato de documentação;
-- o merge do PR final só seria feito após revisão do responsável.
+### Turno 1 — ler o repositório e planejar antes de implementar
 
-## Prompt/instrução do responsável
+**Prompt (resumo):** ler as docs para contexto; atualizar o Plano de Teste antes de implementar, como um plano de testes de verdade.
 
-Trechos das instruções registradas nesta sessão (o histórico completo da conversa não é versionado):
+**Retorno da IA:** leu `docs/plano_de_teste.md`, `docs/plano_projeto.md`, o enunciado, `docs/aplicacao.md`, os relatórios de cobertura/mutação, Sonar e RNF, o README, o AGENTS, o AI-LOG e as issues. Constatou:
 
-> “nós temos que ir fechando as issues, porém, devemos atualizar o plano de testes antes de implementar, como se ele fosse um plano de testes”
+- suíte verde (638 passed, 3 xfailed), mas o plano dizia que havia 2 falhas de PIX;
+- #16 e #17 já corrigidos em `e7881bd` (PR #89), com testes passando;
+- o plano não tinha seção de PIX, o relatório de mutação não tinha `TransacaoPix` e o Sonar local estava com a análise de 11/11;
+- propôs: atualizar o Plano global + criar a seção 6.10.1 (desenho dos testes) **antes** de codar; depois executar #38, #43, #48 e #56; fechar cada issue com evidência.
 
-> “1 - Global; 2 - Sim, essas correções devem ficar atreladas à issue de resolver apontamentos do Sonar, certo?; 3 - Ainda não; 4 - Isso, tem que ser PRs separados; 5 - Isso já foi resolvido.”
+**Decisão do responsável:** aceitou o princípio “plano primeiro” e pediu que o escopo da atualização fosse global, não só PIX. Definiu também as regras de processo que valeram para toda a sessão.
 
-> “Siga essa ordem sem refleti-la em nenhum artefato de doc”
+**Mensagem do responsável:**
 
-> “Ao realizar as mudanças, separe-as em commits curtos e diretos mesmo que isso faça aumentar a quantidade de commits. Não coloque todas as mudanças de contextos diferentes em um só commit.”
+> “leia as docs desse repositorio pra contexto
+>
+> nós temos que ir fechando as issues, porém, devemos atualizar o plano de testes antes de implementar, como se ele fosse um plano de testes, entende?”
 
-> “16 e 17 já foram resolvidas? Você pode associar a issue ao PR que fez esse commit por favor e atualizar o status da issue?”
+---
 
-> “Eu mudei o modelo de IA para o Pro. Revise esse plano e todo o repositório pra ver se há algum ponto faltando ou algo a ser corrigido.”
+### Turno 2 — confirmar #16/#17 e fechar as decisões de escopo
 
-> “sobre o PR 6, nao faça o merge sem minha revisao” → depois: “Revisei e pode fazer merge”
+**Prompt (resumo):** confirmar se #16/#17 já estavam resolvidas, vinculá-las ao PR do commit e fechar as decisões pendentes do plano.
 
-## Decisões da IA e revisão do responsável
+**Retorno da IA:** verificou que **#16 e #17 já estavam CLOSED** (motivo `COMPLETED`), com comentário de resolução apontando o commit `e7881bd` e a **PR #89**; o timeline da PR #89 mostra cross-reference para as duas issues. Ajustou o plano conforme as respostas:
 
-| Momento | Decisão/proposta da IA | Revisão do responsável | Resultado |
-|---|---|---|---|
-| Plano | Atualizar o Plano de Teste **global** e criar a seção 6.10.1 com o desenho dos testes **antes** de codar | Aprovou o escopo global e o princípio “plano primeiro” | Seção 6.10.1 (técnicas, casos planejados, dados, oráculos, critérios, riscos) |
-| Defeitos #16/#17 | Não refazer a correção (já presente em `e7881bd`); comprovar antes/depois, ajustar a documentação e fechar | Confirmou que já estavam resolvidas e pediu associar as issues ao PR que fez o commit | Issues fechadas com comentário de resolução e cross-reference com a PR #89 |
-| Sonar | A classe `pix.py` tem 0 apontamentos; corrigir também `routes/pix.py` e `pix.html` (7 no total) | Perguntou se as correções ficariam atreladas à #48; a IA confirmou e o responsável aprovou | 7 → 0 apontamentos de PIX; PR #94 |
-| Processo | Agrupar as mudanças em uma única PR | Exigiu **PRs separadas** | PRs #91–#96 |
-| Commits | Commits por issue | Exigiu commits **curtos e por contexto** | Ex.: 8 commits no PR #91; 3 no #48 |
-| Documentação | Registrar a ordem de execução no Plano | Proibiu refletir a ordem em artefato de doc | Seção 6.10 sem cronograma/roadmap de execução |
-| Sistema | Usar limites diurno/noturno nos testes de sistema | Aprovou o plano com a ressalva de determinismo; a IA removeu cenários dependentes de horário | 6 cenários determinísticos; 55 passed + 1 xfail na suíte de sistema |
-| Mutação | Aceitar 4 sobreviventes como equivalentes, com justificativa | **Revisão de fechamento** (tabela abaixo) | `pix-execucao-2-depois.txt` |
-| Fechamento | Mergear o PR #96 | “não faça o merge sem minha revisão” → “Revisei e pode fazer merge” | PR #96 mergeado pelo responsável |
+- escopo **global** da atualização do Plano de Teste;
+- correções de Sonar atreladas à **#48**;
+- **uma PR por issue**;
+- commits **curtos e por contexto**;
+- a ordem de execução **não** seria refletida em nenhum documento.
 
-## Revisão independente solicitada (modelo Pro)
+**Decisão do responsável:** aprovou o plano ajustado e, em seguida, trocou o modelo para o Pro para uma revisão independente do plano e do repositório.
 
-Depois da primeira rodada, o responsável trocou o modelo para `deepseek-v4-pro` e pediu uma revisão do plano e de todo o repositório. A revisão encontrou pontos que a primeira rodada não tinha visto e que foram corrigidos:
+**Mensagem do responsável:**
 
-1. a instância local do SonarQube estava com a análise de 11/11 (estado “antes”); era preciso re-escanear a `main` atual para o “depois”;
-2. a funcionalidade PIX tinha **7** apontamentos (não 6): além dos 6 do template, havia 1 `python:S1192` em `routes/pix.py`;
-3. `docs/relatorios/inspecao_sonar.md` tinha **duas seções “6.2”** (Empréstimo e Juros); Juros passou a 6.3, Tarifas a 6.4 e PIX entrou como 6.5;
-4. `docs/relatorios/cobertura_mutacao.md` ainda dizia que a mutação estava bloqueada pelas falhas de PIX/Juros;
-5. o Plano listava #16/#17 como defeitos abertos e tinha versões 1.14/1.16 duplicadas no registro de mudanças;
-6. `docs/aplicacao.md` §4.1 não descrevia as regras corrigidas (e-mail com um único `@`; chargeback de chave bloqueada);
-7. o README não tinha as pastas de sistema de Auth, Tarifas e PIX;
-8. o AGENTS.md ainda descrevia apenas testes unitários e manuais;
-9. `docs/plano_projeto.md` mostrava `app/web/templates/`, CI inexistente e `iso25010.md` pendente;
-10. havia um artefato local `md-to-pdf.css` não rastreado.
+> “16 e 17 já foram resolvidas? Você pode associar a issue ao PR que fez esse commit por favor e atualizar o status da issue?
+>
+> 1 - Global
+> 2 - Sim, essas correcoes devem ficar atreladas a issue de resolver apontamentos do Sonar, certo?
+> 3 - Ainda não.
+> 4 - Isso, tem que ser PR's separados.
+> 5 - Isso ja foi resolvido.
+>
+> Siga essa ordem sem refleti-la em nenhum artefato de doc:
+> Ao realizar as mudanças, separe-as em commits curtos e diretos mesmo que isso faça aumentar a quantidade de commits.
+> Não coloque todas as mudanças de contextos diferentes em um só commit, separe-os pra ficar mais organizado.”
 
-Essas correções entraram no PR #91 (documentação global) e nos PRs seguintes, conforme o contexto.
+---
+
+### Turno 3 — revisão independente com o modelo Pro
+
+**Prompt (resumo):** revisar o plano e todo o repositório para encontrar pontos faltando ou errados.
+
+**Retorno da IA:** a revisão encontrou 11 pontos que a primeira rodada não tinha visto, entre eles:
+
+1. a instância local do SonarQube estava no estado “antes” (11/11) — era preciso re-escanear a `main` atual;
+2. a funcionalidade PIX tinha **7** apontamentos (6 no template + 1 `S1192` em `routes/pix.py`), não 6;
+3. `inspecao_sonar.md` tinha **duas seções “6.2”** (Empréstimo e Juros);
+4. `cobertura_mutacao.md` ainda dizia que a mutação estava bloqueada;
+5. o Plano listava #16/#17 como abertos e tinha versões 1.14/1.16 duplicadas;
+6. `aplicacao.md` §4.1 não descrevia as regras corrigidas de PIX;
+7. README sem as pastas de sistema de Auth, Tarifas e PIX;
+8. AGENTS.md desatualizado;
+9. `plano_projeto.md` com `app/web/templates/` e CI inexistente;
+10. `iso25010.md` ainda pendente;
+11. artefato local `md-to-pdf.css` não rastreado.
+
+**Decisão do responsável:** aceitou as correções e respondeu às quatro decisões pendentes: renumerar as seções, incluir a higiene do `plano_projeto.md`, ignorar `md-to-pdf.css` (mantendo `package-lock.json`) e usar o markdown como base (sem espelhar no Google Docs).
+
+**Mensagem do responsável:**
+
+> “1 - Sim.
+> 2 - Sim.
+> 3 - Apenas ignore o primeiro.
+> 4 - A base é o markdown.”
+
+---
+
+### Turno 4 — executar as issues em PRs separadas
+
+**Prompt (resumo):** aprovação para prosseguir com a implementação.
+
+**Retorno da IA:** executou as mudanças em PRs separadas, com commits curtos por contexto:
+
+- **PR #91** — plano global + seção 6.10.1, correções de documentação e `.gitignore`;
+- **PR #92** — 36 casos unitários novos (104 no total), técnicas `pe_`/`vl_`/`td_`/`laco_`/`custom_`, cobertura 100%;
+- **PR #93** — mutação: 91,9% na 1ª execução, triagem de 12 sobreviventes, 7 casos novos, **97,3%** na 2ª (100% descontando 4 equivalentes);
+- **PR #94** — Sonar: 7 → 0 apontamentos de PIX (template + rota), com reprodução do “antes” e “depois”;
+- **PR #95** — 6 cenários Selenium de PIX, fixture `banco_sistema`/`definir_saldo_sistema`, suíte de sistema 55 passed + 1 xfail;
+- **PR #96** — README e AGENTS atualizados, deixado aberto para revisão.
+
+No caminho, a IA registrou e corrigiu erros próprios: o cache do mutmut não rodou os testes novos (foi preciso limpar `.mutmut-cache`), um caso de chargeback customizado usou a configuração errada de limite e o Sonar local estava desatualizado.
+
+**Decisão do responsável:** acompanhou a execução e, antes do merge da PR final, exigiu revisão própria.
+
+**Mensagem do responsável:**
+
+> “Pode prosseguir. […]”
+
+> “sobre o PR 6, nao faça o merge sem minha revisao”
+
+---
+
+### Turno 5 — revisar o PR final e autorizar o merge
+
+**Prompt (resumo):** revisão do PR #96 antes do merge.
+
+**Retorno da IA:** manteve o PR #96 aberto, com o resumo do estado: README com as cinco pastas de sistema e as evidências de PIX; AGENTS com os quatro níveis de teste e a suíte em 705 passed + 4 xfailed; Plano com as pendências restantes (#62 e #63); a #64 continuaria aberta por causa dos slides e da AI-LOG.
+
+**Decisão do responsável:** revisou o PR #96 e autorizou o merge. Em seguida, pediu a atribuição das PRs ao próprio usuário.
+
+**Mensagem do responsável:**
+
+> “Revisei e pode fazer merge”
+
+---
+
+### Turno 6 — atribuir as PRs ao responsável
+
+**Prompt (resumo):** corrigir a autoria/atribuição das PRs abertas.
+
+**Retorno da IA:** atribuiu as PRs #91–#96 ao usuário `alexandrelimaxs` e confirmou a atribuição.
+
+**Decisão do responsável:** aceitou; em seguida, pediu o planejamento do AI-LOG com foco na revisão das decisões da IA.
+
+**Mensagem do responsável:**
+
+> “uma correcao, faça o assing dos pr que que abriu pro meu usuario, por favor”
+
+---
+
+### Turno 7 — planejar o AI-LOG com foco na revisão
+
+**Prompt (resumo):** planejar um AI-LOG que mostre a revisão das decisões da IA durante a implementação.
+
+**Retorno da IA:** propôs uma estrutura com metadados, decisões da IA × revisão do responsável, solução inicial × final, validação, evidências e uma tabela de revisão de fechamento dos PRs. Deixou claro que não registraria revisão que não tivesse ocorrido: o registro afirma a revisão do plano e das decisões antes da implementação e a revisão de fechamento dos PRs, com checklist.
+
+**Decisão do responsável:** pediu que o formato fosse em **conversa**: prompt → retorno da IA → explicação da decisão → mensagem do responsável. Este arquivo foi reescrito nesse formato.
+
+**Mensagem do responsável:**
+
+> “agora eu preciso planejar um AI LOG onde eu preciso mostrar que eu revisei as decisoes da IA no momento da implementação”
+
+> “eu preciso que o formato seja como uma conversa, onde eu mando o prompt, daí você descreve o retorno da IA, dai vc explica a minha decisao e depois coloca a minha mensagem”
+
+---
 
 ## Solução inicial (gerada pela IA) vs. solução final (após revisão)
 
@@ -124,16 +216,6 @@ git show 23b2c86 --stat   # #94
 git show 3a095cf --stat   # #95
 git show 85abde0 --stat   # #96
 ```
-
-## Ações executadas
-
-1. `git pull` e linha de base: 638 passed, 3 xfailed; conferência de que #16/#17 já estavam corrigidos em `e7881bd`.
-2. PR #91: plano global (escopo, estado atual, ferramentas, critérios, termos), planejamento 6.10.1, correções de documentação e `.gitignore`.
-3. PR #92: 36 casos novos, técnicas `pe_`/`vl_`/`td_`/`laco_`/`custom_`, evidência de cobertura, seção `TransacaoPix` no relatório de cobertura/mutação.
-4. PR #93: execução 1 (91,9%), triagem dos 12 sobreviventes, 7 casos novos, execução 2 (97,3%), mapeamento mutante → teste e justificativa dos 4 equivalentes.
-5. PR #94: correção de 7 apontamentos do Sonar (template + rota), reprodução do “antes” e “depois” na instância local, evidências JSON/log/print, seção 6.5 do relatório de inspeção.
-6. PR #95: page object de PIX, 6 cenários Selenium, fixture `banco_sistema`/`definir_saldo_sistema`, evidências e suíte determinística.
-7. PR #96: README e AGENTS atualizados; PR deixado aberto para revisão do responsável e mergeado após a aprovação.
 
 ## Resultado
 
