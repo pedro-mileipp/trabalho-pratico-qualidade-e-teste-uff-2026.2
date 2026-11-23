@@ -6,7 +6,7 @@ Repositório do trabalho prático da disciplina **Qualidade e Teste** (UFF 2026.
 
 O Banco Digital é uma aplicação web em **Python + Flask + SQLite** com login e serviços bancários simulados. As regras de negócio ficam em classes de domínio puras (PIX, juros, tarifas, empréstimo e crédito), uma por integrante, com **CC ≥ 10**, o que permite testá-las sem o framework.
 
-O trabalho foi dividido em duas entregas: a primeira com testes unitários e casos manuais; a segunda com integração, testes de sistema, cobertura estrutural, mutação, inspeção estática e requisito não funcional de segurança. O escopo e os critérios estão no **[Plano de Teste](docs/plano_de_teste.md)** — também disponível em **[DOCX/Google Docs](https://docs.google.com/document/d/1LWiJPPQAZKMw0ycTe8bxu5VSc6Tf0NlNcL60BzXTZOg/edit?usp=sharing)**.
+O trabalho foi dividido em duas entregas: a primeira com testes unitários e casos manuais; a segunda com integração, testes de sistema, cobertura estrutural, mutação, inspeção estática e requisito não funcional de segurança. O escopo e os critérios estão no **[Plano de Teste](docs/plano_de_teste.md)** — também disponível em **[PDF](docs/plano_de_teste.pdf)** e **[DOCX/Google Docs](https://docs.google.com/document/d/1LWiJPPQAZKMw0ycTe8bxu5VSc6Tf0NlNcL60BzXTZOg/edit?usp=sharing)**.
 
 A arquitetura e os módulos estão em **[docs/aplicacao.md](docs/aplicacao.md)**.
 
@@ -14,7 +14,7 @@ A arquitetura e os módulos estão em **[docs/aplicacao.md](docs/aplicacao.md)**
 
 | Artefato | Link |
 |---|---|
-| Plano de Teste | [Markdown](docs/plano_de_teste.md) · [DOCX/Google Docs](https://docs.google.com/document/d/1LWiJPPQAZKMw0ycTe8bxu5VSc6Tf0NlNcL60BzXTZOg/edit?usp=sharing) |
+| Plano de Teste | [Markdown](docs/plano_de_teste.md) · [PDF](docs/plano_de_teste.pdf) · [DOCX/Google Docs](https://docs.google.com/document/d/1LWiJPPQAZKMw0ycTe8bxu5VSc6Tf0NlNcL60BzXTZOg/edit?usp=sharing) |
 | Plano de Projeto | [docs/plano_projeto.md](docs/plano_projeto.md) |
 | Documentação da aplicação | [docs/aplicacao.md](docs/aplicacao.md) |
 | Relatório de cobertura e mutação | [docs/relatorios/cobertura_mutacao.md](docs/relatorios/cobertura_mutacao.md) |
