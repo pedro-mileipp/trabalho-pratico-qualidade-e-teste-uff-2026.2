@@ -2,7 +2,7 @@
 
 > Relatório da inspeção estática do código-fonte da **Entrega 2** (Qualidade e Teste — UFF 2026.2).
 >
-> **Status:** seção “antes” concluída em 11/11/2026; seções “depois” concluídas para crédito (6.1), empréstimo (6.2), juros (6.3) e tarifas (6.4). O PIX (#48) será registrado na seção 6.5.
+> **Status:** seção “antes” concluída em 11/11/2026; seções “depois” concluídas para crédito (6.1), empréstimo (6.2), juros (6.3), tarifas (6.4) e PIX (6.5).
 
 ## 1. Ambiente e método
 

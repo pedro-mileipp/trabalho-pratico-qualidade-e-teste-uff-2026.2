@@ -32,6 +32,7 @@
 | 1.19 | 22/11/2026 | Alexandre Colmenero | Entrega 2: atualização global do plano (escopo, estado atual, ferramentas e critérios) e planejamento dos testes de `TransacaoPix` — issues #38, #43, #48 e #56 — na seção 6.10 |
 | 1.20 | 22/11/2026 | Alexandre Colmenero | Entrega 2: ampliação dos testes unitários de `TransacaoPix` para 104 casos e cobertura estrutural todas-arestas (100%, issue #38) na seção 6.10.2 |
 | 1.21 | 22/11/2026 | Alexandre Colmenero | Entrega 2: teste de mutação de `TransacaoPix` com `mutmut` (escore 97,3%; 100% descontando 4 equivalentes, issue #43) na seção 6.10.3 |
+| 1.22 | 22/11/2026 | Alexandre Colmenero | Entrega 2: correções do Sonar na funcionalidade PIX (7 → 0 apontamentos, issue #48) na seção 6.10.4 |
 
 > Nota: as versões 1.14 e 1.16 aparecem duplicadas por registros simultâneos de integrantes; a numeração histórica foi preservada porque o AI-LOG e os prompts a citam.
 
@@ -645,5 +646,9 @@ uv run pytest tests/system/pix -v   # e EVIDENCIAS=1 para os prints
 #### 6.10.3 Mutação — issue #43
 
 **Resultado (22/11/2026):** `mutmut` isolado em `app/dominio/pix.py` — **148 mutantes, 144 mortos (97,3%)**; os 4 sobreviventes são equivalentes justificados (100% descontando equivalentes). Meta da disciplina: ≥ 80% ✅. A 1ª execução (104 casos) já atingia 91,9%; os 7 casos novos mataram 8 sobreviventes, com mapeamento mutante → teste verificado por `mutmut apply`. Evidências em [`docs/relatorios/evidencias/mutacao/pix-execucao-1-antes.txt`](relatorios/evidencias/mutacao/pix-execucao-1-antes.txt) e [`pix-execucao-2-depois.txt`](relatorios/evidencias/mutacao/pix-execucao-2-depois.txt); detalhes na seção `TransacaoPix` de [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
+
+#### 6.10.4 Defeitos #16/#17 e inspeção Sonar — issue #48
+
+**Resultado (22/11/2026):** a funcionalidade PIX passou de **7 para 0 apontamentos** no SonarQube local (perfil *Sonar way comprehensive* + Web padrão): 6 de acessibilidade/IDs em `pix.html` (`id`/`for` em `chave`, `tipo` e `valor`) e 1 `python:S1192` em `routes/pix.py` (constante `_TEMPLATE`). A classe `pix.py` segue com 0 apontamentos e CC preservada (11/10). Projeto: 26 → 19 apontamentos abertos (nenhum de PIX). Os defeitos funcionais #16/#17 já haviam sido corrigidos no commit `e7881bd` (PR #89) e são cobertos pelos testes de regressão. Suíte completa: 681 passed, 3 xfailed. Detalhes na seção 6.5 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md); evidências em [`docs/relatorios/evidencias/sonar/depois/pix/`](relatorios/evidencias/sonar/depois/pix/).
 
 ---
