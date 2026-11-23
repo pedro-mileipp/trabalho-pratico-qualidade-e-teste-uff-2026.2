@@ -40,7 +40,8 @@ class TarifaBancaria:
         if tem_pacote and tipo is TipoConta.PREMIUM and saldo >= self._base.faixas_isencao[2]:
             return 0.0
         if tem_pacote and (saldo >= self._base.faixas_isencao[1] or antiguidade_meses >= 24):
-            return round(self._base.corrente * 0.5, 2)
+            # Meia tarifa sobre a tarifa do próprio tipo de conta (#78): corrente 15,00; premium 25,00.
+            return round((self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium) * 0.5, 2)
         if tem_pacote:
             return round(self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium * 0.7, 2)
         base = self._base.corrente if tipo is TipoConta.CORRENTE else self._base.premium

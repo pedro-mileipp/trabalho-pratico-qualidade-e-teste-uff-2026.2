@@ -1,7 +1,7 @@
 """Testes de sistema (Selenium) da Consulta de Tarifas — RF04, issue #58.
 
 Automatizam os casos manuais de ``tests/testes_manuais/tarifas/caso_tarifas.md`` (CT-01 a CT-15),
-com o mesmo id, e acrescentam as recusas do formulário, o acesso sem login e um caso do defeito #78.
+com o mesmo id, e acrescentam as recusas do formulário, o acesso sem login e a regressão do defeito #78.
 
 A tela ``/tarifas`` chama ``TarifaBancaria(TarifasBase()).tarifa_mensal(tipo, saldo, pacote,
 transacoes)``: a antiguidade não é exposta (sempre 0), e o formulário não aceita valores negativos.
@@ -72,10 +72,9 @@ def test_tarifas_exige_login(navegador, servidor):
     assert navegador.current_url == servidor + "/login"
 
 
-@pytest.mark.xfail(strict=True, reason="#78")
 def test_defeito_78_pacote_premium_meia_tarifa(navegador, servidor, cliente_logado, evidencia):
-    # Premium com pacote e saldo entre 5000 e 50000: a meia tarifa deveria ser a da premium
-    # (50 × 0,5 = 25,00), mas a tela mostra hoje 15,00 (meia tarifa da corrente). Ver issue #78.
+    # Premium com pacote e saldo entre 5000 e 50000: a meia tarifa é a da premium (50 × 0,5 = 25,00).
+    # Antes da correção da #78, a tela mostrava 15,00 (meia tarifa da corrente).
     pagina = PaginaTarifas(navegador, servidor).abrir()
     pagina.preencher("premium", 6000, 0, pacote=True)
     evidencia("formulario_preenchido")
