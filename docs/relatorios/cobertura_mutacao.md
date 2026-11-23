@@ -680,3 +680,72 @@ O mapeamento foi conferido aplicando cada mutante sozinho (`mutmut apply`) e rod
 > **Atualização (#50, 22/11/2026):** a #50 removeu `_tarifa_com_pacote` e reescreveu `tarifa_mensal` sem aninhamento (correção do Sonar `python:S3776`). Os testes do método removido passaram a verificar a mesma regra por `tarifa_mensal` com pacote, e foi acrescentado o caso `custom_pacote_meia_tarifa_com_centavos`. Nova execução: **101 mutantes, 93 mortos (92,1%)**. Dos 8 sobreviventes, 7 são equivalentes — os 6 da tabela acima (com outros números, porque o código mudou) e 1 novo, o padrão `antiguidade_meses` 0 → 1 de `tarifa_anual` (mesmo raciocínio do `tarifa_mensal__mutmut_3`) — e 1 é `round(corrente * 0.5, 2)` → `round(..., 3)` na meia tarifa, que só se distingue em meio centavo exato (ambíguo em `float`) e não recebeu teste frágil. Evidência: [`tarifas-execucao-4-pos-sonar.txt`](evidencias/mutacao/tarifas-execucao-4-pos-sonar.txt).
 
 **Revisão da solução gerada por IA** ([sessão 21 do AI-LOG](../ai/prompts/sessao-21-mutacao-tarifas.md)): a solução inicial (commit `145bd2d`, [`tarifas-execucao-2-solucao-inicial.txt`](evidencias/mutacao/tarifas-execucao-2-solucao-inicial.txt)) já matava os 13 mutantes. A revisão conferiu o mapeamento mutante → teste e corrigiu três pontos de manutenção (commit `21e9824`): os comentários citavam só o número do mutante, que muda quando `tarifas.py` muda, e passaram a descrever a mutação; faltava o aviso de que os testes de `_tarifa_com_pacote` cobrem código morto; e faltava a justificativa dos valores com centavos.
+
+---
+
+## `TransacaoPix` — `app/dominio/pix.py`
+
+| Campo | Valor |
+|---|---|
+| Responsável | Alexandre Colmenero |
+| Issues | #38 (unitários + cobertura estrutural) · #43 (mutação) |
+| Arquivo de testes | `tests/unit/test_pix.py` |
+| Complexidade ciclomática (soma dos métodos, `radon cc`) | 52 |
+
+### Cobertura estrutural (todas-arestas) — #38
+
+**Comando**
+
+```bash
+uv run pytest tests/unit/test_pix.py --cov=app.dominio.pix --cov-branch --cov-report=term-missing
+```
+
+**Antes × depois**
+
+| | Antes (Entrega 1) | Depois (22/11/2026 — #38) |
+|---|---|---|
+| Casos de teste | 68 | 104 |
+| Resultado | 66 passam · 2 falham (#16, #17) | 104 passam |
+| Cobertura de arestas | 100% | **100%** |
+| Linhas / ramos não cobertos | nenhuma (101 stmts, 50 branches) | nenhuma (101 stmts, 50 branches) |
+
+**Saída (depois)**
+
+```text
+Name                 Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------------
+app/dominio/pix.py     101      0     50      0   100%
+----------------------------------------------------------------
+TOTAL                  101      0     50      0   100%
+Required test coverage of 80.0% reached. Total coverage: 100.00%
+104 passed in 0.40s
+```
+
+A cobertura já era de 100% na Entrega 1; a ampliação reorganizou a suíte por técnica e acrescentou 36 casos que exercitam as fronteiras que a mutação (#43) tende a atacar. Os 2 casos que falhavam na Entrega 1 eram os defeitos #16 e #17, corrigidos no commit `e7881bd` (PR #89) e mantidos na suíte como regressão (`email_dois_arroba` e `chargeback_bloqueada_dias_30_valor_alto`).
+
+### Técnicas funcionais aplicadas
+
+A técnica de cada caso novo está no prefixo do id do `pytest.param`.
+
+| Técnica | Prefixo | Casos | Onde |
+|---|---|---|---|
+| Partição de equivalência | `pe_` | 5 | CPF formatado e com letras; e-mail com três `@`; aleatória com espaços; `autorizar` sem saldo (`saldo=None`) |
+| Análise de valor-limite | `vl_` | 9 | limites diurnos/noturnos a ±0,01; horário 19:59/20:00/5:59/6:00/6:01; saldo a ±0,01 do valor |
+| Tabela de decisão | `td_` | 8 | precedências de `autorizar` e combinações de chave bloqueada/motivo/faixas do chargeback |
+| Teste de laços | `laco_` | 2 | CPF que falha no 1º e no 2º dígito verificador |
+| Parâmetros customizados | `custom_` | 8 | limites próprios de `autorizar` e prazo/teto próprios do chargeback |
+| Janela noturna com virada de dia | sem prefixo | 4 | `noturno_custom_virada_*` (22h–2h) |
+| Regressão de defeitos | ids originais | 2 | `email_dois_arroba` (#16) e `chargeback_bloqueada_dias_30_valor_alto` (#17) |
+
+> Os 68 casos da Entrega 1 mantiveram os ids originais (sem prefixo) para preservar as referências das issues #16 e #17.
+
+**Observações de projeto:**
+
+- **Isolamento de dependências:** não se aplica — `TransacaoPix` é uma classe pura, sem repositório ou framework; o isolamento por mock ficou nos serviços (#53).
+- **Determinismo:** `autorizar` usa `datetime.now()` quando o horário não é informado; todos os casos de caminho válido passam `horario` fixo.
+
+### Mutação (baseada em defeitos) — #43
+
+> A preencher na issue #43 (execução com `mutmut`, triagem dos sobreviventes e escore final).
+
+Evidência da cobertura: [`evidencias/cobertura/pix-cobertura.txt`](evidencias/cobertura/pix-cobertura.txt).
