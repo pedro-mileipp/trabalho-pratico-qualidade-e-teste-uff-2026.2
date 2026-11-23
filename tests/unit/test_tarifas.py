@@ -561,7 +561,7 @@ def test_custom_anual_arredonda_centavos():
 # (docs/aplicacao.md, seção 4.3). Enquanto o defeito existe, ficam marcados como
 # xfail(strict=True), para não bloquear o mutmut (#45).
 # Ao corrigir o defeito, remova o xfail (strict=True acusa XPASS).
-# #77 foi corrigido na #50: os casos abaixo passaram a ser testes de regressão.
+# #77 foi corrigido na #50 e #78 na #78: os casos abaixo passaram a ser testes de regressão.
 
 
 @pytest.mark.parametrize(
@@ -579,7 +579,6 @@ def test_defeito_tarifa_anual_aplica_desconto_por_antiguidade(
     assert tarifa.tarifa_anual(TipoConta.CORRENTE, 1000.0, antiguidade_meses=antiguidade_meses) == esperado
 
 
-@pytest.mark.xfail(strict=True, reason="#78: meia tarifa do pacote premium usa a tarifa da corrente")
 @pytest.mark.parametrize(
     ("saldo", "antiguidade_meses"),
     [
@@ -591,8 +590,22 @@ def test_defeito_tarifa_anual_aplica_desconto_por_antiguidade(
 def test_defeito_pacote_premium_meia_tarifa_da_premium(
     saldo: float, antiguidade_meses: int, tarifa: TarifaBancaria
 ):
-    # meia tarifa da premium = 50 * 0,5 = 25,00 (o código devolve corrente * 0,5 = 15,00)
+    # meia tarifa da premium = 50 * 0,5 = 25,00 (antes da correção da #78, o código devolvia corrente * 0,5 = 15,00)
     assert (
         tarifa.tarifa_mensal(TipoConta.PREMIUM, saldo, tem_pacote=True, antiguidade_meses=antiguidade_meses)
         == 25.0
     )
+
+
+@pytest.mark.parametrize(
+    ("saldo", "esperado"),
+    [
+        # A correção da #78 só muda a premium: a corrente com pacote e saldo 6000 continua com
+        # a meia tarifa da própria conta, 30 * 0,5 = 15,00.
+        pytest.param(6000.0, 15.0, id="td_r3_corrente_pacote_saldo_6000"),
+    ],
+)
+def test_regressao_78_corrente_continua_com_meia_tarifa_da_corrente(
+    saldo: float, esperado: float, tarifa: TarifaBancaria
+):
+    assert tarifa.tarifa_mensal(TipoConta.CORRENTE, saldo, tem_pacote=True) == esperado

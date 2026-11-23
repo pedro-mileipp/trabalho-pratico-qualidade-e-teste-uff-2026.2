@@ -1,0 +1,14 @@
+SonarQube 26.11.0.134175-community (Docker, Ubuntu no WSL 2), perfil Python Sonar way comprehensive (407 regras)
+Projeto de análise separado: banco-digital-uff-2026-2-issue78 (não altera o projeto principal)
+Data: 22/11/2026
+
+                                   antes (main 8d8dbb5)   depois (branch 99a05ba)
+Apontamentos abertos no projeto                      19                       19
+Apontamentos em app/dominio/tarifas.py                0                        0
+python:S3776 (complexidade cognitiva)                 0                        0
+cognitive_complexity (arquivo tarifas.py)            17                       19
+complexity (arquivo tarifas.py)                      20                       21
+
+A API do SonarQube expõe a complexidade cognitiva por arquivo, não por função. A diferença de +2 vem da
+expressão condicional nova na meia tarifa de tarifa_mensal (+1 da expressão, +1 por estar dentro de um if).
+Sem apontamento python:S3776, tarifa_mensal continua com complexidade cognitiva <= 15.

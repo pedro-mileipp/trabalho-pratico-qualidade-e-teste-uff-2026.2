@@ -172,7 +172,7 @@ Exigência do enunciado: preservar a solução inicial, a final e descrever as a
 | Sonar | `./scripts/sonar_local.sh scan` | 26 → 19 apontamentos abertos no projeto; PIX 7 → 0 |
 | Sistema PIX | `uv run pytest tests/system/pix -q` | 6 passed |
 | Suíte de sistema | `uv run pytest tests/system -q` (duas execuções) | 55 passed, 1 xfailed (40,40s e 43,11s) |
-| Suíte completa | `uv run pytest -q` | 705 passed, 4 xfailed |
+| Suíte completa | `uv run pytest -q` | 705 passed, 4 xfailed (na data da sessão; após a correção do #78, a suíte passou a 710 passed) |
 | Lint / CC | `uv run ruff check app/` · `uv run radon cc app/dominio/pix.py -s` | ruff ok; `autorizar` CC 11 e `solicitar_chargeback` CC 10 |
 
 Evidências: [`cobertura/pix-cobertura.txt`](../../relatorios/evidencias/cobertura/pix-cobertura.txt), [`mutacao/pix-execucao-1-antes.txt`](../../relatorios/evidencias/mutacao/pix-execucao-1-antes.txt), [`mutacao/pix-execucao-2-depois.txt`](../../relatorios/evidencias/mutacao/pix-execucao-2-depois.txt), [`sonar/depois/pix/`](../../relatorios/evidencias/sonar/depois/pix/) e `tests/system/pix/evidencias/`.
@@ -184,8 +184,8 @@ Evidências: [`cobertura/pix-cobertura.txt`](../../relatorios/evidencias/cobertu
 - **Mutação**: 148 mutantes, 144 mortos (97,3%; 100% descontando 4 equivalentes).
 - **Sonar**: 7 → 0 apontamentos na funcionalidade PIX; classe com 0 e CC preservada.
 - **Sistema**: 6 cenários de PIX; suíte total 55 passed + 1 xfail, determinística.
-- **Suíte completa**: 705 passed, 4 xfailed.
-- **Issues fechadas**: #38, #43, #48 e #56 (e #16/#17, já resolvidas). A #64 segue aberta por depender dos slides e dos artefatos de #62/#63.
+- **Suíte completa**: 705 passed, 4 xfailed na data da sessão (710 passed após a correção do #78).
+- **Issues fechadas**: #38, #43, #48 e #56 (e #16/#17, já resolvidas). A #64 segue aberta por depender dos slides e do relatório consolidado do Sonar (#63).
 
 ## Avaliação crítica e lições aprendidas
 
