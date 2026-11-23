@@ -82,7 +82,7 @@ Exigência do enunciado: preservar a solução inicial, a final e descrever as a
 3. Acrescentados os 2 ids no template; criados o page object e os testes; valor da #78 confirmado no Chrome; solução inicial gravada sem revisão (`850f87d`).
 4. Revisão: correção do `PYI041`, suíte completa, caso isolado, evidências e falha forçada; versão revisada gravada (`afe29fa`).
 5. Validação manual da #78 pelo responsável (prompt 3).
-6. Atualizados `docs/plano_de_teste.md` (v1.19, seção 6.2), o `README.md` e o AI-LOG; comentário na issue #78 registrando que o defeito aparece na interface.
+6. Atualizados `docs/plano_de_teste.md` (v1.22, seção 6.2), o `README.md` e o AI-LOG; comentário na issue #78 registrando que o defeito aparece na interface.
 
 ## Resultado
 

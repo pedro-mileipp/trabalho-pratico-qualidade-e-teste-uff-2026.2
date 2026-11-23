@@ -1,6 +1,6 @@
 # 📌 Plano de Teste — Banco Digital
 
-> Plano de Teste da **Entrega 1** do trabalho prático de Qualidade e Teste (UFF 2026.2).
+> Plano de Teste das **Entregas 1 e 2** do trabalho prático de Qualidade e Teste (UFF 2026.2).
 
 ---
 
@@ -29,7 +29,12 @@
 | 1.16 | 22/11/2026 | Gabrielle Rosa | Entrega 2: inspeção estática SonarQube em `CalculadoraJuros` — 0 apontamentos e evidência pós-correção (issue #49) nas seções 6.4 e registro de mudanças |
 | 1.17 | 22/11/2026 | Daniel Izu | Entrega 2: correção dos apontamentos do Sonar em `TarifaBancaria` e `tarifas.html` (7 → 0) e do defeito #77 (issue #50) na seção 6.8 |
 | 1.18 | 22/11/2026 | Daniel Izu | Entrega 2: testes de integração serviços ↔ repositório, sem mocks, no `SqliteRepositorio` e no `MemoriaRepositorio` (issue #54) na seção 6.9 |
-| 1.19 | 22/11/2026 | Daniel Izu | Entrega 2: testes de sistema com Selenium — Tarifas/RF04 (issue #58) na seção 6.2; defeito #78 confirmado na interface |
+| 1.19 | 22/11/2026 | Alexandre Colmenero | Entrega 2: atualização global do plano (escopo, estado atual, ferramentas e critérios) e planejamento dos testes de `TransacaoPix` — issues #38, #43, #48 e #56 — na seção 6.10 |
+| 1.20 | 22/11/2026 | Alexandre Colmenero | Entrega 2: ampliação dos testes unitários de `TransacaoPix` para 104 casos e cobertura estrutural todas-arestas (100%, issue #38) na seção 6.10.2 |
+| 1.21 | 22/11/2026 | Alexandre Colmenero | Entrega 2: teste de mutação de `TransacaoPix` com `mutmut` (escore 97,3%; 100% descontando 4 equivalentes, issue #43) na seção 6.10.3 |
+| 1.22 | 22/11/2026 | Daniel Izu | Entrega 2: testes de sistema com Selenium — Tarifas/RF04 (issue #58) na seção 6.2; defeito #78 confirmado na interface |
+
+> Nota: as versões 1.14 e 1.16 aparecem duplicadas por registros simultâneos de integrantes; a numeração histórica foi preservada porque o AI-LOG e os prompts a citam.
 
 ---
 
@@ -40,6 +45,8 @@ O presente Plano de Teste tem como finalidade descrever as estratégias, process
 O principal objetivo é verificar se as funcionalidades implementadas atendem aos requisitos definidos, além de garantir uma experiência de uso confiável e adequada ao público alvo.
 
 Para isso, foram adotadas abordagens de **testes unitários** e **testes manuais**, contemplando funcionalidades como autenticação de usuários, transferência PIX, consulta de tarifas, simulação de empréstimo e análise de crédito. O processo de verificação e validação foi conduzido de forma iterativa, possibilitando a identificação antecipada de falhas e a evolução contínua do sistema ao longo da Entrega 1.
+
+Na **Entrega 2**, o processo foi ampliado com **testes de integração**, **testes de sistema automatizados (Selenium)**, **cobertura estrutural (todas-arestas)**, **teste de mutação (mutmut)** e **inspeção estática (SonarQube)**, além do requisito não funcional de segurança (RNF06). As seções 6.1 a 6.9 registram os resultados por classe e funcionalidade; o planejamento e os resultados de `TransacaoPix` ficam na seção 6.10.
 
 ---
 
@@ -101,7 +108,6 @@ Esses recursos não foram testados porque não estão expostos na interface ou n
 | Testes de segurança avançados | Fora do escopo acadêmico do projeto |
 | Testes de desempenho em larga escala | Não aplicável nesta entrega |
 | Testes de banco de dados em alto volume | Não contemplados |
-| Testes de sistema com Selenium, cobertura estrutural e mutação | Previstos para a Entrega 2 |
 
 ---
 
@@ -177,6 +183,29 @@ Além disso, os testes visam garantir a integridade dos dados, o tratamento de e
 | Empréstimo | 5 | 5 aprovados |
 | Crédito | 10 | 10 aprovados |
 
+#### Estado atual (22/11/2026)
+
+| Suíte | Casos | Resultado |
+|-------|-------|-----------|
+| Unitária (`tests/unit/`) | 544 | 544 pass · 3 xfail (defeito #78, Tarifas) |
+| Integração (`tests/integration/`) | 84 | 84 pass |
+| Sistema (`tests/system/`) | 31 | 31 pass |
+| Requisitos não funcionais (`tests/rnf/`) | 22 | 22 pass |
+| **Total** | **681** | **681 pass · 3 xfail** |
+
+Unitários por classe de domínio:
+
+| Classe | Casos | Resultado |
+|--------|-------|-----------|
+| `TransacaoPix` | 111 | 111 pass |
+| `DecisorCredito` | 96 | 96 pass |
+| `CalculadoraJuros` | 68 | 68 pass |
+| `SimuladorEmprestimo` | 125 | 125 pass |
+| `TarifaBancaria` | 128 | 128 pass · 3 xfail (#78) |
+| `AuthService` e `TransacaoService` | 16 | 16 pass |
+
+> A suíte completa ficou verde em 22/11/2026, após a correção dos bugs de PIX #16 e #17 (commit `e7881bd`, PR #89). Os 3 `xfail` restantes documentam o defeito #78 (Tarifas) e não bloqueiam a execução.
+
 ---
 
 ## 🔬 2. Metodologia de Teste
@@ -188,6 +217,15 @@ No projeto foram conduzidas as seguintes fases de teste na Entrega 1:
 - **Teste de Unidade:** classes puras de `app/dominio/` testadas com **pytest**, aplicando partição de equivalência, análise de valor-limite, tabela de decisão e teste de laços. Suíte em `tests/unit/` (1 arquivo por classe).
 - **Teste de Sistema (manual):** casos executados na interface do Flask em `tests/testes_manuais/` (PIX, Auth, Tarifas, Empréstimo e Crédito), com evidências por caso.
 - **Gestão de casos:** casos manuais registrados no TestLink, com relatório do caso Auth exportado em PDF ([Auth — Relatório TestLink](https://drive.google.com/file/d/14yShZiduI8gixsV5wCQqA70DH2TV4SN4/view?usp=sharing)).
+
+Na **Entrega 2**, além das fases acima:
+
+- **Teste de integração:** rotas HTTP com `test_client` (#55) e serviços ↔ repositório sem mocks (#54), em `tests/integration/`.
+- **Cobertura estrutural (todas-arestas):** ≥ 80% nas 5 classes de domínio, com `pytest-cov` e `branch = True`.
+- **Teste de mutação:** escore ≥ 80% nas mesmas classes, com `mutmut`.
+- **Teste de sistema automatizado:** Selenium + Chrome headless em `tests/system/` (uma pasta por funcionalidade).
+- **Requisito não funcional:** segurança da autenticação (RNF06) em `tests/rnf/seguranca/`.
+- **Inspeção estática:** SonarQube local (Docker), perfil *Sonar way comprehensive*, com registro "antes" e "depois".
 
 ---
 
@@ -207,6 +245,13 @@ Os testes foram considerados concluídos quando:
 - Os resultados dos testes foram devidamente registrados
 - As falhas identificadas foram documentadas em issues
 - As principais funcionalidades do sistema foram avaliadas
+
+Na Entrega 2, acrescentam-se:
+
+- Cobertura estrutural ≥ 80% (todas-arestas) nas 5 classes de domínio;
+- Escore de mutação ≥ 80% nas mesmas classes;
+- Testes de sistema automatizados executados e verdes;
+- Apontamentos do Sonar resolvidos ou justificados, com print antes/depois.
 
 ---
 
@@ -246,8 +291,8 @@ Os entregáveis de teste são fornecidos conforme abaixo.
 - Testes unitários em `tests/unit/`.
 - Relatório do TestLink (PDF — caso Auth): [Auth — Relatório TestLink](https://drive.google.com/file/d/14yShZiduI8gixsV5wCQqA70DH2TV4SN4/view?usp=sharing).
 - Issues de defeito abertas no GitHub (bugs encontrados pelos testes):
-  - [#16](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/16) — e-mail com dois `@` aceito como válido (PIX)
-  - [#17](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/17) — chave bloqueada ignora regra de valor no chargeback (PIX)
+  - [#16](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/16) — e-mail com dois `@` aceito como válido (PIX). **Corrigida na Entrega 2:** `_validar_email` passou a exigir exatamente um `@` (commit `e7881bd`, PR #89)
+  - [#17](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/17) — chave bloqueada ignora regra de valor no chargeback (PIX). **Corrigida na Entrega 2:** chargeback de chave bloqueada passou a devolver `False` (commit `e7881bd`, PR #89)
   - [#20](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/20) — desconto de IR não aplicado no mês 12 (Juros). **Corrigida na Entrega 2:** ajustado o laço em `CalculadoraJuros.montante_com_aportes` para `range(1, meses + 1)`
   - [#35](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/35) — limite máximo não aplicado para score ≥ 850 (Crédito). **Fechada na Entrega 2:** o defeito estava nas expectativas dos testes, não no código; corrigido na issue [#42](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/42)
 
@@ -265,6 +310,10 @@ Os entregáveis de teste são fornecidos conforme abaixo.
 | 4 | TestLink | Gestão de casos de teste manuais |
 | 5 | GitHub Issues | Reporte de bugs e acompanhamento das atividades |
 | 6 | Google Chrome | Navegador usado na execução dos testes manuais |
+| 7 | Selenium WebDriver | Automação dos testes de sistema (Chrome headless) |
+| 8 | mutmut | Teste de mutação sobre as classes de domínio |
+| 9 | pytest-cov / coverage.py | Cobertura estrutural (todas-arestas) |
+| 10 | SonarQube (Docker) | Inspeção estática do código |
 
 ### 💻 4.2 Ambiente de Teste
 
@@ -274,9 +323,10 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 
 - Sistema operacional macOS, Linux ou Windows
 - Python **3.12** gerenciado por **uv**
-- Navegador Google Chrome
+- Navegador Google Chrome (headless nos testes de sistema, via Selenium Manager)
 - Banco de dados **SQLite** (arquivo em `/tmp` no ambiente de teste, fora do workspace)
 - Servidor de desenvolvimento **Flask**
+- Docker para o SonarQube local
 
 ---
 
@@ -295,12 +345,16 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 | TestLink | Ferramenta de gestão de casos de teste |
 | Flask | Microframework web do projeto |
 | TD | Tabela de Decisão |
+| Selenium | Framework de automação dos testes de sistema |
+| mutmut | Ferramenta de teste de mutação |
+| SonarQube | Plataforma de inspeção estática de código |
+| Cobertura de arestas | Critério estrutural que exige a passagem por todos os desvios |
 
 ---
 
 ## 🚀 6. Entrega 2 — Resultados
 
-> Seção em construção: cada integrante adiciona a subseção da sua classe ao concluir as issues da Entrega 2. O detalhamento (comandos, saídas e casos) fica em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
+> Cada integrante documenta a subseção da sua classe ao concluir as issues da Entrega 2; pendentes: Tarifas/Selenium (#58), ISO 25010 (#62) e relatório consolidado do Sonar (#63). O detalhamento (comandos, saídas e casos) fica em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
 
 ### 6.1 `DecisorCredito` — Pedro Mileipp
 
@@ -328,6 +382,8 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 ### 6.2 Testes de sistema (Selenium)
 
 **Ferramentas:** Selenium WebDriver 4 com Google Chrome em modo headless (driver resolvido pelo Selenium Manager) e pytest.
+
+**Situação em 22/11/2026:** 31 testes de sistema, todos passando — Crédito (13), Auth (12) e Empréstimo (6). O PIX (RF03, issue #56) está planejado na seção 6.10.
 
 **Base compartilhada** (`tests/system/conftest.py`), para todos os testes de sistema:
 
@@ -513,7 +569,7 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 | Defeito: `tarifa_anual` ignora a antiguidade | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | Corrigido na #50 | Revelado na #40; `tarifa_anual` passou a repassar `antiguidade_meses`; o teste virou regressão (`vl_anual_antiguidade_35/36`) |
 | Defeito: meia tarifa do pacote premium usa a tarifa da corrente | [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | Aberto (a confirmar pelo grupo) | Revelado na tabela de decisão (regra R3); teste com `xfail(strict=True)` |
 | Mutação (escore ≥ 80%) | [#45](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/45) | Concluído | 106 mutantes, 100 mortos: **94,3%** (antes: 82,1%; 100% descontando 6 equivalentes justificados); +7 casos (`custom_`, `vl_`, `pe_`) que exercitam os arredondamentos; mutmut executado no Ubuntu (WSL 2); evidências em [`docs/relatorios/evidencias/mutacao/`](relatorios/evidencias/mutacao/) |
-| Correções do Sonar | [#50](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/50) | Concluído | 7 apontamentos de tarifas corrigidos (`tarifas.py`: 1 → 0; `tarifas.html`: 6 → 0); projeto: 37 → 30. `tarifa_mensal` reescrita sem aninhamento: complexidade cognitiva ≤ 15 e CC 14 (antes 12). Detalhes na seção 6.3 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md) |
+| Correções do Sonar | [#50](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/50) | Concluído | 7 apontamentos de tarifas corrigidos (`tarifas.py`: 1 → 0; `tarifas.html`: 6 → 0); projeto: 37 → 30. `tarifa_mensal` reescrita sem aninhamento: complexidade cognitiva ≤ 15 e CC 14 (antes 12). Detalhes na seção 6.4 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md) |
 
 **Técnicas aplicadas** (identificadas pelo prefixo do id de cada caso em `tests/unit/test_tarifas.py`):
 
@@ -547,7 +603,7 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 | Contrato do `Repositorio` | `criar_cliente` (saldo 0, score 500, ids distintos); busca por id e por e-mail; inexistentes → `None`; `atualizar_saldo` e `atualizar_score` persistem; `registrar_transacao` devolve data ISO; `listar_transacoes` mantém a ordem de inserção | 8 × 2 | ✅ |
 | Divergências entre as implementações | Comportamento atual fixado em testes separados por implementação (ver abaixo) | 4 | ✅ |
 
-**Resultado (22/11/2026):** **56 testes novos** passando. `uv run pytest tests/integration -q`: **84 passed** (os 28 da #55 e os 56 novos). Cobertura de linhas e arestas de `app/servicos` e `app/repositorios` com os testes de integração: **100%** (136 statements, 18 ramos). Nenhum `banco.db` criado no workspace: uma fixture autouse compara a existência e o `mtime` de `banco.db` na raiz antes e depois de cada teste. Suíte completa (`uv run pytest`): só falham os 2 testes de PIX dos bugs #16 e #17, de outra issue. Evidência em [`docs/relatorios/evidencias/integracao/servicos-repositorio.txt`](relatorios/evidencias/integracao/servicos-repositorio.txt).
+**Resultado (22/11/2026):** **56 testes novos** passando. `uv run pytest tests/integration -q`: **84 passed** (os 28 da #55 e os 56 novos). Cobertura de linhas e arestas de `app/servicos` e `app/repositorios` com os testes de integração: **100%** (136 statements, 18 ramos). Nenhum `banco.db` criado no workspace: uma fixture autouse compara a existência e o `mtime` de `banco.db` na raiz antes e depois de cada teste. Suíte completa (`uv run pytest`): **638 passed e 3 xfailed** (defeito #78, de outra issue; os bugs de PIX #16 e #17 foram corrigidos depois, no commit `e7881bd`, PR #89). Evidência em [`docs/relatorios/evidencias/integracao/servicos-repositorio.txt`](relatorios/evidencias/integracao/servicos-repositorio.txt).
 
 **Divergências e observações** (o código de produção não foi alterado):
 
@@ -556,5 +612,69 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 - **Tipo do horário:** `TransacaoService.transferir_pix` anota `horario: datetime | None`, mas `TransacaoPix.autorizar` espera `datetime.time`. Os testes sempre passam `horario=time(...)`, porque sem horário o resultado dependeria da hora da execução (o limite noturno começa às 20h).
 - Chaves de e-mail com dois `@` (bug #16) e chargeback (bug #17) não foram usadas.
 - Os testes foram gerados com IA. A solução inicial foi preservada (`829b937`), e a revisão acrescentou o caso de registro inválido, que leva `auth.py` de 94% para 100% sem depender dos testes de rota da #55 (`093eed1`). Detalhes na sessão 23 do [AI-LOG](ai/AI-LOG.md).
+
+### 6.10 `TransacaoPix` — Alexandre Colmenero
+
+#### 6.10.1 Planejamento dos testes (elaborado antes da execução)
+
+**Objetivo.** Comprovar o requisito funcional RF03 (transferência PIX) e a manutenibilidade da classe (`app/dominio/pix.py`) com as técnicas funcional, estrutural e baseada em defeitos; automatizar o fluxo principal e os fluxos de recusa na interface (Selenium); resolver os apontamentos do Sonar da funcionalidade; preservar a complexidade ciclomática ≥ 10.
+
+**Itens sob teste.** `validar_chave`, `autorizar`, `solicitar_chargeback`, `_eh_noturno` e a rota/tela `/pix`. O chargeback e a lista de chaves bloqueadas não são alcançáveis pela interface — permanecem no nível de unidade.
+
+**Estado inicial (22/11/2026).** 68 casos em `tests/unit/test_pix.py`, todos passando; cobertura de arestas 100% (101 statements, 50 branches); CC máxima 11 (`autorizar`) e 10 (`solicitar_chargeback`). Os defeitos #16 e #17 já foram corrigidos (commit `e7881bd`, PR #89) e têm casos de regressão na suíte.
+
+**Técnicas e casos planejados** (a técnica é identificada no id do `pytest.param` ou em comentário):
+
+| Técnica | Método/Fluxo | Casos planejados |
+|---|---|---|
+| Partição de equivalência | `validar_chave` | CPF válido (com e sem pontuação); CPF inválido por dígito verificador (1º e 2º), dígitos repetidos, curto/longo e sem dígitos; e-mail válido, sem `@`, com dois `@` (regressão #16), domínio sem ponto e com ponto no início/fim; telefone 10/11 dígitos e formatado; aleatória 31/32/33 caracteres; vazio e tipo desconhecido |
+| Análise de valor-limite | `autorizar` | valor 0 e 0,01; limites diurnos 4999,99 / 5000,00 / 5000,01; noturnos 999,99 / 1000,00 / 1000,01; saldo igual e logo abaixo do valor; fronteiras de horário 19:59 / 20:00 / 5:59 / 6:00 / 6:01 |
+| Tabela de decisão | `autorizar` | precedência valor → chave → bloqueio → horário/limite → saldo → aprovada; chave bloqueada combinada com valor inválido e com valor válido |
+| Tabela de decisão | `solicitar_chargeback` | dias -1 / 0 / 7 / 8 / 30 / 31 / 90 / 91; valor 0, 5000,00 e 5000,01; motivo golpe/fraude/vazio; chave bloqueada em cada faixa (regressão #17) |
+| Teste de laços | `_validar_cpf` | laço dos dois dígitos verificadores: falha no 1º, falha no 2º e CPF válido |
+| PE + valor-limite | `_eh_noturno` | janela padrão (20h–6h) e janela customizada, inclusive com virada de dia (22h–2h); fronteiras exatas |
+| Parâmetros customizados | construtor | `ConfiguracaoPix` com limites e prazo de chargeback próprios (preparação para a mutação) |
+| Sistema (Selenium) | `/pix` | CT-01 aprovado; CT-02 chave inválida; CT-03 saldo insuficiente; CT-04 e-mail com dois `@` (regressão #16); CT-05 valor ≤ 0 barrado pelo HTML5; guarda sem login |
+
+**Dados de teste.** CPF válido `529.982.247-25`; CPFs inválidos `123.456.789-00` e dígitos repetidos; e-mails `user@example.com`, `a@b@c.com`, `@example.com`, `user@example` etc.; telefones `(21) 2222-3333` e `21988887777`; chave aleatória de 32 caracteres; valores e horários da tabela acima.
+
+**Oráculos.** Valores esperados explícitos derivados de `docs/aplicacao.md` §4.1 — nunca calculados pelo próprio código sob teste. Nos testes de sistema, o saldo inicial é definido diretamente no SQLite temporário (a interface não tem depósito), e os cenários evitam os limites por horário para não depender do relógio da máquina.
+
+**Ambiente e comandos.**
+
+```bash
+uv run pytest tests/unit/test_pix.py --cov=app.dominio.pix --cov-branch --cov-report=term-missing
+uv run radon cc app/dominio/pix.py -s
+uv run mutmut run   # configuração isolada (only_mutate), sem versionar
+uv run pytest tests/system/pix -v   # e EVIDENCIAS=1 para os prints
+./scripts/sonar_local.sh scan
+```
+
+**Critérios de aceite.**
+
+- #38: casos ampliados e executados; cobertura de arestas ≥ 80% na classe.
+- #43: escore de mutação ≥ 80%; sobreviventes triados e justificados.
+- #48: apontamentos da funcionalidade PIX resolvidos ou justificados; print "depois"; CC ≥ 10 preservada; suíte verde.
+- #56: fluxo principal e recusas automatizados; testes determinísticos e independentes; evidências.
+
+**Riscos e mitigação.**
+
+| Risco | Mitigação |
+|---|---|
+| `autorizar` usa `datetime.now()` quando o horário não é informado | testes sempre passam `horario` fixo |
+| Limites diurno/noturno dependem do horário da execução (sistema) | cenários de sistema usam valores válidos nas duas janelas |
+| Saldo inicial zero na interface | fixture define o saldo no SQLite antes do cenário |
+| Sonar local desatualizado (análise de 11/11) | re-scan com o script antes e depois das correções |
+| Mutantes equivalentes | triagem e justificativa no relatório |
+
+**Resultados:** registrados nas seções 6.10.2 (unitários/cobertura), 6.10.3 (mutação), 6.10.4 (Sonar) e 6.10.5 (sistema), à medida que as issues forem concluídas.
+
+#### 6.10.2 Unitários e cobertura estrutural — issue #38
+
+**Resultado (22/11/2026):** suíte ampliada de 68 para **104 casos**, todos passando; cobertura de arestas mantida em **100%** (101 statements, 50 branches). Os 2 casos que falhavam na Entrega 1 eram os defeitos #16 e #17, corrigidos no commit `e7881bd` (PR #89) e mantidos como regressão. Comando, saída e data em [`docs/relatorios/evidencias/cobertura/pix-cobertura.txt`](relatorios/evidencias/cobertura/pix-cobertura.txt); detalhes na seção `TransacaoPix` de [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
+
+#### 6.10.3 Mutação — issue #43
+
+**Resultado (22/11/2026):** `mutmut` isolado em `app/dominio/pix.py` — **148 mutantes, 144 mortos (97,3%)**; os 4 sobreviventes são equivalentes justificados (100% descontando equivalentes). Meta da disciplina: ≥ 80% ✅. A 1ª execução (104 casos) já atingia 91,9%; os 7 casos novos mataram 8 sobreviventes, com mapeamento mutante → teste verificado por `mutmut apply`. Evidências em [`docs/relatorios/evidencias/mutacao/pix-execucao-1-antes.txt`](relatorios/evidencias/mutacao/pix-execucao-1-antes.txt) e [`pix-execucao-2-depois.txt`](relatorios/evidencias/mutacao/pix-execucao-2-depois.txt); detalhes na seção `TransacaoPix` de [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
 
 ---

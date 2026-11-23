@@ -29,7 +29,7 @@ uv run mutmut results
 uv run mutmut show <id>
 ```
 
-O `source_paths` explícito corrige o `FileNotFoundError` que o mutmut 3.8 apresentava sem configuração. A suíte unitária precisa estar 100% verde antes do run completo; as falhas abertas de PIX (#16/#17) e juros (#20) bloqueiam temporariamente o run geral.
+O `source_paths` explícito corrige o `FileNotFoundError` que o mutmut 3.8 apresentava sem configuração. A suíte unitária precisa estar 100% verde antes do run completo. Desde 22/11/2026 a suíte está verde — os bugs #16, #17 e #20 foram corrigidos — e os 3 `xfail` restantes (defeito #78) não bloqueiam o mutmut.
 
 Para mutar uma classe isolada, acrescente `only_mutate = ["app/dominio/<arquivo>.py"]` e restrinja `pytest_add_cli_args_test_selection` ao teste correspondente. Remova as duas restrições para o run completo de todas as classes.
 
@@ -51,7 +51,7 @@ Escore: 74 / 106 = 69,8%
 
 > **Atualização (#45, 22/11/2026):** com a suíte ampliada na #40 e na #45, o escore de `TarifaBancaria` chegou a **94,3%** (100% descontando 6 equivalentes). Ver a subseção "Mutação — #45" na seção da classe.
 
-> O run completo de todas as classes continua bloqueado pelas 3 falhas atuais da suíte (#16, #17 e #20).
+> O run completo de todas as classes pode ser executado: a suíte está verde desde 22/11/2026 (os bugs #16, #17 e #20 foram corrigidos; restam 3 `xfail` do defeito #78).
 
 ---
 
@@ -680,3 +680,127 @@ O mapeamento foi conferido aplicando cada mutante sozinho (`mutmut apply`) e rod
 > **Atualização (#50, 22/11/2026):** a #50 removeu `_tarifa_com_pacote` e reescreveu `tarifa_mensal` sem aninhamento (correção do Sonar `python:S3776`). Os testes do método removido passaram a verificar a mesma regra por `tarifa_mensal` com pacote, e foi acrescentado o caso `custom_pacote_meia_tarifa_com_centavos`. Nova execução: **101 mutantes, 93 mortos (92,1%)**. Dos 8 sobreviventes, 7 são equivalentes — os 6 da tabela acima (com outros números, porque o código mudou) e 1 novo, o padrão `antiguidade_meses` 0 → 1 de `tarifa_anual` (mesmo raciocínio do `tarifa_mensal__mutmut_3`) — e 1 é `round(corrente * 0.5, 2)` → `round(..., 3)` na meia tarifa, que só se distingue em meio centavo exato (ambíguo em `float`) e não recebeu teste frágil. Evidência: [`tarifas-execucao-4-pos-sonar.txt`](evidencias/mutacao/tarifas-execucao-4-pos-sonar.txt).
 
 **Revisão da solução gerada por IA** ([sessão 21 do AI-LOG](../ai/prompts/sessao-21-mutacao-tarifas.md)): a solução inicial (commit `145bd2d`, [`tarifas-execucao-2-solucao-inicial.txt`](evidencias/mutacao/tarifas-execucao-2-solucao-inicial.txt)) já matava os 13 mutantes. A revisão conferiu o mapeamento mutante → teste e corrigiu três pontos de manutenção (commit `21e9824`): os comentários citavam só o número do mutante, que muda quando `tarifas.py` muda, e passaram a descrever a mutação; faltava o aviso de que os testes de `_tarifa_com_pacote` cobrem código morto; e faltava a justificativa dos valores com centavos.
+
+---
+
+## `TransacaoPix` — `app/dominio/pix.py`
+
+| Campo | Valor |
+|---|---|
+| Responsável | Alexandre Colmenero |
+| Issues | #38 (unitários + cobertura estrutural) · #43 (mutação) |
+| Arquivo de testes | `tests/unit/test_pix.py` |
+| Complexidade ciclomática (soma dos métodos, `radon cc`) | 52 |
+
+### Cobertura estrutural (todas-arestas) — #38
+
+**Comando**
+
+```bash
+uv run pytest tests/unit/test_pix.py --cov=app.dominio.pix --cov-branch --cov-report=term-missing
+```
+
+**Antes × depois**
+
+| | Antes (Entrega 1) | Depois (22/11/2026 — #38) |
+|---|---|---|
+| Casos de teste | 68 | 104 |
+| Resultado | 66 passam · 2 falham (#16, #17) | 104 passam |
+| Cobertura de arestas | 100% | **100%** |
+| Linhas / ramos não cobertos | nenhuma (101 stmts, 50 branches) | nenhuma (101 stmts, 50 branches) |
+
+**Saída (depois)**
+
+```text
+Name                 Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------------
+app/dominio/pix.py     101      0     50      0   100%
+----------------------------------------------------------------
+TOTAL                  101      0     50      0   100%
+Required test coverage of 80.0% reached. Total coverage: 100.00%
+104 passed in 0.40s
+```
+
+A cobertura já era de 100% na Entrega 1; a ampliação reorganizou a suíte por técnica e acrescentou 36 casos que exercitam as fronteiras que a mutação (#43) tende a atacar. Os 2 casos que falhavam na Entrega 1 eram os defeitos #16 e #17, corrigidos no commit `e7881bd` (PR #89) e mantidos na suíte como regressão (`email_dois_arroba` e `chargeback_bloqueada_dias_30_valor_alto`).
+
+### Técnicas funcionais aplicadas
+
+A técnica de cada caso novo está no prefixo do id do `pytest.param`.
+
+| Técnica | Prefixo | Casos | Onde |
+|---|---|---|---|
+| Partição de equivalência | `pe_` | 5 | CPF formatado e com letras; e-mail com três `@`; aleatória com espaços; `autorizar` sem saldo (`saldo=None`) |
+| Análise de valor-limite | `vl_` | 9 | limites diurnos/noturnos a ±0,01; horário 19:59/20:00/5:59/6:00/6:01; saldo a ±0,01 do valor |
+| Tabela de decisão | `td_` | 8 | precedências de `autorizar` e combinações de chave bloqueada/motivo/faixas do chargeback |
+| Teste de laços | `laco_` | 2 | CPF que falha no 1º e no 2º dígito verificador |
+| Parâmetros customizados | `custom_` | 8 | limites próprios de `autorizar` e prazo/teto próprios do chargeback |
+| Janela noturna com virada de dia | sem prefixo | 4 | `noturno_custom_virada_*` (22h–2h) |
+| Regressão de defeitos | ids originais | 2 | `email_dois_arroba` (#16) e `chargeback_bloqueada_dias_30_valor_alto` (#17) |
+
+> Os 68 casos da Entrega 1 mantiveram os ids originais (sem prefixo) para preservar as referências das issues #16 e #17.
+
+**Observações de projeto:**
+
+- **Isolamento de dependências:** não se aplica — `TransacaoPix` é uma classe pura, sem repositório ou framework; o isolamento por mock ficou nos serviços (#53).
+- **Determinismo:** `autorizar` usa `datetime.now()` quando o horário não é informado; todos os casos de caminho válido passam `horario` fixo.
+
+### Mutação (baseada em defeitos) — #43
+
+**Ferramenta:** `mutmut` 3.8.0, com a receita de **classe isolada** da issue #36 (acrescentada temporariamente ao `pyproject.toml`, sem versionar, e removida após a medição):
+
+```toml
+only_mutate = ["app/dominio/pix.py"]
+pytest_add_cli_args_test_selection = ["tests/unit/test_pix.py"]
+```
+
+**Comandos**
+
+```bash
+rm -rf .mutmut-cache mutants   # força a re-execução com a suíte nova
+uv run mutmut run --max-children 4
+uv run mutmut results
+uv run mutmut show <mutante>
+```
+
+**Resultado (22/11/2026)**
+
+| | 1ª execução — antes (suíte da #38, 104 casos) | 2ª execução — depois (suíte da #43, 111 casos) |
+|---|---|---|
+| Mutantes gerados | 148 | 148 |
+| Mortos | 136 | **144** |
+| Sobreviventes | 12 | 4 (todos equivalentes) |
+| Timeout / suspeitos | 0 | 0 |
+| Escore (mortos / gerados) | 91,9% | **97,3%** |
+| Escore descontando os equivalentes (mortos / não equivalentes) | 136 / 140 = 97,1% | **144 / 144 = 100%** |
+| Evidência | [`pix-execucao-1-antes.txt`](evidencias/mutacao/pix-execucao-1-antes.txt) | [`pix-execucao-2-depois.txt`](evidencias/mutacao/pix-execucao-2-depois.txt) |
+
+Meta da disciplina: ≥ 80%. ✅
+
+**Triagem dos 12 sobreviventes da 1ª execução**
+
+| Mutante | Linha original → mutação | Classificação | Caso que mata |
+|---|---|---|---|
+| `autorizar__mutmut_4` | `valor <= 0` → `valor <= 1` | Morto na 2ª execução | `vl_valor_um_real` (valor 1,00 é válido) |
+| `solicitar_chargeback__mutmut_7` | `valor <= 0` → `valor <= 1` | Morto na 2ª execução | `vl_chargeback_valor_um_real` |
+| `solicitar_chargeback__mutmut_23` | `dias <= 7` → `dias < 7` | Morto na 2ª execução | `vl_chargeback_dias_7_valor_alto` (7 dias com valor acima do teto: o original aprova antes da regra de valor) |
+| `_eh_noturno__mutmut_1` | `inicio <= fim` → `inicio < fim` | Morto na 2ª execução | `vl_janela_ponto_depois` (janela com início == fim) |
+| `_validar_cpf__mutmut_16` | `range(9, 11)` → `range(10, 11)` | Morto na 2ª execução | `laco_cpf_falha_so_primeiro_dv` (CPF que falha só no 1º dígito verificador) |
+| `_validar_cpf__mutmut_34` | `resto == 10` → `resto == 11` | Morto na 2ª execução | `pe_cpf_valido_dv_zero` (resto 10 no 2º DV, transformado em 0) |
+| `_validar_cpf__mutmut_35` | `resto = 0` → `resto = None` | Morto na 2ª execução | `pe_cpf_valido_dv_zero` |
+| `_validar_cpf__mutmut_36` | `resto = 0` → `resto = 1` | Morto na 2ª execução | `pe_cpf_valido_dv_zero` |
+| `validar_chave__mutmut_3` | `(chave or "")` → `(chave or "XXXX")` | Equivalente | — |
+| `solicitar_chargeback__mutmut_14` | `(motivo or "")` → `(motivo or "XXXX")` | Equivalente | — |
+| `_validar_cpf__mutmut_9` | `digitos == digitos[0] * 11` → `digitos == digitos[1] * 11` | Equivalente | — |
+| `_validar_email__mutmut_8` | `partition("@")` → `rpartition("@")` | Equivalente | — |
+
+O mapeamento mutante → teste foi conferido aplicando cada mutante sozinho (`mutmut apply`) e rodando só o teste indicado: 8/8 mortos (registrado na evidência).
+
+**Justificativa dos 4 equivalentes**
+
+- `validar_chave__mutmut_3` e `solicitar_chargeback__mutmut_14`: a mutação só altera o valor usado quando o argumento é `None`/falsy. `"XXXX"` não valida como chave de nenhum tipo (CPF, e-mail, telefone ou aleatória de 32) e não contém `golpe`/`fraude` — o resultado é sempre o mesmo.
+- `_validar_cpf__mutmut_9`: em uma string de 11 caracteres, `digitos == digitos[0] * 11` e `digitos == digitos[1] * 11` só são verdadeiras quando todos os dígitos são iguais; as condições são idênticas.
+- `_validar_email__mutmut_8`: a linha só é alcançada quando `email.count("@") == 1`, caso em que `partition` e `rpartition` devolvem exatamente a mesma divisão.
+
+**Lição registrada:** a cobertura de arestas já era 100%, mas a mutação revelou fronteiras não testadas — valor `1,00` (mutação de `<= 0` para `<= 1`), 7 dias com valor acima do teto, janela noturna com início == fim e o ramo `resto == 10` do CPF (que exige um CPF válido com dígito verificador 0).
+
+Evidência da cobertura: [`evidencias/cobertura/pix-cobertura.txt`](evidencias/cobertura/pix-cobertura.txt).

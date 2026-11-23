@@ -1,0 +1,48 @@
+Mutação — TransacaoPix (#43) — execução 2 (depois, 111 casos)
+
+Configuração temporária em [tool.mutmut] (sem versionar; removida após a medição):
+  only_mutate = ["app/dominio/pix.py"]
+  pytest_add_cli_args_test_selection = ["tests/unit/test_pix.py"]
+
+Comando:
+  rm -rf .mutmut-cache mutants   # força a re-execução com a suíte nova
+  DATABASE=/tmp/pix43.db uv run mutmut run --max-children 4
+
+Data: 22/11/2026 (suíte: 111 passed em tests/unit/test_pix.py)
+
+Resumo:
+  148 mutantes gerados
+  144 mortos
+  4 sobreviventes (todos equivalentes)
+  0 timeouts
+  0 suspeitos
+  Escore: 144 / 148 = 97,3%
+  Escore descontando os equivalentes: 144 / 144 = 100%
+
+Meta da disciplina: >= 80%. OK.
+
+Mapeamento mutante -> teste (verificado aplicando cada mutante sozinho com
+`mutmut apply` e rodando só o teste indicado: 8/8 mortos):
+
+| Mutante | Mutação | Caso que mata |
+|---|---|---|
+| autorizar__mutmut_4 | `valor <= 0` -> `valor <= 1` | `vl_valor_um_real` |
+| solicitar_chargeback__mutmut_7 | `valor <= 0` -> `valor <= 1` | `vl_chargeback_valor_um_real` |
+| solicitar_chargeback__mutmut_23 | `dias <= 7` -> `dias < 7` | `vl_chargeback_dias_7_valor_alto` (7 dias com valor acima do teto) |
+| _eh_noturno__mutmut_1 | `inicio <= fim` -> `inicio < fim` | `vl_janela_ponto_depois` (inicio == fim, momento depois) |
+| _validar_cpf__mutmut_16 | `range(9, 11)` -> `range(10, 11)` | `laco_cpf_falha_so_primeiro_dv` (52998224733: falha só no 1º DV) |
+| _validar_cpf__mutmut_34 | `resto == 10` -> `resto == 11` | `pe_cpf_valido_dv_zero` (47824504000: resto 10 no 2º DV) |
+| _validar_cpf__mutmut_35 | `resto = 0` -> `resto = None` | `pe_cpf_valido_dv_zero` |
+| _validar_cpf__mutmut_36 | `resto = 0` -> `resto = 1` | `pe_cpf_valido_dv_zero` |
+
+Sobreviventes equivalentes (4, justificados):
+
+| Mutante | Mutação | Justificativa |
+|---|---|---|
+| validar_chave__mutmut_3 | `(chave or "")` -> `(chave or "XXXX")` | Só muda quando `chave` é None/falsy; "XXXX" não valida como chave de nenhum tipo (não é CPF, e-mail, telefone nem aleatória de 32), então o resultado é sempre o mesmo |
+| solicitar_chargeback__mutmut_14 | `(motivo or "")` -> `(motivo or "XXXX")` | "XXXX" não contém "golpe" nem "fraude"; quando `motivo` é None o resultado não muda |
+| _validar_cpf__mutmut_9 | `digitos == digitos[0] * 11` -> `digitos == digitos[1] * 11` | Para uma string de 11 caracteres, as duas condições só são verdadeiras quando todos os dígitos são iguais — condições idênticas |
+| _validar_email__mutmut_8 | `partition("@")` -> `rpartition("@")` | A linha só é alcançada quando `email.count("@") == 1`; com um único `@`, partition e rpartition devolvem a mesma divisão |
+
+Observação: a execução 1 (104 casos) já atingia 91,9%; os 7 casos novos
+mataram 8 sobreviventes e os 4 restantes são equivalentes.

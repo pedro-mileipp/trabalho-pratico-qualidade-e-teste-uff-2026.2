@@ -2,7 +2,7 @@
 
 > Relatório da inspeção estática do código-fonte da **Entrega 2** (Qualidade e Teste — UFF 2026.2).
 >
-> **Status:** seção “antes” concluída em 11/11/2026. A seção “depois” será preenchida após as correções das issues de cada classe.
+> **Status:** seção “antes” concluída em 11/11/2026; seções “depois” concluídas para crédito (6.1), empréstimo (6.2), juros (6.3) e tarifas (6.4). O PIX (#48) será registrado na seção 6.5.
 
 ## 1. Ambiente e método
 
@@ -246,7 +246,7 @@ Como a classe de domínio `SimuladorEmprestimo` não possuía apontamentos está
 - `issues-emprestimo-depois.json` — 0 apontamentos abertos nos arquivos de empréstimo após nova análise;
 - `dashboard-depois.png` — print do dashboard SonarQube após a análise;
 - `issues-emprestimo-resolvidos.png` — print da lista de issues demonstrando a resolução.
-### 6.2 `CalculadoraJuros` — Gabrielle Rosa (#49)
+### 6.3 `CalculadoraJuros` — Gabrielle Rosa (#49)
 
 **Ambiente:** SonarQube Community Build (`26.11.0.134175-community`, instância local), com o perfil Python **Sonar way comprehensive** (407 regras), na mesma base de comparação do relatório[cite: 12].
 
@@ -263,7 +263,7 @@ Como a classe de domínio `SimuladorEmprestimo` não possuía apontamentos está
 **Evidências** em `docs/relatorios/evidencias/sonar/depois/juros/`:
 - `issues-juros-depois.png` — print da tela de issues do SonarQube confirmando `0 issues` para `app/dominio/juros.py`.
 
-### 6.3 `TarifaBancaria` e funcionalidade de tarifas — Daniel Izu (#50)
+### 6.4 `TarifaBancaria` e funcionalidade de tarifas — Daniel Izu (#50)
 
 **Ambiente:** a mesma imagem do SonarQube (`26.11.0.134175-community`, via `docker-compose.yml` do projeto), numa instância local nova no Ubuntu (WSL 2), com o perfil Python **Sonar way comprehensive** (407 regras) e o perfil Web padrão, como no “antes”. Scanner: imagem oficial `sonar-scanner-cli` (SonarScanner CLI 8.4.0.16527), chamada pelo `scripts/sonar_local.sh scan`. Data: 22/11/2026.
 

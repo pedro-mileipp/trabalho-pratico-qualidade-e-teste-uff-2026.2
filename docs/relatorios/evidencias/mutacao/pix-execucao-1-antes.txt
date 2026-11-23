@@ -1,0 +1,43 @@
+Mutação — TransacaoPix (#43) — execução 1 (antes, 104 casos)
+
+Configuração temporária em [tool.mutmut] (sem versionar):
+  only_mutate = ["app/dominio/pix.py"]
+  pytest_add_cli_args_test_selection = ["tests/unit/test_pix.py"]
+
+Comando:
+  DATABASE=/tmp/pix43.db uv run mutmut run --max-children 4
+
+Data: 22/11/2026 (suíte: 104 passed em tests/unit/test_pix.py)
+
+Resumo:
+  148 mutantes gerados
+  136 mortos
+  12 sobreviventes
+  0 timeouts
+  0 suspeitos
+  Escore: 136 / 148 = 91,9%
+
+Sobreviventes (triagem na execução 2):
+  validar_chave__mutmut_3        — (chave or "") -> (chave or "XXXX")        [equivalente]
+  autorizar__mutmut_4            — valor <= 0 -> valor <= 1
+  solicitar_chargeback__mutmut_7 — valor <= 0 -> valor <= 1
+  solicitar_chargeback__mutmut_14— (motivo or "") -> (motivo or "XXXX")      [equivalente]
+  solicitar_chargeback__mutmut_23— dias <= 7 -> dias < 7
+  _eh_noturno__mutmut_1          — inicio <= fim -> inicio < fim
+  _validar_cpf__mutmut_9         — digitos == digitos[0]*11 -> digitos == digitos[1]*11 [equivalente]
+  _validar_cpf__mutmut_16        — range(9, 11) -> range(10, 11)
+  _validar_cpf__mutmut_34        — resto == 10 -> resto == 11
+  _validar_cpf__mutmut_35        — resto = 0 -> resto = None
+  _validar_cpf__mutmut_36        — resto = 0 -> resto = 1
+  _validar_email__mutmut_8       — partition -> rpartition                    [equivalente]
+
+Justificativas dos equivalentes (execução 1):
+- validar_chave__mutmut_3 e solicitar_chargeback__mutmut_14: o literal "XXXX"
+  só é usado quando o argumento é None/falsy; "XXXX" não contém golpe/fraude
+  nem valida como chave de nenhum tipo, então nenhuma entrada distingue.
+- _validar_cpf__mutmut_9: para strings de 11 caracteres, digitos ==
+  digitos[0]*11 ocorre se e somente se digitos == digitos[1]*11 (todos os
+  dígitos iguais). Condições idênticas.
+- _validar_email__mutmut_8: partition e rpartition só divergem com mais de um
+  "@"; a linha só é alcançada quando email.count("@") == 1, caso em que
+  coincidem.
