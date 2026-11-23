@@ -21,7 +21,7 @@ Objetivo: **planejar antes de implementar**, executar as issues #38, #43, #48 e 
 
 **Prompt (resumo):** ler as docs para contexto; atualizar o Plano de Teste antes de implementar, como um plano de testes de verdade.
 
-**Retorno da IA:** leu `docs/plano_de_teste.md`, `docs/plano_projeto.md`, o enunciado, `docs/aplicacao.md`, os relatórios de cobertura/mutação, Sonar e RNF, o README, o AGENTS, o AI-LOG e as issues. Constatou:
+**Retorno da IA:** leu `docs/plano_de_teste.md`, `docs/plano_projeto.md`, o enunciado, `docs/aplicacao.md`, os relatórios de cobertura/mutação, Sonar e RNF, o README, o AGENTS e as issues. Constatou:
 
 - suíte verde (638 passed, 3 xfailed), mas o plano dizia que havia 2 falhas de PIX;
 - #16 e #17 já corrigidos em `e7881bd` (PR #89), com testes passando;
