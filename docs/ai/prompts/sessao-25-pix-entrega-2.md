@@ -177,30 +177,6 @@ Exigência do enunciado: preservar a solução inicial, a final e descrever as a
 
 Evidências: [`cobertura/pix-cobertura.txt`](../../relatorios/evidencias/cobertura/pix-cobertura.txt), [`mutacao/pix-execucao-1-antes.txt`](../../relatorios/evidencias/mutacao/pix-execucao-1-antes.txt), [`mutacao/pix-execucao-2-depois.txt`](../../relatorios/evidencias/mutacao/pix-execucao-2-depois.txt), [`sonar/depois/pix/`](../../relatorios/evidencias/sonar/depois/pix/) e `tests/system/pix/evidencias/`.
 
-## Revisão de fechamento dos PRs (preencher após a conferência)
-
-Esta tabela é o registro da revisão de fechamento feita pelo responsável **após o merge**. Para cada PR, execute a verificação, registre o resultado e a decisão.
-
-| PR | Verificação realizada | Resultado | Data/hora | Decisão |
-|---|---|---|---|---|
-| #91 — Plano global | Ler a seção 6.10.1 e conferir que não há ordem de execução no documento; conferir o registro de mudanças (v1.19) | a preencher | a preencher | a preencher |
-| #92 — Unitários/cobertura | Conferir os 104 casos, os ids de técnica e as regressões #16/#17; rodar `uv run pytest tests/unit/test_pix.py -q` | a preencher | a preencher | a preencher |
-| #93 — Mutação | Ler o diff dos 7 casos, o mapeamento mutante → teste e a justificativa dos 4 equivalentes | a preencher | a preencher | a preencher |
-| #94 — Sonar | Conferir o diff de `pix.html` e `routes/pix.py`; conferir no JSON 0 abertos e 7 resolvidos; verificar CC | a preencher | a preencher | a preencher |
-| #95 — Sistema | Ler os 6 cenários e o page object; rodar `uv run pytest tests/system/pix -q` | a preencher | a preencher | a preencher |
-| #96 — README/AGENTS | Conferir os links e o estado atual descrito; verificar que o PR não fecha a #64 | a preencher | a preencher | a preencher |
-
-Comandos de apoio:
-
-```bash
-git show 2262858 --stat   # #91
-git show 5cddd5e --stat   # #92
-git show 5cd5645 --stat   # #93
-git show 23b2c86 --stat   # #94
-git show 3a095cf --stat   # #95
-git show 85abde0 --stat   # #96
-```
-
 ## Resultado
 
 - **Plano**: seção 6.10.1 escrita antes da implementação, sem ordem de execução; documentação global alinhada ao estado real (v1.19–v1.23).
