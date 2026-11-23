@@ -29,7 +29,7 @@ uv run mutmut results
 uv run mutmut show <id>
 ```
 
-O `source_paths` explícito corrige o `FileNotFoundError` que o mutmut 3.8 apresentava sem configuração. A suíte unitária precisa estar 100% verde antes do run completo; as falhas abertas de PIX (#16/#17) e juros (#20) bloqueiam temporariamente o run geral.
+O `source_paths` explícito corrige o `FileNotFoundError` que o mutmut 3.8 apresentava sem configuração. A suíte unitária precisa estar 100% verde antes do run completo. Desde 22/11/2026 a suíte está verde — os bugs #16, #17 e #20 foram corrigidos — e os 3 `xfail` restantes (defeito #78) não bloqueiam o mutmut.
 
 Para mutar uma classe isolada, acrescente `only_mutate = ["app/dominio/<arquivo>.py"]` e restrinja `pytest_add_cli_args_test_selection` ao teste correspondente. Remova as duas restrições para o run completo de todas as classes.
 
@@ -51,7 +51,7 @@ Escore: 74 / 106 = 69,8%
 
 > **Atualização (#45, 22/11/2026):** com a suíte ampliada na #40 e na #45, o escore de `TarifaBancaria` chegou a **94,3%** (100% descontando 6 equivalentes). Ver a subseção "Mutação — #45" na seção da classe.
 
-> O run completo de todas as classes continua bloqueado pelas 3 falhas atuais da suíte (#16, #17 e #20).
+> O run completo de todas as classes pode ser executado: a suíte está verde desde 22/11/2026 (os bugs #16, #17 e #20 foram corrigidos; restam 3 `xfail` do defeito #78).
 
 ---
 

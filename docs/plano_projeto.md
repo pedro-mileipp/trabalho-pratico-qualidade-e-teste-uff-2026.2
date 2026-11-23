@@ -30,8 +30,8 @@ Construir um sistema web de **banco digital** e aplicar, sobre ele, as técnicas
 | Mutação | mutmut | Equivalente ao PIT; escore ≥ 80% |
 | Testes de sistema | Selenium WebDriver + webdriver-manager | Browser headless (Chrome/Chromium) |
 | Medição de complexidade | radon (`radon cc`) | Justificar CC ≥ 10 das classes sob teste |
-| Inspeção de código | ruff + SonarCloud | Lint local + inspeção com print para o relatório |
-| CI | GitHub Actions | pytest + coverage + mutmut + ruff + SonarCloud automatizados |
+| Inspeção de código | ruff + SonarQube (Docker local) | Lint local + inspeção com print para o relatório |
+| CI | GitHub Actions | Planejado no projeto; ainda não implementado (não há `.github/workflows/`) |
 | Bug tracking | GitHub Issues | Aceito pela regra "ou git issues" |
 | Gestão de testes | TestLink | Ao menos 1 cenário; demais em planilha/documento |
 
@@ -53,22 +53,23 @@ Construir um sistema web de **banco digital** e aplicar, sobre ele, as técnicas
 │   │   ├── sqlite_repositorio.py
 │   │   └── memoria_repositorio.py   # usado em testes
 │   ├── servicos/              # Orquestração domínio + repositório (auth, transferência...)
-│   └── web/                   # Rotas Flask + templates (Jinja2)
-│       ├── routes/
-│       └── templates/
+│   ├── web/                   # Rotas Flask (blueprints)
+│   │   ├── routes/
+│   │   └── helpers.py
+│   └── templates/             # Telas Jinja2 (pasta padrão do Flask)
 ├── tests/
-│   ├── unit/                  # 1 arquivo por classe de domínio
-│   ├── integration/           # domínio ↔ repositório e fluxos web (test_client)
+│   ├── unit/                  # 1 arquivo por classe de domínio + serviços com mock
+│   ├── integration/           # rotas (test_client) e serviços ↔ repositório
 │   ├── system/                # Selenium (requisitos funcionais)
+│   ├── rnf/                   # requisitos não funcionais (segurança)
 │   └── testes_manuais/        # casos de teste manuais (Entrega 1), 1 subpasta por teste
 ├── docs/
 │   ├── descricao_trabalho.md
 │   ├── plano_projeto.md       # este documento
-│   ├── plano_de_teste.md      # Entrega 1
+│   ├── plano_de_teste.md      # Entregas 1 e 2
 │   ├── relatorios/            # cobertura, mutação, ISO 25010, inspeção Sonar (Entrega 2)
 │   └── ai/
 │       └── AI-LOG.md          # registro de uso de IA
-├── .github/workflows/ci.yml
 ├── .coveragerc
 ├── sonar-project.properties
 ├── pyproject.toml          # dependências (runtime e dev) + config de ferramentas
@@ -105,17 +106,18 @@ Cada classe será projetada com `if/elif/for/while` suficientes para atingir CC 
 
 ### 5.3 Inspeção (Sonar)
 
-- Projeto vinculado ao SonarCloud (gratuito para repositórios públicos).
+- SonarQube Community local em Docker, com o perfil Python *Sonar way comprehensive* (ver `docs/relatorios/inspecao_sonar.md`).
 - Print dos resultados (antes) e print após as correções de pelo menos uma classe por membro.
 
 ### 5.4 CI (GitHub Actions)
 
-Jobs encadeados:
+**Ainda não implementado** — não há `.github/workflows/` no repositório. Jobs planejados:
+
 1. `lint` — ruff
 2. `test` — pytest + pytest-cov (branch ≥ 80%)
 3. `mutation` — mutmut (≥ 80%)
 4. `complexity` — radon cc (assert CC ≥ 10 nas 5 classes)
-5. `sonar` — scan do SonarCloud
+5. `sonar` — scan do SonarQube
 
 ## 6. Cronograma e entregas
 
@@ -142,16 +144,16 @@ Jobs encadeados:
 | 4 | Mutação ≥ 80% nas mesmas classes | relatório + `docs/relatorios/` |
 | 5 | Testes de sistema (Selenium) com requisitos funcionais | `tests/system/*` |
 | 6 | Inspeção Sonar + correção de 1 classe por membro (prints) | `docs/relatorios/inspecao_sonar.md` |
-| 7 | ISO 25010: medidas por atributo com escala e justificativa | `docs/relatorios/iso25010.md` |
+| 7 | ISO 25010: medidas por atributo com escala e justificativa | `docs/relatorios/iso25010.md` (pendente — issue #62) |
 | 8 | NFR (segurança/desempenho) — opcional | testes específicos |
 
 ## 7. Requisitos do software (aderência ao enunciado)
 
 ### Obrigatório
-- [ ] Código-fonte público no GitHub
-- [ ] Classes com desvios, laços e estruturas de controle
-- [ ] Pelo menos 5 classes (1 por membro) com CC ≥ 10
-- [ ] Registro de IA em `docs/ai/AI-LOG.md`
+- [x] Código-fonte público no GitHub
+- [x] Classes com desvios, laços e estruturas de controle
+- [x] Pelo menos 5 classes (1 por membro) com CC ≥ 10
+- [x] Registro de IA em `docs/ai/AI-LOG.md`
 
 ### Desejável
 - [x] Sistema web (Flask)
