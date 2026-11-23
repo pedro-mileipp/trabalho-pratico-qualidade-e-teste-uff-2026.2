@@ -1,0 +1,16 @@
+{
+  "projeto": "banco-digital-uff-2026-2",
+  "medidas": {
+    "coverage": "69.7",
+    "bugs": "5",
+    "code_smells": "13",
+    "duplicated_lines_density": "0.0",
+    "software_quality_reliability_issues": "10",
+    "ncloc": "1109",
+    "violations": "19",
+    "software_quality_maintainability_issues": "8",
+    "software_quality_security_issues": "1",
+    "vulnerabilities": "1",
+    "security_hotspots": "0"
+  }
+}

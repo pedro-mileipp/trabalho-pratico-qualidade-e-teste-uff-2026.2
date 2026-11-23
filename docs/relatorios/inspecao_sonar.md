@@ -2,7 +2,7 @@
 
 > Relatório da inspeção estática do código-fonte da **Entrega 2** (Qualidade e Teste — UFF 2026.2).
 >
-> **Status:** seção “antes” concluída em 11/11/2026; seções “depois” concluídas para crédito (6.1), empréstimo (6.2), juros (6.3), tarifas (6.4) e PIX (6.5).
+> **Status:** seção “antes” concluída em 11/11/2026; seções “depois” concluídas para crédito (6.1), empréstimo (6.2), juros (6.3), tarifas (6.4) e PIX (6.5); **consolidação final** (antes × depois das 5 classes, numa análise única da `main`) na seção 7, em 23/11/2026.
 
 ## 1. Ambiente e método
 
@@ -59,6 +59,8 @@ O token fica em `.sonar/token` (ignorado pelo Git). A imagem do SonarQube está 
 - `docs/relatorios/evidencias/sonar/antes/scanner-antes.txt` — log completo do scanner.
 - `docs/relatorios/evidencias/sonar/antes/pytest-coverage.txt` — execução da suíte e cobertura no momento da análise.
 - `docs/relatorios/evidencias/sonar/antes/cobertura-dominio.txt` — cobertura de arestas das 5 classes de domínio (99,3%, com 1 arquivo vazio ignorado).
+
+> **Observação (#63):** `pix.png` e `credito.png` são o mesmo arquivo, assim como `juros.png` e `emprestimo.png`, e nenhum deles mostra o filtro de arquivo. Por isso a evidência do “antes” por classe é o `issues-antes.json` (que traz arquivo, regra e linha de cada apontamento), confirmado pela reprodução local da seção 7. Os prints do “antes” de empréstimo foram complementados na seção 6.2.
 
 ## 2. Visão geral — antes das correções
 
@@ -244,11 +246,15 @@ Como a classe de domínio `SimuladorEmprestimo` não possuía apontamentos está
 **Evidências** em `docs/relatorios/evidencias/sonar/depois/emprestimo/`:
 - `issues-emprestimo-antes.json` — os 8 apontamentos abertos antes da correção;
 - `issues-emprestimo-depois.json` — 0 apontamentos abertos nos arquivos de empréstimo após nova análise;
-- `dashboard-depois.png` — print do dashboard SonarQube após a análise;
-- `issues-emprestimo-resolvidos.png` — print da lista de issues demonstrando a resolução.
+- `issues-emprestimo-resolvidos.json` — os 8 apontamentos com status `CLOSED` / `FIXED`;
+- `Dashboard-SimuladorEmprestimo-depois.PNG` — print do dashboard SonarQube após a análise;
+- `simuladorEmprestimo-depois.PNG` — print da lista de issues de `emprestimo.html` filtrada por status “Fixed”, com os 8 corrigidos.
+
+Prints do “antes” em `docs/relatorios/evidencias/sonar/antes/`: `Dashboard - SimuladorEmprestimo-antes.PNG`, `SimuladorEmprestimo1-antes.PNG` e `SimuladorEmprestimo2-antes.PNG`.
+
 ### 6.3 `CalculadoraJuros` — Gabrielle Rosa (#49)
 
-**Ambiente:** SonarQube Community Build (`26.11.0.134175-community`, instância local), com o perfil Python **Sonar way comprehensive** (407 regras), na mesma base de comparação do relatório[cite: 12].
+**Ambiente:** SonarQube Community Build (`26.11.0.134175-community`, instância local), com o perfil Python **Sonar way comprehensive** (407 regras), na mesma base de comparação do relatório.
 
 **Apontamentos da classe**
 
@@ -392,3 +398,97 @@ Os 19 restantes são de outras funcionalidades (login/registro, rotas de auth/da
 - `depois-branch/issues-pix-resolvidas.json` — os 7 apontamentos de PIX com status `CLOSED` / `FIXED`;
 - `depois-branch/scanner.txt` — log do scanner do “depois”;
 - `issues-pix-depois.png` — print da consulta de issues dos arquivos de PIX depois da correção (0 abertas, 7 resolvidas), gerado a partir da API porque a instância local não tem credenciais de UI disponíveis.
+
+## 7. Consolidação final — antes × depois das 5 classes (#63)
+
+> Pedro Mileipp, issue #63. Análise única da `main` com todas as correções das issues #48 a #52 já mergeadas.
+
+### 7.1 Método
+
+- **Mesma instância e mesmo perfil do “antes”.** SonarQube Community Build `26.11.0.134175-community` (via `docker-compose.yml` do projeto), perfil Python **Sonar way comprehensive** (407 regras) e perfil Web padrão. A primeira análise dessa instância é a reprodução do “antes” feita na seção 6.1: commit `6a1f9eb`, **40 apontamentos**, com a mesma distribuição por arquivo da seção 2. A análise final é do commit `74febcf` (`main` em 23/11/2026).
+- **Por que uma análise única.** Cada integrante fez o seu “depois” em um momento diferente da `main`, então os totais do projeto nas seções 6.x não batem entre si (40 → 36, 37 → 30, 26 → 19). Com as duas análises no mesmo projeto do SonarQube, cada apontamento corrigido fica registrado com status `CLOSED` / `FIXED`, e os que surgiram depois aparecem como novos. Assim a comparação vale para as 5 classes ao mesmo tempo.
+- **Suíte na análise final:** 548 testes unitários, todos passando. Os defeitos funcionais #16, #17 (PIX) e #20 (juros), que faziam a suíte falhar no “antes”, foram corrigidos.
+- **Reprodução:** numa instância nova, o projeto precisa ser criado pela API (`api/projects/create`) antes de associar o perfil comprehensive; o comando `bootstrap` do `scripts/sonar_local.sh` não faz isso e recebe HTTP 404 (ver seção 6.1).
+
+### 7.2 Classes de domínio
+
+| Classe | Responsável | Issue / PR | Na classe (antes → depois) | Na funcionalidade (antes → depois) | Cobertura de arestas (Sonar) | Detalhes |
+|---|---|---|---|---|---:|---|
+| `TransacaoPix` | Alexandre Colmenero | #48 / #94 | 0 → 0 | `pix.html` 6 → 0 · `routes/pix.py` 1 → 0 | 100% | 6.5 |
+| `CalculadoraJuros` | Gabrielle Rosa | #49 / #87 | 0 → 0 | — (domínio sem tela) | 100% | 6.3 |
+| `TarifaBancaria` | Daniel Izu | #50 / #85 | **1 → 0** (`python:S3776`) | `tarifas.html` 6 → 0 | 100% | 6.4 |
+| `SimuladorEmprestimo` | Vinicius Felinto | #51 / #89 | 0 → 0 | `emprestimo.html` 8 → 0 | 95,2% | 6.2 |
+| `DecisorCredito` | Pedro Mileipp | #52 / #71 | 0 → 0 | `credito.html` 4 → 0 | 100% | 6.1 |
+| **Total** | | | **1 → 0** | **25 → 0** | | |
+
+**26 apontamentos corrigidos**, todos confirmados pelo SonarQube com status `CLOSED` / `FIXED`: 1 na classe `TarifaBancaria` e 25 nas telas e rotas das funcionalidades. **Nenhuma das 5 classes tem apontamento aberto.**
+
+Leitura:
+
+1. Mesmo com o perfil mais rigoroso, 4 das 5 classes não tinham apontamento estático. O único apontamento numa classe de domínio (complexidade cognitiva de `tarifa_mensal`) foi corrigido sem reduzir a complexidade ciclomática abaixo de 10, requisito da disciplina (seção 6.4).
+2. Por isso, para cumprir “resolver os problemas de uma classe por integrante”, cada integrante corrigiu também os apontamentos da tela da sua funcionalidade (rótulos sem associação e campos sem `id`), que eram todos de Reliability. `CalculadoraJuros` não tem tela própria e não tinha apontamento a corrigir; a seção 6.3 registra a correção do defeito funcional #20, revelado por teste e não pelo SonarQube.
+3. Os defeitos que de fato mudavam o comportamento das classes (#16 e #17 em PIX, #20 em juros, #77 e #78 em tarifas) foram revelados pelos testes, não pela inspeção estática: as duas técnicas se complementam.
+
+### 7.3 Projeto inteiro
+
+| Métrica | Antes (`6a1f9eb`) | Depois (`74febcf`) |
+|---|---:|---:|
+| Apontamentos abertos | 40 | **19** |
+| Bugs (tipo) | 17 | 5 |
+| Code smells (tipo) | 22 | 13 |
+| Vulnerabilidades (tipo) | 1 | 1 |
+| Security (impacto) | 1 | 1 |
+| Reliability (impacto) | 34 | **10** |
+| Maintainability (impacto) | 5 | 8 |
+| Cobertura | 60,6% | **69,7%** |
+| Duplicações | 0,0% | 0,0% |
+| Linhas de código | 1.086 | 1.109 |
+
+Balanço: **40 do “antes” − 26 corrigidos + 5 novos = 19 abertos**. Os 5 novos estão em arquivos de teste de integração criados depois do “antes” (issue #54), e são todos de Maintainability; por isso esse impacto subiu de 5 para 8 mesmo com 2 apontamentos de Maintainability corrigidos (`tarifas.py` e `routes/pix.py`). A cobertura subiu porque os testes unitários dos serviços com mock do repositório (`test_auth_service.py` e `test_transacao_service.py`, issue #53) passaram a exercitar `app/servicos/`. Ela é medida só com `tests/unit`, como no “antes” (comando `scan` do `scripts/sonar_local.sh`); os testes de integração, sistema e RNF não entram nesse número.
+
+**Quality Gate: “Failed”.** O dashboard mostra o Quality Gate padrão reprovado no código novo (desde a análise de 18/11/2026). Das três condições, duas passam (cobertura do código novo 87,3%, mínimo 80%; duplicação 0,0%, máximo 3%) e só uma falha: **novos apontamentos = 5** (o limite é 0). São justamente os 5 apontamentos dos testes de integração da #54 (`python:S5778` e `python:S9100`). Nenhum dos 26 apontamentos corrigidos e nenhuma das 5 classes de domínio influencia essa reprovação; corrigir esses 5 apontamentos nos testes de integração faria o Quality Gate passar.
+
+### 7.4 Apontamentos que continuam abertos (19)
+
+Nenhum deles está nas 5 classes de domínio nem nas telas das funcionalidades corrigidas.
+
+| Arquivo | Qtde | Regras | Situação |
+|---|---:|---|---|
+| `app/templates/registro.html` | 6 | `Web:InputWithoutLabelCheck` (3), `Web:S6853` (3) | Já existiam no “antes”. Funcionalidade de autenticação, fora das 5 classes sob teste |
+| `app/templates/login.html` | 4 | `Web:InputWithoutLabelCheck` (2), `Web:S6853` (2) | Idem |
+| `app/web/routes/auth.py` | 2 | `python:S1192`, `python:S6965` | Idem |
+| `app/web/routes/dashboard.py` | 1 | `python:S6965` | Já existia |
+| `app/__init__.py` | 1 | `python:S4502` (vulnerabilidade) | Já existia. Não é falso positivo: a aplicação não tem proteção contra CSRF, e o POST de `/pix` movimenta dinheiro (ver também `docs/relatorios/rnf_seguranca.md`) |
+| `tests/integration/conftest.py` | 1 | `python:S9100` | Novo (arquivo criado na #54) |
+| `tests/integration/test_servicos_repositorio.py` | 4 | `python:S5778` | Novo (arquivo criado na #54) |
+
+Os 14 apontamentos de autenticação e do `app/__init__.py` ficam registrados como pendências do projeto.
+
+### 7.5 Evidências
+
+**Análise final**, em `docs/relatorios/evidencias/sonar/final/`:
+
+- `medidas-final.json` — métricas do projeto na análise final;
+- `issues-abertas-final.json` — os 19 apontamentos abertos;
+- `issues-corrigidas-final.json` — os 26 apontamentos com status `CLOSED` / `FIXED`;
+- `scanner-final.txt` — saída da suíte e do scanner da análise final;
+- `dashboard-final.png` — print do dashboard “Overall Code”: Security 1, Reliability 10, Maintainability 8, cobertura 69,7% e o Quality Gate (ver 7.3);
+- `issues-corrigidas-final.png` — print da lista de issues filtrada por status “Fixed” (26), com a contagem de abertos (19) no filtro de status e os apontamentos agrupados por arquivo;
+- `codigo-dominio-final.png` — print da aba Code em `app/dominio`: as 5 classes com 0 apontamentos de Security, Reliability e Maintainability e cobertura de 100% (`credito.py`, `juros.py`, `pix.py`, `tarifas.py`) e 97,2% (`emprestimo.py`); 99,3% na pasta.
+
+**Por classe** (antes e depois):
+
+| Classe | “Antes” | “Depois” |
+|---|---|---|
+| `TransacaoPix` | `antes/issues-antes.json`; `depois/pix/antes-main/` | `depois/pix/depois-branch/`; `depois/pix/issues-pix-depois.png` (\*) |
+| `CalculadoraJuros` | `antes/issues-antes.json` | `depois/juros/issues-juros-depois.png` (\*\*) |
+| `TarifaBancaria` | `antes/tarifas.png`; `depois/tarifas/antes-main/` | `depois/tarifas/` (3 prints + JSONs) |
+| `SimuladorEmprestimo` | `antes/SimuladorEmprestimo1-antes.PNG`, `antes/SimuladorEmprestimo2-antes.PNG` | `depois/emprestimo/` (2 prints + JSONs) |
+| `DecisorCredito` | `antes/issues-antes.json`; `depois/credito/issues-credito-antes.json` | `depois/credito/` (2 prints + JSONs) |
+
+(\*) Imagem gerada a partir da API, não um print da tela do SonarQube; os apontamentos corrigidos de PIX aparecem na tela em `final/issues-corrigidas-final.png`.
+(\*\*) Mostra “0 issues”, mas sem o nome do arquivo visível; `final/codigo-dominio-final.png` mostra `juros.py` com 0 apontamentos.
+
+### 7.6 Conclusão
+
+A inspeção com o SonarQube cobriu as 5 classes de domínio e as telas das funcionalidades. Ao fim da Entrega 2, **nenhuma das 5 classes tem apontamento aberto**, **26 apontamentos foram corrigidos** e o projeto caiu de **40 para 19 apontamentos abertos**, com a complexidade ciclomática de cada classe mantida acima do mínimo da disciplina. Os 19 restantes estão fora das classes sob teste: autenticação, a ausência de proteção CSRF e testes de integração.

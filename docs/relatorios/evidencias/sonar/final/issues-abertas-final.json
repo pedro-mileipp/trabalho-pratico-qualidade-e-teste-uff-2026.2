@@ -1,0 +1,195 @@
+{
+  "total": 19,
+  "issues": [
+    {
+      "rule": "python:S5778",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:tests/integration/test_servicos_repositorio.py",
+      "line": 109,
+      "message": "Refactor this exception test to have only one invocation possibly throwing an exception.",
+      "status": "OPEN",
+      "creationDate": "2026-11-22T22:09:22+0000"
+    },
+    {
+      "rule": "python:S5778",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:tests/integration/test_servicos_repositorio.py",
+      "line": 122,
+      "message": "Refactor this exception test to have only one invocation possibly throwing an exception.",
+      "status": "OPEN",
+      "creationDate": "2026-11-22T21:56:38+0000"
+    },
+    {
+      "rule": "python:S5778",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:tests/integration/test_servicos_repositorio.py",
+      "line": 204,
+      "message": "Refactor this exception test to have only one invocation possibly throwing an exception.",
+      "status": "OPEN",
+      "creationDate": "2026-11-22T21:56:38+0000"
+    },
+    {
+      "rule": "python:S5778",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:tests/integration/test_servicos_repositorio.py",
+      "line": 212,
+      "message": "Refactor this exception test to have only one invocation possibly throwing an exception.",
+      "status": "OPEN",
+      "creationDate": "2026-11-22T21:56:38+0000"
+    },
+    {
+      "rule": "python:S9100",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:tests/integration/conftest.py",
+      "line": 29,
+      "message": "No teardown in this fixture. Use \"return\" instead of \"yield\".",
+      "status": "OPEN",
+      "creationDate": "2026-11-22T15:46:28+0000"
+    },
+    {
+      "rule": "python:S4502",
+      "severity": "CRITICAL",
+      "type": "VULNERABILITY",
+      "component": "banco-digital-uff-2026-2:app/__init__.py",
+      "line": 10,
+      "message": "Make sure disabling CSRF protection is safe here.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "Web:S6853",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:app/templates/login.html",
+      "line": 7,
+      "message": "A form label must be associated with a control and have accessible text.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "Web:InputWithoutLabelCheck",
+      "severity": "MAJOR",
+      "type": "BUG",
+      "component": "banco-digital-uff-2026-2:app/templates/login.html",
+      "line": 8,
+      "message": "Add an \"id\" attribute to this input field and associate it with a label.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "Web:S6853",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:app/templates/login.html",
+      "line": 9,
+      "message": "A form label must be associated with a control and have accessible text.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "Web:InputWithoutLabelCheck",
+      "severity": "MAJOR",
+      "type": "BUG",
+      "component": "banco-digital-uff-2026-2:app/templates/login.html",
+      "line": 10,
+      "message": "Add an \"id\" attribute to this input field and associate it with a label.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "Web:S6853",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:app/templates/registro.html",
+      "line": 7,
+      "message": "A form label must be associated with a control and have accessible text.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "Web:InputWithoutLabelCheck",
+      "severity": "MAJOR",
+      "type": "BUG",
+      "component": "banco-digital-uff-2026-2:app/templates/registro.html",
+      "line": 8,
+      "message": "Add an \"id\" attribute to this input field and associate it with a label.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "Web:S6853",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:app/templates/registro.html",
+      "line": 9,
+      "message": "A form label must be associated with a control and have accessible text.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "Web:InputWithoutLabelCheck",
+      "severity": "MAJOR",
+      "type": "BUG",
+      "component": "banco-digital-uff-2026-2:app/templates/registro.html",
+      "line": 10,
+      "message": "Add an \"id\" attribute to this input field and associate it with a label.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "Web:S6853",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:app/templates/registro.html",
+      "line": 11,
+      "message": "A form label must be associated with a control and have accessible text.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "Web:InputWithoutLabelCheck",
+      "severity": "MAJOR",
+      "type": "BUG",
+      "component": "banco-digital-uff-2026-2:app/templates/registro.html",
+      "line": 12,
+      "message": "Add an \"id\" attribute to this input field and associate it with a label.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "python:S1192",
+      "severity": "CRITICAL",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:app/web/routes/auth.py",
+      "line": 27,
+      "message": "Define a constant instead of duplicating this literal \"registro.html\" 3 times.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "python:S6965",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:app/web/routes/auth.py",
+      "line": 52,
+      "message": "Specify the HTTP methods this route should accept.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    },
+    {
+      "rule": "python:S6965",
+      "severity": "MAJOR",
+      "type": "CODE_SMELL",
+      "component": "banco-digital-uff-2026-2:app/web/routes/dashboard.py",
+      "line": 12,
+      "message": "Specify the HTTP methods this route should accept.",
+      "status": "OPEN",
+      "creationDate": "2026-09-16T23:34:29+0000"
+    }
+  ]
+}
