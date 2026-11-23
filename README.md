@@ -7,7 +7,7 @@ Repositório do trabalho prático da disciplina **Qualidade e Teste** (UFF 2026.
 O grupo aplica os conceitos aprendidos na disciplina Qualidade e Teste sobre um software livre desenvolvido por nós — o **Banco Digital**. O objetivo é exercitar as técnicas de teste de software em um sistema real, com duas entregas:
 
 ### Entrega 1 (peso 3)
-- Descrição do escopo no **[Plano de Teste](docs/plano_de_teste.md)**
+- Descrição do escopo no **[Plano de Teste](docs/plano_de_teste.md)** — também disponível em **[DOCX/Google Docs](https://docs.google.com/document/d/1LWiJPPQAZKMw0ycTe8bxu5VSc6Tf0NlNcL60BzXTZOg/edit?usp=sharing)**
 - Testes unitários de pelo menos uma classe não-CRUD por integrante
 - Casos de teste manuais (uma funcionalidade por integrante)
 - Gestão de casos com TestLink (ao menos um cenário)
@@ -205,6 +205,7 @@ O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes n
 | `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
 | `docs/aplicacao.md` | Documentação completa da aplicação e sua arquitetura |
 | [`docs/plano_de_teste.md`](docs/plano_de_teste.md) | Plano de Teste oficial (Entregas 1 e 2): escopo, metodologia em cascata, entregáveis, ambiente e termos |
+| [Plano de Teste (DOCX)](https://docs.google.com/document/d/1LWiJPPQAZKMw0ycTe8bxu5VSc6Tf0NlNcL60BzXTZOg/edit?usp=sharing) | Versão em DOCX/Google Docs do Plano de Teste oficial |
 | `tests/testes_manuais/` | Casos de teste manuais (Entrega 1) — PIX em [`tests/testes_manuais/pix/caso_pix.md`](tests/testes_manuais/pix/caso_pix.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/auth/` | Casos de teste manuais (Entrega 1) — Auth em [`tests/testes_manuais/auth/caso_auth.md`](tests/testes_manuais/auth/caso_auth.md) com evidências em `evidencias/` |
 | `tests/testes_manuais/tarifas/` | Casos de teste manuais (Entrega 1) — Tarifas em [`tests/testes_manuais/tarifas/caso_tarifas.md`](tests/testes_manuais/tarifas/caso_tarifas.md) com evidências em `evidencias/` |
