@@ -10,6 +10,8 @@ from app.web.helpers import login_required
 
 bp = Blueprint("pix", __name__)
 
+_TEMPLATE = "pix.html"
+
 _MENSAGENS = {
     ResultadoPix.CHAVE_INVALIDA: "Chave PIX inválida.",
     ResultadoPix.VALOR_INVALIDO: "Valor inválido.",
@@ -28,7 +30,7 @@ def transferir():
             valor = float(request.form["valor"])
         except (TypeError, ValueError):
             flash("Valor inválido.", "erro")
-            return render_template("pix.html")
+            return render_template(_TEMPLATE)
         try:
             tipo = ChaveTipo(request.form["tipo"])
         except (KeyError, ValueError):
@@ -42,7 +44,7 @@ def transferir():
             )
         except TransacaoRecusada as exc:
             flash(_MENSAGENS.get(exc.resultado, "Transferência recusada."), "erro")
-            return render_template("pix.html")
+            return render_template(_TEMPLATE)
         flash("Transferência realizada com sucesso.", "sucesso")
         return redirect(url_for("dashboard.index"))
-    return render_template("pix.html")
+    return render_template(_TEMPLATE)
