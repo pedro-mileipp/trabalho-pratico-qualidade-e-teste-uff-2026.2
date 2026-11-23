@@ -144,7 +144,7 @@ Cada classe será projetada com `if/elif/for/while` suficientes para atingir CC 
 | 4 | Mutação ≥ 80% nas mesmas classes | relatório + `docs/relatorios/` |
 | 5 | Testes de sistema (Selenium) com requisitos funcionais | `tests/system/*` |
 | 6 | Inspeção Sonar + correção de 1 classe por membro (prints) | `docs/relatorios/inspecao_sonar.md` |
-| 7 | ISO 25010: medidas por atributo com escala e justificativa | `docs/relatorios/iso25010.md` (pendente — issue #62) |
+| 7 | ISO 25010: medidas por atributo com escala e justificativa | [`docs/relatorios/iso25010.md`](relatorios/iso25010.md) (issue #62) |
 | 8 | NFR (segurança/desempenho) — opcional | testes específicos |
 
 ## 7. Requisitos do software (aderência ao enunciado)
