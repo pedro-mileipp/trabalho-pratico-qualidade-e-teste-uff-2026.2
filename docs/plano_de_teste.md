@@ -34,6 +34,7 @@
 | 1.21 | 22/11/2026 | Alexandre Colmenero | Entrega 2: teste de mutação de `TransacaoPix` com `mutmut` (escore 97,3%; 100% descontando 4 equivalentes, issue #43) na seção 6.10.3 |
 | 1.22 | 22/11/2026 | Daniel Izu | Entrega 2: testes de sistema com Selenium — Tarifas/RF04 (issue #58) na seção 6.2; defeito #78 confirmado na interface |
 | 1.22 | 22/11/2026 | Alexandre Colmenero | Entrega 2: correções do Sonar na funcionalidade PIX (7 → 0 apontamentos, issue #48) na seção 6.10.4 |
+| 1.23 | 22/11/2026 | Alexandre Colmenero | Entrega 2: testes de sistema com Selenium — PIX/RF03 (issue #56) nas seções 6.2 e 6.10.5 |
 
 > Nota: as versões 1.14, 1.16 e 1.22 aparecem duplicadas por registros simultâneos de integrantes; a numeração histórica foi preservada porque o AI-LOG e os prompts a citam.
 
@@ -190,9 +191,9 @@ Além disso, os testes visam garantir a integridade dos dados, o tratamento de e
 |-------|-------|-----------|
 | Unitária (`tests/unit/`) | 547 | 544 pass · 3 xfail (defeito #78, Tarifas) |
 | Integração (`tests/integration/`) | 84 | 84 pass |
-| Sistema (`tests/system/`) | 50 | 49 pass · 1 xfail (defeito #78, Tarifas) |
+| Sistema (`tests/system/`) | 56 | 55 pass · 1 xfail (defeito #78, Tarifas) |
 | Requisitos não funcionais (`tests/rnf/`) | 22 | 22 pass |
-| **Total** | **703** | **699 pass · 4 xfail** |
+| **Total** | **709** | **705 pass · 4 xfail** |
 
 Unitários por classe de domínio:
 
@@ -384,7 +385,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 
 **Ferramentas:** Selenium WebDriver 4 com Google Chrome em modo headless (driver resolvido pelo Selenium Manager) e pytest.
 
-**Situação em 22/11/2026:** 49 testes de sistema passando e 1 `xfail` (defeito #78) — Crédito (13), Auth (12), Empréstimo (6) e Tarifas (18 pass + 1 `xfail`). O PIX (RF03, issue #56) está planejado na seção 6.10.
+**Situação em 22/11/2026:** 55 testes de sistema passando e 1 `xfail` (defeito #78) — Crédito (13), Auth (12), Empréstimo (6), Tarifas (18 pass + 1 `xfail`) e PIX (6).
 
 **Base compartilhada** (`tests/system/conftest.py`), para todos os testes de sistema:
 
@@ -483,6 +484,21 @@ Pasta: `tests/system/tarifas/` (testes em `test_tarifas_sistema.py`, page object
 **Resultado (22/11/2026):** 19 cenários: **18 passando e 1 `xfail`** (#78). Suíte `tests/system`: **49 passed, 1 xfailed** (antes: 31 passed). Execução isolada (`-k ct09`) também passa. Evidências em `tests/system/tarifas/evidencias/` com `EVIDENCIAS=1` (37 prints): para cada cenário, o formulário preenchido antes do envio (`__1_formulario_preenchido`) e a tela final com o resultado (`__2_final`). Como a tela limpa o formulário a cada envio (limitação registrada no caso manual), o print final mostra o resultado com o formulário de volta aos valores padrão. A gravação de evidência em falha foi verificada quebrando de propósito o esperado do CT-09: `falhas/` recebeu o screenshot e o HTML, e o esperado foi restaurado.
 
 **Defeito #78 confirmado na interface:** o valor de 15,00 foi verificado no Chrome (`--runxfail`: `assert 15.0 == 25.0`) e na validação manual do responsável. O defeito continua aberto, aguardando a decisão do grupo; a correção remove o `xfail`. Os testes foram gerados com IA; a solução inicial (`850f87d`) e a revisada (`afe29fa`) estão na sessão 24 do [AI-LOG](ai/AI-LOG.md).
+
+#### PIX (RF03) — Alexandre Colmenero, issue [#56](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/56)
+
+Pasta: `tests/system/pix/` (testes em `test_pix_sistema.py`, page object em `pagina_pix.py`). Os cenários automatizam os casos manuais de PIX (`tests/testes_manuais/pix/caso_pix.md`) e acrescentam a regressão do defeito #16, a validação HTML5 do valor e a guarda de autenticação. O saldo inicial é definido direto no SQLite temporário pela fixture `definir_saldo_sistema` (a interface não tem depósito), e os cenários usam valores válidos nas duas janelas de horário para não depender do relógio da máquina.
+
+| Id | Cenário | Entrada (chave / tipo / valor / saldo) | Resultado esperado |
+|---|---|---|---|
+| TC-01 | PIX aprovado com CPF válido | `529.982.247-25` / cpf / 100,00 / 1000,00 | Redireciona ao dashboard com "Transferência realizada com sucesso.", saldo R$ 900,00 e extrato `PIX cpf -100.00` |
+| TC-02 | Recusa por chave inválida | `123.456.789-00` / cpf / 50,00 / 1000,00 | "Chave PIX inválida." em `/pix`; saldo intacto (R$ 1000,00), extrato vazio |
+| TC-03 | Recusa por saldo insuficiente | `529.982.247-25` / cpf / 500,00 / 100,00 | "Saldo insuficiente." em `/pix`; saldo intacto (R$ 100,00), extrato vazio |
+| TC-04 (regressão #16) | E-mail com dois `@` recusado | `a@b@c.com` / email / 25,00 / 1000,00 | "Chave PIX inválida." em `/pix`; saldo intacto, extrato vazio |
+| TC-05 | Valor zero barrado pelo formulário | 0 / cpf / — / 1000,00 | Validação HTML5 (`min="0.01"` / `rangeUnderflow`) impede o envio, sem flash |
+| — | Acesso à tela de PIX sem login | — | Redireciona para `/login` |
+
+**Resultado (22/11/2026):** 6 cenários, todos passando (`uv run pytest tests/system/pix -q`), em execuções repetidas com o mesmo resultado verde. A suíte completa de sistema fica em **55 passed, 1 xfailed** (`uv run pytest tests/system -q`, executada duas vezes: 40.40s e 43.11s). Cada teste usa um cliente com e-mail único e saldo definido pela fixture, garantindo independência e banco SQLite limpo por sessão; evidências geradas em `tests/system/pix/evidencias/` com `EVIDENCIAS=1` (formulário preenchido, dashboard após o PIX e tela final de cada cenário). Detalhes do planejamento na seção 6.10.
 
 ### 6.3 Requisito não funcional — segurança da autenticação (RNF06)
 
@@ -681,5 +697,9 @@ uv run pytest tests/system/pix -v   # e EVIDENCIAS=1 para os prints
 #### 6.10.4 Defeitos #16/#17 e inspeção Sonar — issue #48
 
 **Resultado (22/11/2026):** a funcionalidade PIX passou de **7 para 0 apontamentos** no SonarQube local (perfil *Sonar way comprehensive* + Web padrão): 6 de acessibilidade/IDs em `pix.html` (`id`/`for` em `chave`, `tipo` e `valor`) e 1 `python:S1192` em `routes/pix.py` (constante `_TEMPLATE`). A classe `pix.py` segue com 0 apontamentos e CC preservada (11/10). Projeto: 26 → 19 apontamentos abertos (nenhum de PIX). Os defeitos funcionais #16/#17 já haviam sido corrigidos no commit `e7881bd` (PR #89) e são cobertos pelos testes de regressão. Suíte completa: 699 passed, 4 xfailed (defeito #78, Tarifas — unitários e sistema). Detalhes na seção 6.5 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md); evidências em [`docs/relatorios/evidencias/sonar/depois/pix/`](relatorios/evidencias/sonar/depois/pix/).
+
+#### 6.10.5 Testes de sistema (Selenium) — issue #56
+
+**Resultado (22/11/2026):** `tests/system/pix/` criado com page object (`pagina_pix.py`, seletores por `id` definidos na #48) e 6 cenários automatizados: PIX aprovado com CPF válido; recusa por chave inválida; recusa por saldo insuficiente; regressão do defeito #16 (e-mail com dois `@`); valor zero barrado pelo HTML5 (`min="0.01"`); guarda de autenticação. Saldo inicial definido pela fixture `definir_saldo_sistema` (SQLite temporário), cenários independentes de horário. Resultado: 6/6 passando em execuções repetidas; suíte de sistema completa: 55 passed, 1 xfailed. Evidências em `tests/system/pix/evidencias/` (com `EVIDENCIAS=1`); tabela de cenários na seção 6.2.
 
 ---
