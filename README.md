@@ -20,7 +20,7 @@ O grupo aplica os conceitos aprendidos na disciplina Qualidade e Teste sobre um 
 - Cobertura estrutural ≥ 80% (todas-arestas) com mutação ≥ 80%
 - Testes de sistema com **Selenium**
 - Inspeção de código (Sonar) e correção de defeitos
-- Indicação de medidas da ISO 25010
+- Indicação de medidas da ISO 25010 — ver [`docs/relatorios/iso25010.md`](docs/relatorios/iso25010.md)
 
 > O uso de ferramentas de IA Generativa é permitido e incentivado, desde que documentado e avaliado criticamente em `docs/ai/AI-LOG.md`.
 
@@ -194,6 +194,7 @@ O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes n
 | [`tests/rnf/`](tests/rnf/) | Entrega 2 — testes de requisitos não funcionais: fixtures compartilhadas em `conftest.py` e uma pasta por requisito |
 | [`tests/rnf/seguranca/`](tests/rnf/seguranca/) | Segurança da autenticação (RNF06): [`test_seguranca_autenticacao.py`](tests/rnf/seguranca/test_seguranca_autenticacao.py) |
 | [`docs/relatorios/rnf_seguranca.md`](docs/relatorios/rnf_seguranca.md) | Entrega 2 — relatório do RNF de segurança: verificações, riscos identificados e avaliação ISO 25010 (Segurança) |
+| [`docs/relatorios/iso25010.md`](docs/relatorios/iso25010.md) | Entrega 2 — avaliação ISO/IEC 25010:2023: escala de 1 a 5, importância e medida das 9 características, com evidências e melhorias recomendadas (#62) |
 | `docker-compose.yml` | SonarQube local com versão fixada e volumes persistentes |
 | `scripts/sonar_local.sh` | Sobe o SonarQube, gera token e executa a análise |
 | `sonar-project.properties` | Configuração do projeto para o SonarQube |

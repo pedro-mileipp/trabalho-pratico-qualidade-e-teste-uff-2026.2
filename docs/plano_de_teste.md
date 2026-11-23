@@ -35,6 +35,7 @@
 | 1.22 | 22/11/2026 | Daniel Izu | Entrega 2: testes de sistema com Selenium — Tarifas/RF04 (issue #58) na seção 6.2; defeito #78 confirmado na interface |
 | 1.22 | 22/11/2026 | Alexandre Colmenero | Entrega 2: correções do Sonar na funcionalidade PIX (7 → 0 apontamentos, issue #48) na seção 6.10.4 |
 | 1.23 | 22/11/2026 | Alexandre Colmenero | Entrega 2: testes de sistema com Selenium — PIX/RF03 (issue #56) nas seções 6.2 e 6.10.5 |
+| 1.24 | 22/11/2026 | Daniel Izu | Entrega 2: avaliação ISO/IEC 25010:2023 das 9 características, com escala e evidências (issue #62), em `docs/relatorios/iso25010.md` |
 
 > Nota: as versões 1.14, 1.16 e 1.22 aparecem duplicadas por registros simultâneos de integrantes; a numeração histórica foi preservada porque o AI-LOG e os prompts a citam.
 
@@ -356,7 +357,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 
 ## 🚀 6. Entrega 2 — Resultados
 
-> Cada integrante documenta a subseção da sua classe ao concluir as issues da Entrega 2; pendentes: ISO 25010 (#62) e relatório consolidado do Sonar (#63). O detalhamento (comandos, saídas e casos) fica em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
+> Cada integrante documenta a subseção da sua classe ao concluir as issues da Entrega 2; pendente: relatório consolidado do Sonar (#63). A avaliação ISO 25010 (#62) está em [`docs/relatorios/iso25010.md`](relatorios/iso25010.md). O detalhamento (comandos, saídas e casos) fica em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
 
 ### 6.1 `DecisorCredito` — Pedro Mileipp
 
