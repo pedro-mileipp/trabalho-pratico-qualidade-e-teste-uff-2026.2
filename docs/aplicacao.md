@@ -100,7 +100,8 @@ Juros compostos, faixas de taxa por prazo, mora e aportes.
 
 Cobrança de tarifas por tipo de conta, saldo, pacote e transações.
 
-- `tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes, antiguidade_meses)` — **CC 14** (era 12; na #50 a regra do pacote passou a usar retornos antecipados sem aninhamento, para atender ao Sonar `python:S3776`, e o método duplicado `_tarifa_com_pacote` foi removido): poupança gratuita, pacote, isenção por faixa de saldo, desconto por antiguidade, taxa negativa e tarifa por transações excedentes.
+- `tarifa_mensal(tipo, saldo, tem_pacote, quantidade_transacoes, antiguidade_meses)` — **CC 15** (era 12; na #50 a regra do pacote passou a usar retornos antecipados sem aninhamento, para atender ao Sonar `python:S3776`, e o método duplicado `_tarifa_com_pacote` foi removido; na #78, a meia tarifa passou a usar a tarifa do próprio tipo de conta): poupança gratuita, pacote, isenção por faixa de saldo, desconto por antiguidade, taxa negativa e tarifa por transações excedentes.
+  - **Regra do pacote:** premium com saldo ≥ 50.000 é isenta. Com saldo ≥ 5.000 ou antiguidade ≥ 24 meses, a conta paga a **meia tarifa: 50% da tarifa do próprio tipo de conta** (corrente 30 × 0,5 = 15,00; premium 50 × 0,5 = 25,00), regra definida pelo grupo na #78. Nos demais casos, a corrente paga a tarifa cheia e a premium paga 70% (35,00). Com pacote, as transações extras e a sobretaxa de saldo negativo não são cobradas.
 - `tarifa_por_transacao_extra(quantidade)` — transações acima da cota gratuita.
 - `tarifa_anual(..., antiguidade_meses)` — 12× a tarifa mensal (repassa a antiguidade desde a correção do #77).
 

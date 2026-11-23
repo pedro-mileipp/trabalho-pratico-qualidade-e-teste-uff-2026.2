@@ -36,6 +36,7 @@
 | 1.22 | 22/11/2026 | Alexandre Colmenero | Entrega 2: correções do Sonar na funcionalidade PIX (7 → 0 apontamentos, issue #48) na seção 6.10.4 |
 | 1.23 | 22/11/2026 | Alexandre Colmenero | Entrega 2: testes de sistema com Selenium — PIX/RF03 (issue #56) nas seções 6.2 e 6.10.5 |
 | 1.24 | 22/11/2026 | Daniel Izu | Entrega 2: avaliação ISO/IEC 25010:2023 das 9 características, com escala e evidências (issue #62), em `docs/relatorios/iso25010.md` |
+| 1.25 | 22/11/2026 | Daniel Izu | Entrega 2: correção do defeito #78 (meia tarifa do pacote sobre a tarifa do próprio tipo de conta: premium 25,00), decisão do grupo; 4 `xfail` viram regressão e 1 caso novo da corrente; mutação de `TarifaBancaria` 92,3%; estado atual e seções 6.2 e 6.8 |
 
 > Nota: as versões 1.14, 1.16 e 1.22 aparecem duplicadas por registros simultâneos de integrantes; a numeração histórica foi preservada porque o AI-LOG e os prompts a citam.
 
@@ -190,11 +191,11 @@ Além disso, os testes visam garantir a integridade dos dados, o tratamento de e
 
 | Suíte | Casos | Resultado |
 |-------|-------|-----------|
-| Unitária (`tests/unit/`) | 547 | 544 pass · 3 xfail (defeito #78, Tarifas) |
+| Unitária (`tests/unit/`) | 548 | 548 pass |
 | Integração (`tests/integration/`) | 84 | 84 pass |
-| Sistema (`tests/system/`) | 56 | 55 pass · 1 xfail (defeito #78, Tarifas) |
+| Sistema (`tests/system/`) | 56 | 56 pass |
 | Requisitos não funcionais (`tests/rnf/`) | 22 | 22 pass |
-| **Total** | **709** | **705 pass · 4 xfail** |
+| **Total** | **710** | **710 pass** |
 
 Unitários por classe de domínio:
 
@@ -204,10 +205,10 @@ Unitários por classe de domínio:
 | `DecisorCredito` | 96 | 96 pass |
 | `CalculadoraJuros` | 68 | 68 pass |
 | `SimuladorEmprestimo` | 125 | 125 pass |
-| `TarifaBancaria` | 128 | 128 pass · 3 xfail (#78) |
+| `TarifaBancaria` | 132 | 132 pass |
 | `AuthService` e `TransacaoService` | 16 | 16 pass |
 
-> A suíte completa ficou verde em 22/11/2026, após a correção dos bugs de PIX #16 e #17 (commit `e7881bd`, PR #89). Os 4 `xfail` restantes documentam o defeito #78 (Tarifas) e não bloqueiam a execução.
+> A suíte completa ficou verde em 22/11/2026, após a correção dos bugs de PIX #16 e #17 (commit `e7881bd`, PR #89). Os 4 `xfail` que documentavam o defeito #78 (Tarifas) viraram testes de regressão com a correção da #78, e foi acrescentada a regressão da corrente: a suíte tem 710 testes, todos passando.
 
 ---
 
@@ -386,7 +387,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 
 **Ferramentas:** Selenium WebDriver 4 com Google Chrome em modo headless (driver resolvido pelo Selenium Manager) e pytest.
 
-**Situação em 22/11/2026:** 55 testes de sistema passando e 1 `xfail` (defeito #78) — Crédito (13), Auth (12), Empréstimo (6), Tarifas (18 pass + 1 `xfail`) e PIX (6).
+**Situação em 22/11/2026:** 56 testes de sistema passando — Crédito (13), Auth (12), Empréstimo (6), Tarifas (19) e PIX (6). O `xfail` do defeito #78 virou teste de regressão com a correção.
 
 **Base compartilhada** (`tests/system/conftest.py`), para todos os testes de sistema:
 
@@ -480,11 +481,11 @@ Pasta: `tests/system/tarifas/` (testes em `test_tarifas_sistema.py`, page object
 | — | Saldo negativo barrado pelo formulário | corrente / -100 / 0 / não | validação HTML5 (`min="0"` / `rangeUnderflow`) impede o envio |
 | — | Transações negativas barradas pelo formulário | corrente / 0 / -1 / não | validação HTML5 (`min="0"` / `rangeUnderflow`) impede o envio |
 | — | Acesso à tela sem login | — | redireciona para `/login` |
-| — | Defeito #78: premium com pacote e saldo entre 5000 e 50000 | premium / 6000 / 0 / sim | esperado R$ 25.00; a tela mostra **R$ 15.00** (`xfail(strict=True)`) |
+| — | Regressão do defeito #78: premium com pacote e saldo entre 5000 e 50000 | premium / 6000 / 0 / sim | R$ 25.00 (antes da correção, a tela mostrava R$ 15.00) |
 
 **Resultado (22/11/2026):** 19 cenários: **18 passando e 1 `xfail`** (#78). Suíte `tests/system`: **49 passed, 1 xfailed** (antes: 31 passed). Execução isolada (`-k ct09`) também passa. Evidências em `tests/system/tarifas/evidencias/` com `EVIDENCIAS=1` (37 prints): para cada cenário, o formulário preenchido antes do envio (`__1_formulario_preenchido`) e a tela final com o resultado (`__2_final`). Como a tela limpa o formulário a cada envio (limitação registrada no caso manual), o print final mostra o resultado com o formulário de volta aos valores padrão. A gravação de evidência em falha foi verificada quebrando de propósito o esperado do CT-09: `falhas/` recebeu o screenshot e o HTML, e o esperado foi restaurado.
 
-**Defeito #78 confirmado na interface:** o valor de 15,00 foi verificado no Chrome (`--runxfail`: `assert 15.0 == 25.0`) e na validação manual do responsável. O defeito continua aberto, aguardando a decisão do grupo; a correção remove o `xfail`. Os testes foram gerados com IA; a solução inicial (`850f87d`) e a revisada (`afe29fa`) estão na sessão 24 do [AI-LOG](ai/AI-LOG.md).
+**Defeito #78 confirmado na interface e corrigido:** o valor de 15,00 foi verificado no Chrome (`--runxfail`: `assert 15.0 == 25.0`) e na validação manual do responsável. O grupo decidiu que é defeito no código: a meia tarifa do pacote é 50% da tarifa do próprio tipo de conta (premium 25,00). A correção foi feita na [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78); o teste deixou de ser `xfail`, virou regressão, e os 19 cenários de tarifas passam. O print do caso corrigido (R$ 25.00) está em `tests/system/tarifas/evidencias/test_defeito_78_pacote_premium_meia_tarifa__2_final.png`. Os testes foram gerados com IA; a solução inicial (`850f87d`) e a revisada (`afe29fa`) estão na sessão 24 do [AI-LOG](ai/AI-LOG.md).
 
 #### PIX (RF03) — Alexandre Colmenero, issue [#56](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/56)
 
@@ -585,7 +586,7 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 |---|---|---|---|
 | Unitários ampliados + cobertura estrutural (todas-arestas) | [#40](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/40) | Concluído | 122 casos em 22/11/2026 (antes: 44): 118 passam e 4 `xfail` que documentam defeitos; **100%** de cobertura de arestas (antes: 97%, linha 49 não coberta) |
 | Defeito: `tarifa_anual` ignora a antiguidade | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | Corrigido na #50 | Revelado na #40; `tarifa_anual` passou a repassar `antiguidade_meses`; o teste virou regressão (`vl_anual_antiguidade_35/36`) |
-| Defeito: meia tarifa do pacote premium usa a tarifa da corrente | [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | Aberto (a confirmar pelo grupo) | Revelado na tabela de decisão (regra R3); teste com `xfail(strict=True)` |
+| Defeito: meia tarifa do pacote premium usa a tarifa da corrente | [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | Corrigido na #78 | Revelado na #40 (regra R3) e confirmado na interface na #58. **Decisão do grupo:** é defeito no código, e a meia tarifa é 50% da tarifa do próprio tipo de conta, como no desconto de 30% (`premium * 0.7`). Premium com pacote e saldo ≥ 5.000 ou 24 meses: 15,00 → **25,00**; a corrente continua 15,00 (caso novo `td_r3_corrente_pacote_saldo_6000`). Os 3 testes unitários e o de sistema viraram regressão. CC de `tarifa_mensal` 14 → 15; Sonar: 0 apontamentos em tarifas; mutação: 104 mutantes, 96 mortos (**92,3%**; antes 92,1%) |
 | Mutação (escore ≥ 80%) | [#45](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/45) | Concluído | 106 mutantes, 100 mortos: **94,3%** (antes: 82,1%; 100% descontando 6 equivalentes justificados); +7 casos (`custom_`, `vl_`, `pe_`) que exercitam os arredondamentos; mutmut executado no Ubuntu (WSL 2); evidências em [`docs/relatorios/evidencias/mutacao/`](relatorios/evidencias/mutacao/) |
 | Correções do Sonar | [#50](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/50) | Concluído | 7 apontamentos de tarifas corrigidos (`tarifas.py`: 1 → 0; `tarifas.html`: 6 → 0); projeto: 37 → 30. `tarifa_mensal` reescrita sem aninhamento: complexidade cognitiva ≤ 15 e CC 14 (antes 12). Detalhes na seção 6.4 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md) |
 
@@ -599,7 +600,7 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 
 **Defeitos e decisões:**
 
-- Os defeitos #77 e #78 ficam com o teste marcado como `xfail(strict=True)` para não bloquear o mutmut (#45); a correção remove a marcação.
+- Os defeitos #77 e #78 ficaram com o teste marcado como `xfail(strict=True)` para não bloquear o mutmut (#45) até serem corrigidos (#77 na #50, #78 na #78); as marcações foram removidas e os casos viraram testes de regressão.
 - `_tarifa_com_pacote` é código morto (nunca chamado), e a faixa de isenção da poupança (1000) nunca é consultada por `tarifa_mensal`; ficam como entrada para a #50 (Sonar).
 - Os testes foram gerados com IA em duas rodadas, cada uma com a solução inicial preservada e revisada: 2 duplicados removidos, 1 partição inválida acrescentada, oráculo de `tarifa_anual` corrigido (comprovado por mutação manual), `xfail` restrito a `TypeError` e 3 cenários da premium recuperados na tabela de decisão. Detalhes em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md) e na sessão 20 do [AI-LOG](ai/AI-LOG.md).
 

@@ -216,6 +216,7 @@ O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes n
 | `docs/ai/prompts/sessao-23-integracao-servicos-repositorio.md` | [Sessão 23](docs/ai/prompts/sessao-23-integracao-servicos-repositorio.md) — Testes de integração serviços ↔ repositório (#54) |
 | `docs/ai/prompts/sessao-24-selenium-tarifas.md` | [Sessão 24](docs/ai/prompts/sessao-24-selenium-tarifas.md) — Testes de sistema Selenium de Tarifas (#58) |
 | `docs/ai/prompts/sessao-25-iso25010.md` | [Sessão 25](docs/ai/prompts/sessao-25-iso25010.md) — Avaliação ISO/IEC 25010:2023 (#62) |
+| `docs/ai/prompts/sessao-26-correcao-78.md` | [Sessão 26](docs/ai/prompts/sessao-26-correcao-78.md) — Correção do defeito #78 (meia tarifa do pacote premium) |
 | `pyproject.toml` | Dependências e configuração de ferramentas |
 | `.coveragerc` | Cobertura de arestas, caminhos relativos e gate de 80% |
 | `.python-version` | Versão do Python gerenciada pelo uv |

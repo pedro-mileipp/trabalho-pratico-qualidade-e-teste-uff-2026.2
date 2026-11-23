@@ -51,7 +51,7 @@ Escore: 74 / 106 = 69,8%
 
 > **Atualização (#45, 22/11/2026):** com a suíte ampliada na #40 e na #45, o escore de `TarifaBancaria` chegou a **94,3%** (100% descontando 6 equivalentes). Ver a subseção "Mutação — #45" na seção da classe.
 
-> O run completo de todas as classes pode ser executado: a suíte está verde desde 22/11/2026 (os bugs #16, #17 e #20 foram corrigidos; restam 3 `xfail` do defeito #78).
+> O run completo de todas as classes pode ser executado: a suíte está verde desde 22/11/2026 (os bugs #16, #17 e #20 foram corrigidos, e os 3 `xfail` do defeito #78 viraram regressão com a correção da #78).
 
 ---
 
@@ -522,8 +522,8 @@ Como saldo ≥ 50000 implica saldo ≥ 5000, há 3 faixas de saldo (1000 / 20000
 | corrente | 1000 | 30,00 | 15,00 |
 | corrente | 20000 | 15,00 | 15,00 |
 | corrente | 60000 | 15,00 | 15,00 |
-| premium | 1000 | 35,00 | 15,00 → esperado 25,00 (**#78**) |
-| premium | 20000 | 15,00 → esperado 25,00 (**#78**) | 15,00 → esperado 25,00 (**#78**) |
+| premium | 1000 | 35,00 | 25,00 (era 15,00 até a correção do **#78**) |
+| premium | 20000 | 25,00 (era 15,00 até a correção do **#78**) | 25,00 (era 15,00 até a correção do **#78**) |
 | premium | 60000 | 0,00 | 0,00 |
 
 Com pacote, as transações extras são ignoradas (`td_cp_pacote_ignora_transacoes`) e não há sobretaxa de saldo negativo (`pe_corrente_pacote_saldo_negativo`: 30,00).
@@ -542,9 +542,9 @@ Com pacote, as transações extras são ignoradas (`td_cp_pacote_ignora_transaco
 | Issue | Defeito | Esperado × atual | Caso |
 |---|---|---|---|
 | [#77](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/77) | `tarifa_anual` não recebe nem repassa `antiguidade_meses` | 288,00 × `TypeError` (sempre 360,00) | `test_defeito_tarifa_anual_aplica_desconto_por_antiguidade` |
-| [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | meia tarifa do pacote premium usa a tarifa da corrente (suspeito, a confirmar pelo grupo) | 25,00 × 15,00 | `test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_*]` (3 casos) |
+| [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78) | meia tarifa do pacote premium usa a tarifa da corrente (confirmado pelo grupo como defeito no código; **corrigido na #78**) | 25,00 × 15,00 | `test_defeito_pacote_premium_meia_tarifa_da_premium[td_r3_*]` (3 casos) |
 
-Os casos afirmam o comportamento esperado e estão marcados com `@pytest.mark.xfail(strict=True)`, para a suíte continuar verde e não bloquear o mutmut (#45). O caso do #77 usa `raises=TypeError`, para que só a falha do defeito seja aceita. Ao corrigir, o `xfail` deve ser removido (com `strict=True`, o pytest acusa XPASS).
+Os casos afirmam o comportamento esperado e estão marcados com `@pytest.mark.xfail(strict=True)`, para a suíte continuar verde e não bloquear o mutmut (#45). O caso do #77 usa `raises=TypeError`, para que só a falha do defeito seja aceita. Ao corrigir, o `xfail` deve ser removido (com `strict=True`, o pytest acusa XPASS). Os dois defeitos foram corrigidos (#77 na #50, #78 na #78), e os casos viraram testes de regressão.
 
 **Outras observações (sem issue de bug):**
 
@@ -678,6 +678,8 @@ O mapeamento foi conferido aplicando cada mutante sozinho (`mutmut apply`) e rod
 **Observação:** 4 dos 13 mutantes mortos estão em `_tarifa_com_pacote`, que é **código morto** (apontado na #40 para a #50). Se a #50 remover o método, os testes dele saem junto e o escore deve ser recalculado sobre os mutantes restantes.
 
 > **Atualização (#50, 22/11/2026):** a #50 removeu `_tarifa_com_pacote` e reescreveu `tarifa_mensal` sem aninhamento (correção do Sonar `python:S3776`). Os testes do método removido passaram a verificar a mesma regra por `tarifa_mensal` com pacote, e foi acrescentado o caso `custom_pacote_meia_tarifa_com_centavos`. Nova execução: **101 mutantes, 93 mortos (92,1%)**. Dos 8 sobreviventes, 7 são equivalentes — os 6 da tabela acima (com outros números, porque o código mudou) e 1 novo, o padrão `antiguidade_meses` 0 → 1 de `tarifa_anual` (mesmo raciocínio do `tarifa_mensal__mutmut_3`) — e 1 é `round(corrente * 0.5, 2)` → `round(..., 3)` na meia tarifa, que só se distingue em meio centavo exato (ambíguo em `float`) e não recebeu teste frágil. Evidência: [`tarifas-execucao-4-pos-sonar.txt`](evidencias/mutacao/tarifas-execucao-4-pos-sonar.txt).
+
+> **Atualização (#78, 22/11/2026):** o grupo decidiu que o #78 é defeito no código: a meia tarifa do pacote é 50% da tarifa do próprio tipo de conta. A linha passou a usar `corrente if tipo is CORRENTE else premium`; os 3 `xfail` da regra R3 viraram regressão, e foi acrescentado `td_r3_corrente_pacote_saldo_6000` (a corrente continua 15,00). São 132 casos, todos passando, com cobertura de arestas de 100%. Nova execução: **104 mutantes, 96 mortos (92,3%)**, contra 101 / 93 (92,1%) na execução 4. Os 3 mutantes a mais vêm da expressão condicional nova e foram todos mortos. Os 8 sobreviventes são os mesmos padrões da execução 4, só com dois números diferentes (`tarifa_mensal__mutmut_24` → `_27` e `_54` → `_57`): 7 equivalentes e o `round(..., 2)` → `round(..., 3)` da meia tarifa, que só se distingue em meio centavo exato. Descontando os equivalentes, o escore é 96 / 97 = 99,0%. Evidência: [`tarifas-execucao-5-pos-78.txt`](evidencias/mutacao/tarifas-execucao-5-pos-78.txt).
 
 **Revisão da solução gerada por IA** ([sessão 21 do AI-LOG](../ai/prompts/sessao-21-mutacao-tarifas.md)): a solução inicial (commit `145bd2d`, [`tarifas-execucao-2-solucao-inicial.txt`](evidencias/mutacao/tarifas-execucao-2-solucao-inicial.txt)) já matava os 13 mutantes. A revisão conferiu o mapeamento mutante → teste e corrigiu três pontos de manutenção (commit `21e9824`): os comentários citavam só o número do mutante, que muda quando `tarifas.py` muda, e passaram a descrever a mutação; faltava o aviso de que os testes de `_tarifa_com_pacote` cobrem código morto; e faltava a justificativa dos valores com centavos.
 
