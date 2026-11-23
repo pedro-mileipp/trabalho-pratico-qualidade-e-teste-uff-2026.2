@@ -356,7 +356,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 
 ## 🚀 6. Entrega 2 — Resultados
 
-> Cada integrante documenta a subseção da sua classe ao concluir as issues da Entrega 2; pendentes: Tarifas/Selenium (#58), ISO 25010 (#62) e relatório consolidado do Sonar (#63). O detalhamento (comandos, saídas e casos) fica em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
+> Cada integrante documenta a subseção da sua classe ao concluir as issues da Entrega 2; pendentes: ISO 25010 (#62) e relatório consolidado do Sonar (#63). O detalhamento (comandos, saídas e casos) fica em [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
 
 ### 6.1 `DecisorCredito` — Pedro Mileipp
 

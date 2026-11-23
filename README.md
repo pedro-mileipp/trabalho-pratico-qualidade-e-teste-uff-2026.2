@@ -117,7 +117,7 @@ uv run pytest tests/system -v                 # roda os testes de sistema (Chrom
 EVIDENCIAS=1 uv run pytest tests/system       # salva prints de cada etapa em <funcionalidade>/evidencias/
 ```
 
-Cada funcionalidade tem a sua pasta em `tests/system/` (ex.: `tests/system/credito/`), com os testes, o page object e as evidências. As fixtures compartilhadas (servidor Flask com banco temporário, navegador e cliente logado) estão em [`tests/system/conftest.py`](tests/system/conftest.py). Detalhes na seção 6.2 do [Plano de Teste](docs/plano_de_teste.md).
+Cada funcionalidade tem a sua pasta em `tests/system/` — Auth ([`tests/system/auth/`](tests/system/auth/)), Crédito ([`tests/system/credito/`](tests/system/credito/)), Empréstimo ([`tests/system/emprestimo/`](tests/system/emprestimo/)), Tarifas ([`tests/system/tarifas/`](tests/system/tarifas/)) e PIX ([`tests/system/pix/`](tests/system/pix/)) — com os testes, o page object e as evidências. As fixtures compartilhadas (servidor Flask com banco temporário, navegador, cliente logado, `definir_saldo_sistema` e prints de etapas) estão em [`tests/system/conftest.py`](tests/system/conftest.py). Detalhes na seção 6.2 do [Plano de Teste](docs/plano_de_teste.md).
 
 ### Requisitos não funcionais
 
@@ -185,8 +185,11 @@ O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes n
 | [`tests/integration/test_servicos_repositorio.py`](tests/integration/test_servicos_repositorio.py) | Entrega 2 — integração `AuthService`/`TransacaoService` ↔ repositório real (SQLite e memória), sem mocks (#54) |
 | [`tests/integration/test_contrato_repositorio.py`](tests/integration/test_contrato_repositorio.py) | Entrega 2 — contrato de `Repositorio` nas duas implementações e divergências entre elas (#54) |
 | [`tests/system/`](tests/system/) | Entrega 2 — testes de sistema com Selenium: fixtures compartilhadas em `conftest.py` e uma pasta por funcionalidade |
+| [`tests/system/auth/`](tests/system/auth/) | Testes de sistema — Autenticação (RF01/RF02): [`test_auth_sistema.py`](tests/system/auth/test_auth_sistema.py), page object [`pagina_auth.py`](tests/system/auth/pagina_auth.py) e evidências em [`evidencias/`](tests/system/auth/evidencias/) |
 | [`tests/system/credito/`](tests/system/credito/) | Testes de sistema — Crédito (RF06): [`test_credito_sistema.py`](tests/system/credito/test_credito_sistema.py), page object [`pagina_credito.py`](tests/system/credito/pagina_credito.py) e evidências em [`evidencias/`](tests/system/credito/evidencias/) |
 | [`tests/system/emprestimo/`](tests/system/emprestimo/) | Testes de sistema — Empréstimo (RF05): [`test_emprestimo_sistema.py`](tests/system/emprestimo/test_emprestimo_sistema.py), page object [`pagina_emprestimo.py`](tests/system/emprestimo/pagina_emprestimo.py) e evidências em [`evidencias/`](tests/system/emprestimo/evidencias/) |
+| [`tests/system/tarifas/`](tests/system/tarifas/) | Testes de sistema — Tarifas (RF04): [`test_tarifas_sistema.py`](tests/system/tarifas/test_tarifas_sistema.py), page object [`pagina_tarifas.py`](tests/system/tarifas/pagina_tarifas.py) e evidências em [`evidencias/`](tests/system/tarifas/evidencias/) |
+| [`tests/system/pix/`](tests/system/pix/) | Testes de sistema — PIX (RF03): [`test_pix_sistema.py`](tests/system/pix/test_pix_sistema.py), page object [`pagina_pix.py`](tests/system/pix/pagina_pix.py) e evidências em [`evidencias/`](tests/system/pix/evidencias/) |
 | [`tests/system/tarifas/`](tests/system/tarifas/) | Testes de sistema — Tarifas (RF04): [`test_tarifas_sistema.py`](tests/system/tarifas/test_tarifas_sistema.py), page object [`pagina_tarifas.py`](tests/system/tarifas/pagina_tarifas.py) e evidências em [`evidencias/`](tests/system/tarifas/evidencias/) |
 | [`tests/rnf/`](tests/rnf/) | Entrega 2 — testes de requisitos não funcionais: fixtures compartilhadas em `conftest.py` e uma pasta por requisito |
 | [`tests/rnf/seguranca/`](tests/rnf/seguranca/) | Segurança da autenticação (RNF06): [`test_seguranca_autenticacao.py`](tests/rnf/seguranca/test_seguranca_autenticacao.py) |
@@ -196,6 +199,7 @@ O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes n
 | `sonar-project.properties` | Configuração do projeto para o SonarQube |
 | `docs/relatorios/inspecao_sonar.md` | Relatório de inspeção com seções “antes” e “depois” |
 | `docs/relatorios/evidencias/sonar/` | Prints e JSON das análises do SonarQube |
+| `docs/relatorios/evidencias/` | Evidências de cobertura, mutação e Sonar por classe — PIX em [`cobertura/pix-cobertura.txt`](docs/relatorios/evidencias/cobertura/pix-cobertura.txt), [`mutacao/pix-execucao-1-antes.txt`](docs/relatorios/evidencias/mutacao/pix-execucao-1-antes.txt) e [`mutacao/pix-execucao-2-depois.txt`](docs/relatorios/evidencias/mutacao/pix-execucao-2-depois.txt), [`sonar/depois/pix/`](docs/relatorios/evidencias/sonar/depois/pix/) |
 | `docs/descricao_trabalho.md` | Enunciado do trabalho |
 | `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
 | `docs/aplicacao.md` | Documentação completa da aplicação e sua arquitetura |
