@@ -212,6 +212,15 @@ No projeto foram conduzidas as seguintes fases de teste na Entrega 1:
 - **Teste de Sistema (manual):** casos executados na interface do Flask em `tests/testes_manuais/` (PIX, Auth, Tarifas, Empréstimo e Crédito), com evidências por caso.
 - **Gestão de casos:** casos manuais registrados no TestLink, com relatório do caso Auth exportado em PDF ([Auth — Relatório TestLink](https://drive.google.com/file/d/14yShZiduI8gixsV5wCQqA70DH2TV4SN4/view?usp=sharing)).
 
+Na **Entrega 2**, além das fases acima:
+
+- **Teste de integração:** rotas HTTP com `test_client` (#55) e serviços ↔ repositório sem mocks (#54), em `tests/integration/`.
+- **Cobertura estrutural (todas-arestas):** ≥ 80% nas 5 classes de domínio, com `pytest-cov` e `branch = True`.
+- **Teste de mutação:** escore ≥ 80% nas mesmas classes, com `mutmut`.
+- **Teste de sistema automatizado:** Selenium + Chrome headless em `tests/system/` (uma pasta por funcionalidade).
+- **Requisito não funcional:** segurança da autenticação (RNF06) em `tests/rnf/seguranca/`.
+- **Inspeção estática:** SonarQube local (Docker), perfil *Sonar way comprehensive*, com registro "antes" e "depois".
+
 ---
 
 ### ⛔ 2.2 Critérios de Suspensão e Retomada
@@ -230,6 +239,13 @@ Os testes foram considerados concluídos quando:
 - Os resultados dos testes foram devidamente registrados
 - As falhas identificadas foram documentadas em issues
 - As principais funcionalidades do sistema foram avaliadas
+
+Na Entrega 2, acrescentam-se:
+
+- Cobertura estrutural ≥ 80% (todas-arestas) nas 5 classes de domínio;
+- Escore de mutação ≥ 80% nas mesmas classes;
+- Testes de sistema automatizados executados e verdes;
+- Apontamentos do Sonar resolvidos ou justificados, com print antes/depois.
 
 ---
 
@@ -288,6 +304,10 @@ Os entregáveis de teste são fornecidos conforme abaixo.
 | 4 | TestLink | Gestão de casos de teste manuais |
 | 5 | GitHub Issues | Reporte de bugs e acompanhamento das atividades |
 | 6 | Google Chrome | Navegador usado na execução dos testes manuais |
+| 7 | Selenium WebDriver | Automação dos testes de sistema (Chrome headless) |
+| 8 | mutmut | Teste de mutação sobre as classes de domínio |
+| 9 | pytest-cov / coverage.py | Cobertura estrutural (todas-arestas) |
+| 10 | SonarQube (Docker) | Inspeção estática do código |
 
 ### 💻 4.2 Ambiente de Teste
 
@@ -297,9 +317,10 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 
 - Sistema operacional macOS, Linux ou Windows
 - Python **3.12** gerenciado por **uv**
-- Navegador Google Chrome
+- Navegador Google Chrome (headless nos testes de sistema, via Selenium Manager)
 - Banco de dados **SQLite** (arquivo em `/tmp` no ambiente de teste, fora do workspace)
 - Servidor de desenvolvimento **Flask**
+- Docker para o SonarQube local
 
 ---
 
@@ -318,6 +339,10 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 | TestLink | Ferramenta de gestão de casos de teste |
 | Flask | Microframework web do projeto |
 | TD | Tabela de Decisão |
+| Selenium | Framework de automação dos testes de sistema |
+| mutmut | Ferramenta de teste de mutação |
+| SonarQube | Plataforma de inspeção estática de código |
+| Cobertura de arestas | Critério estrutural que exige a passagem por todos os desvios |
 
 ---
 
