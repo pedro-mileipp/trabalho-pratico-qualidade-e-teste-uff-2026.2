@@ -66,7 +66,7 @@ Construir um sistema web de **banco digital** e aplicar, sobre ele, as técnicas
 ├── docs/
 │   ├── descricao_trabalho.md
 │   ├── plano_projeto.md       # este documento
-│   ├── plano_de_teste.md      # Entregas 1 e 2
+│   ├── plano_de_teste.md      # plano oficial (Entregas 1 e 2)
 │   ├── relatorios/            # cobertura, mutação, ISO 25010, inspeção Sonar (Entrega 2)
 │   └── ai/
 │       └── AI-LOG.md          # registro de uso de IA
