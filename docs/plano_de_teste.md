@@ -580,4 +580,60 @@ Implementação da suíte de testes de integração para validar o ciclo complet
 - Chaves de e-mail com dois `@` (bug #16) e chargeback (bug #17) não foram usadas.
 - Os testes foram gerados com IA. A solução inicial foi preservada (`829b937`), e a revisão acrescentou o caso de registro inválido, que leva `auth.py` de 94% para 100% sem depender dos testes de rota da #55 (`093eed1`). Detalhes na sessão 23 do [AI-LOG](ai/AI-LOG.md).
 
+### 6.10 `TransacaoPix` — Alexandre Colmenero
+
+#### 6.10.1 Planejamento dos testes (elaborado antes da execução)
+
+**Objetivo.** Comprovar o requisito funcional RF03 (transferência PIX) e a manutenibilidade da classe (`app/dominio/pix.py`) com as técnicas funcional, estrutural e baseada em defeitos; automatizar o fluxo principal e os fluxos de recusa na interface (Selenium); resolver os apontamentos do Sonar da funcionalidade; preservar a complexidade ciclomática ≥ 10.
+
+**Itens sob teste.** `validar_chave`, `autorizar`, `solicitar_chargeback`, `_eh_noturno` e a rota/tela `/pix`. O chargeback e a lista de chaves bloqueadas não são alcançáveis pela interface — permanecem no nível de unidade.
+
+**Estado inicial (22/11/2026).** 68 casos em `tests/unit/test_pix.py`, todos passando; cobertura de arestas 100% (101 statements, 50 branches); CC máxima 11 (`autorizar`) e 10 (`solicitar_chargeback`). Os defeitos #16 e #17 já foram corrigidos (commit `e7881bd`, PR #89) e têm casos de regressão na suíte.
+
+**Técnicas e casos planejados** (a técnica é identificada no id do `pytest.param` ou em comentário):
+
+| Técnica | Método/Fluxo | Casos planejados |
+|---|---|---|
+| Partição de equivalência | `validar_chave` | CPF válido (com e sem pontuação); CPF inválido por dígito verificador (1º e 2º), dígitos repetidos, curto/longo e sem dígitos; e-mail válido, sem `@`, com dois `@` (regressão #16), domínio sem ponto e com ponto no início/fim; telefone 10/11 dígitos e formatado; aleatória 31/32/33 caracteres; vazio e tipo desconhecido |
+| Análise de valor-limite | `autorizar` | valor 0 e 0,01; limites diurnos 4999,99 / 5000,00 / 5000,01; noturnos 999,99 / 1000,00 / 1000,01; saldo igual e logo abaixo do valor; fronteiras de horário 19:59 / 20:00 / 5:59 / 6:00 / 6:01 |
+| Tabela de decisão | `autorizar` | precedência valor → chave → bloqueio → horário/limite → saldo → aprovada; chave bloqueada combinada com valor inválido e com valor válido |
+| Tabela de decisão | `solicitar_chargeback` | dias -1 / 0 / 7 / 8 / 30 / 31 / 90 / 91; valor 0, 5000,00 e 5000,01; motivo golpe/fraude/vazio; chave bloqueada em cada faixa (regressão #17) |
+| Teste de laços | `_validar_cpf` | laço dos dois dígitos verificadores: falha no 1º, falha no 2º e CPF válido |
+| PE + valor-limite | `_eh_noturno` | janela padrão (20h–6h) e janela customizada, inclusive com virada de dia (22h–2h); fronteiras exatas |
+| Parâmetros customizados | construtor | `ConfiguracaoPix` com limites e prazo de chargeback próprios (preparação para a mutação) |
+| Sistema (Selenium) | `/pix` | CT-01 aprovado; CT-02 chave inválida; CT-03 saldo insuficiente; CT-04 e-mail com dois `@` (regressão #16); CT-05 valor ≤ 0 barrado pelo HTML5; guarda sem login |
+
+**Dados de teste.** CPF válido `529.982.247-25`; CPFs inválidos `123.456.789-00` e dígitos repetidos; e-mails `user@example.com`, `a@b@c.com`, `@example.com`, `user@example` etc.; telefones `(21) 2222-3333` e `21988887777`; chave aleatória de 32 caracteres; valores e horários da tabela acima.
+
+**Oráculos.** Valores esperados explícitos derivados de `docs/aplicacao.md` §4.1 — nunca calculados pelo próprio código sob teste. Nos testes de sistema, o saldo inicial é definido diretamente no SQLite temporário (a interface não tem depósito), e os cenários evitam os limites por horário para não depender do relógio da máquina.
+
+**Ambiente e comandos.**
+
+```bash
+uv run pytest tests/unit/test_pix.py --cov=app.dominio.pix --cov-branch --cov-report=term-missing
+uv run radon cc app/dominio/pix.py -s
+uv run mutmut run   # configuração isolada (only_mutate), sem versionar
+uv run pytest tests/system/pix -v   # e EVIDENCIAS=1 para os prints
+./scripts/sonar_local.sh scan
+```
+
+**Critérios de aceite.**
+
+- #38: casos ampliados e executados; cobertura de arestas ≥ 80% na classe.
+- #43: escore de mutação ≥ 80%; sobreviventes triados e justificados.
+- #48: apontamentos da funcionalidade PIX resolvidos ou justificados; print "depois"; CC ≥ 10 preservada; suíte verde.
+- #56: fluxo principal e recusas automatizados; testes determinísticos e independentes; evidências.
+
+**Riscos e mitigação.**
+
+| Risco | Mitigação |
+|---|---|
+| `autorizar` usa `datetime.now()` quando o horário não é informado | testes sempre passam `horario` fixo |
+| Limites diurno/noturno dependem do horário da execução (sistema) | cenários de sistema usam valores válidos nas duas janelas |
+| Saldo inicial zero na interface | fixture define o saldo no SQLite antes do cenário |
+| Sonar local desatualizado (análise de 11/11) | re-scan com o script antes e depois das correções |
+| Mutantes equivalentes | triagem e justificativa no relatório |
+
+**Resultados:** registrados nas seções 6.10.2 (unitários/cobertura), 6.10.3 (mutação), 6.10.4 (Sonar) e 6.10.5 (sistema), à medida que as issues forem concluídas.
+
 ---
