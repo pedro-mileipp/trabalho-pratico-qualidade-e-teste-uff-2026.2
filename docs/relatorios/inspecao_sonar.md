@@ -2,7 +2,7 @@
 
 > Relatório da inspeção estática do código-fonte da **Entrega 2** (Qualidade e Teste — UFF 2026.2).
 >
-> **Status:** seção “antes” concluída em 11/11/2026; seções “depois” concluídas para crédito (6.1), empréstimo (6.2), juros (6.3) e tarifas (6.4). O PIX (#48) será registrado na seção 6.5.
+> **Status:** seção “antes” concluída em 11/11/2026; seções “depois” concluídas para crédito (6.1), empréstimo (6.2), juros (6.3), tarifas (6.4) e PIX (6.5).
 
 ## 1. Ambiente e método
 
@@ -340,3 +340,55 @@ A cobertura do projeto caiu 0,4 ponto porque o método removido (`_tarifa_com_pa
 
 - O mutmut 3 e o SonarQube local exigem Linux: no Windows, foram usados o WSL 2 com Ubuntu e o Docker instalado nele. O WSL desliga o Ubuntu alguns segundos depois do último comando, e o container do SonarQube cai junto; é preciso manter um terminal do Ubuntu aberto durante a análise.
 - Numa instância nova, a interface exige trocar a senha padrão do `admin` antes de mostrar as telas. Para não alterar a senha usada pelo `scripts/sonar_local.sh`, os prints foram tirados com um usuário local só de leitura, criado pela API.
+
+### 6.5 `TransacaoPix` e funcionalidade de PIX — Alexandre Colmenero (#48)
+
+**Ambiente:** a mesma imagem do SonarQube (`26.11.0.134175-community`, via `docker-compose.yml` do projeto), com o perfil Python **Sonar way comprehensive** e o perfil Web padrão, como no “antes”. Scanner local (`sonar-scanner` 8.1). Data: 22/11/2026.
+
+**Reprodução do “antes” na mesma instância.** Antes de aplicar as correções, a `main` atual (commit `5cd5645`) foi analisada de novo: **26 apontamentos abertos no projeto**, dos quais **7 da funcionalidade PIX** — os mesmos do relatório original (seções 2 e 4): 6 em `app/templates/pix.html` (3 `Web:S6853` + 3 `Web:InputWithoutLabelCheck`) e 1 em `app/web/routes/pix.py` (`python:S1192`, literal `"pix.html"` repetido 3 vezes). A classe `app/dominio/pix.py` segue com **0 apontamentos estáticos**; os defeitos funcionais #16 e #17 (já corrigidos no commit `e7881bd`) são semânticos e não são detectados pelo Sonar — a verificação ficou nos testes de regressão (`email_dois_arroba` e `chargeback_bloqueada_dias_30_valor_alto`).
+
+**Apontamentos da classe e da funcionalidade**
+
+| Arquivo | Antes | Depois | Situação |
+|---|---:|---:|---|
+| `app/dominio/pix.py` (`TransacaoPix`) | 0 | 0 | Classe sem apontamentos estáticos; CC preservada (11 em `autorizar`, 10 em `solicitar_chargeback`) |
+| `app/web/routes/pix.py` | **1** | **0** | `python:S1192` corrigido com a constante `_TEMPLATE = "pix.html"` |
+| `app/templates/pix.html` | **6** | **0** | 6 corrigidos (`CLOSED` / `FIXED`): `id` + `for` em `chave`, `tipo` e `valor` |
+
+| Linha | Regra | Tipo / severidade | Apontamento | Correção |
+|---|---|---|---|---|
+| `routes/pix.py:31` | `python:S1192` | Code smell / crítica | Literal `"pix.html"` repetido 3 vezes | Constante `_TEMPLATE` |
+| `pix.html:7` | `Web:S6853` | Code smell / maior | Rótulo “Chave” sem associação | `<label for="chave">` + `id="chave"` |
+| `pix.html:8` | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `chave` sem `id` | `id="chave"` |
+| `pix.html:9` | `Web:S6853` | Code smell / maior | Rótulo “Tipo de chave” sem associação | `<label for="tipo">` + `id="tipo"` |
+| `pix.html:10` | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `tipo` sem `id` | `id="tipo"` |
+| `pix.html:16` | `Web:S6853` | Code smell / maior | Rótulo “Valor (R$)” sem associação | `<label for="valor">` + `id="valor"` |
+| `pix.html:17` | `Web:InputWithoutLabelCheck` | Bug / maior | Campo `valor` sem `id` | `id="valor"` |
+
+Os `id`s estáveis também servem de seletores para o page object dos testes de sistema do PIX (#56).
+
+**Projeto inteiro**
+
+| Métrica | Antes (reprodução) | Depois |
+|---|---:|---:|
+| Apontamentos abertos | 26 | **19** |
+| Bugs (tipo) | 12 | 9 |
+| Code smells (tipo) | 13 | 9 |
+| Vulnerabilidades (tipo) | 1 | 1 |
+
+Os 19 restantes são de outras funcionalidades (login/registro, rotas de auth/dashboard, `app/__init__.py`) e 4 em arquivos de teste pré-existentes — nenhum em arquivos de PIX.
+
+**Verificação:**
+
+- `uv run pytest`: **681 passed, 3 xfailed** (os `xfail` são o defeito #78, de Tarifas).
+- `uv run ruff check app/`: sem apontamentos.
+- `uv run radon cc app/dominio/pix.py -s`: `autorizar` CC 11 e `solicitar_chargeback` CC 10 — requisito CC ≥ 10 preservado.
+
+**Evidências** em `docs/relatorios/evidencias/sonar/depois/pix/`:
+
+- `antes-main/issues-abertas.json` e `antes-main/issues-pix.json` — reprodução do “antes” (26 abertos, 7 de PIX);
+- `antes-main/scanner.txt` — log do scanner do “antes”;
+- `depois-branch/issues-abertas.json` — 19 apontamentos abertos, nenhum de PIX;
+- `depois-branch/issues-pix-resolvidas.json` — os 7 apontamentos de PIX com status `CLOSED` / `FIXED`;
+- `depois-branch/scanner.txt` — log do scanner do “depois”;
+- `issues-pix-depois.png` — print da consulta de issues dos arquivos de PIX depois da correção (0 abertas, 7 resolvidas), gerado a partir da API porque a instância local não tem credenciais de UI disponíveis.

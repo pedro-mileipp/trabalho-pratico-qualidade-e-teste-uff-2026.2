@@ -4,17 +4,17 @@
 <div class="cartao">
   <h2>Transferência PIX</h2>
   <form method="post">
-    <label>Chave</label>
-    <input name="chave" required>
-    <label>Tipo de chave</label>
-    <select name="tipo">
+    <label for="chave">Chave</label>
+    <input id="chave" name="chave" required>
+    <label for="tipo">Tipo de chave</label>
+    <select id="tipo" name="tipo">
       <option value="cpf">CPF</option>
       <option value="email">E-mail</option>
       <option value="telefone">Telefone</option>
       <option value="aleatoria">Aleatória</option>
     </select>
-    <label>Valor (R$)</label>
-    <input type="number" name="valor" step="0.01" min="0.01" required>
+    <label for="valor">Valor (R$)</label>
+    <input id="valor" type="number" name="valor" step="0.01" min="0.01" required>
     <button type="submit">Transferir</button>
   </form>
 </div>

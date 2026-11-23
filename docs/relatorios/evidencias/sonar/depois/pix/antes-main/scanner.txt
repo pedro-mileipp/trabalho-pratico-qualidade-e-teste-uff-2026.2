@@ -1,0 +1,157 @@
+[1;34m[sonar][0m Gerando coverage.xml...
+============================= test session starts ==============================
+platform darwin -- Python 3.12.12, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/alexandrecolmenero/Faculdade/qualidade-teste/trabalho-pratico-qualidade-e-teste-uff-2026.2
+configfile: pyproject.toml
+plugins: mock-3.15.1, cov-7.1.0
+collected 547 items
+
+tests/unit/test_auth_service.py ............                             [  2%]
+tests/unit/test_credito.py ............................................. [ 10%]
+...................................................                      [ 19%]
+tests/unit/test_emprestimo.py .......................................... [ 27%]
+........................................................................ [ 40%]
+...........                                                              [ 42%]
+tests/unit/test_juros.py ............................................... [ 51%]
+.....................                                                    [ 55%]
+tests/unit/test_pix.py ................................................. [ 63%]
+..............................................................           [ 75%]
+tests/unit/test_tarifas.py ............................................. [ 83%]
+........................................................................ [ 96%]
+...........xxx                                                           [ 99%]
+tests/unit/test_transacao_service.py ....                                [100%]
+
+================================ tests coverage ================================
+______________ coverage: platform darwin, python 3.12.12-final-0 _______________
+
+Coverage XML written to file coverage.xml
+======================== 544 passed, 3 xfailed in 2.45s ========================
+21:17:26.632 INFO  Scanner configuration file: /opt/homebrew/Cellar/sonar-scanner/8.1.0.6389/libexec/conf/sonar-scanner.properties
+21:17:26.635 INFO  Project root configuration file: /Users/alexandrecolmenero/Faculdade/qualidade-teste/trabalho-pratico-qualidade-e-teste-uff-2026.2/sonar-project.properties
+21:17:26.648 INFO  SonarScanner CLI 8.1.0.6389
+21:17:26.650 INFO  Mac OS X 26.6.2 aarch64
+21:17:28.992 INFO  Communicating with SonarQube Community Build 26.11.0.134175
+21:17:28.993 INFO  JRE provisioning: os[macos], arch[arm64]
+21:17:30.028 INFO  Starting SonarScanner Engine...
+21:17:30.029 INFO  Java 21.0.13 Eclipse Adoptium (64-bit)
+21:17:32.542 INFO  Load global settings
+21:17:32.692 INFO  Load global settings (done) | time=150ms
+21:17:32.694 INFO  Server id: 147B411E-AaHK1NE7Rp5ToEA_hYq4
+21:17:32.920 INFO  Loading required plugins
+21:17:32.921 INFO  Load plugins index
+21:17:33.047 INFO  Load plugins index (done) | time=124ms
+21:17:33.047 INFO  Load/download plugins
+21:17:33.057 INFO  Load/download plugins (done) | time=10ms
+21:17:33.278 INFO  Load project settings for component key: 'banco-digital-uff-2026-2'
+21:17:33.313 INFO  Load project settings for component key: 'banco-digital-uff-2026-2' (done) | time=35ms
+21:17:33.324 INFO  Process project properties
+21:17:33.338 INFO  Process project properties (done) | time=14ms
+21:17:33.347 INFO  Project key: banco-digital-uff-2026-2
+21:17:33.347 INFO  Base dir: /Users/alexandrecolmenero/Faculdade/qualidade-teste/trabalho-pratico-qualidade-e-teste-uff-2026.2
+21:17:33.348 INFO  Working dir: /Users/alexandrecolmenero/Faculdade/qualidade-teste/trabalho-pratico-qualidade-e-teste-uff-2026.2/.scannerwork
+21:17:33.543 INFO  Load quality profiles
+21:17:33.600 INFO  Load quality profiles (done) | time=57ms
+21:17:33.614 INFO  Load active rules
+21:17:33.892 INFO  Load active rules (done) | time=277ms
+21:17:33.899 INFO  Load analysis cache
+21:17:33.925 INFO  Load analysis cache (404) | time=26ms
+21:17:34.010 INFO  Preprocessing files...
+21:17:34.441 INFO  2 languages detected in 170 preprocessed files (done) | time=430ms
+21:17:34.441 INFO  0 files ignored because of inclusion/exclusion patterns
+21:17:34.442 INFO  14 directories skipped because of exclusion patterns (content not counted)
+21:17:34.442 INFO  0 files ignored because of scm ignore settings
+21:17:34.443 INFO  Loading plugins for detected languages
+21:17:34.443 INFO  Load/download plugins
+21:17:34.462 INFO  Load/download plugins (done) | time=19ms
+21:17:34.624 INFO  Load project repositories
+21:17:34.767 INFO  Load project repositories (done) | time=143ms
+21:17:34.804 INFO  Indexing files...
+21:17:34.804 INFO  Project configuration:
+21:17:34.805 INFO    Excluded sources: **/__pycache__/**, **/*.pyc
+21:17:34.805 INFO    Excluded tests: **/__pycache__/**, **/*.pyc
+21:17:34.880 INFO  170 files indexed (done) | time=76ms
+21:17:34.881 INFO  Quality profile for py: Sonar way comprehensive
+21:17:34.882 INFO  Quality profile for web: Sonar way core
+21:17:34.882 INFO  ------------- Run sensors on module Banco Digital - UFF 2026.2
+21:17:34.940 INFO  Load metrics repository
+21:17:34.984 INFO  Load metrics repository (done) | time=44ms
+21:17:35.671 INFO  Reflections took 104 ms to scan 1 urls, producing 30 keys and 313 values
+21:17:35.799 INFO  Sensor IaC YAML File Type Classification Sensor [iac]
+21:17:35.801 INFO  Sensor IaC YAML File Type Classification Sensor [iac] (done) | time=2ms
+21:17:35.802 INFO  Sensor IaC hadolint report Sensor [iac]
+21:17:35.802 INFO  Sensor IaC hadolint report Sensor [iac] (done) | time=0ms
+21:17:35.802 INFO  Sensor Java Config Sensor [iac]
+21:17:35.802 INFO  There are no files to be analyzed for the Java language
+21:17:35.802 INFO  Sensor Java Config Sensor [iac] (done) | time=0ms
+21:17:35.803 INFO  Sensor IaC Docker Sensor [iac]
+21:17:35.804 INFO  There are no files to be analyzed for the Docker language
+21:17:35.804 INFO  Sensor IaC Docker Sensor [iac] (done) | time=2ms
+21:17:35.805 INFO  Sensor Python Sensor [python]
+21:17:37.316 INFO  Starting global symbols computation
+21:17:37.317 INFO  46 source files to be analyzed
+21:17:38.960 INFO  46/46 source files have been analyzed
+21:17:38.961 INFO  Finished step global symbols computation in 1644ms
+21:17:39.049 INFO  Starting rules execution
+21:17:39.049 INFO  46 source files to be analyzed
+21:17:41.062 INFO  46/46 source files have been analyzed
+21:17:41.063 INFO  Finished step rules execution in 2012ms
+21:17:41.063 INFO  The Python analyzer was able to leverage cached data from previous analyses for 0 out of 46 files. These files were not parsed.
+21:17:41.065 INFO  Sensor Python Sensor [python] (done) | time=5260ms
+21:17:41.066 INFO  Sensor Cobertura Sensor for Python coverage [python]
+21:17:41.234 INFO  Python test coverage
+21:17:41.237 INFO  Parsing report '/Users/alexandrecolmenero/Faculdade/qualidade-teste/trabalho-pratico-qualidade-e-teste-uff-2026.2/coverage.xml'
+21:17:41.319 INFO  Sensor Cobertura Sensor for Python coverage [python] (done) | time=253ms
+21:17:41.320 INFO  Sensor PythonXUnitSensor [python]
+21:17:41.486 INFO  Sensor PythonXUnitSensor [python] (done) | time=165ms
+21:17:41.486 INFO  Sensor Python Dependency Sensor [python]
+21:17:41.497 INFO  Sensor Python Dependency Sensor [python] (done) | time=10ms
+21:17:41.498 INFO  Sensor HTML [web]
+21:17:41.724 INFO  Sensor HTML [web] (done) | time=227ms
+21:17:41.724 INFO  Sensor TextAndSecretsSensor [text]
+21:17:41.807 INFO  Available processors: 10
+21:17:41.807 INFO  Using 10 threads for analysis.
+21:17:42.036 INFO  Start fetching files for the text and secrets analysis
+21:17:42.079 INFO  Using Git CLI to retrieve dirty files
+21:17:42.131 INFO  Retrieving language associated files and files included via "sonar.text.inclusions" that are tracked by git
+21:17:42.141 INFO  Starting the text and secrets analysis
+21:17:42.142 INFO  54 source files to be analyzed for the text and secrets analysis
+21:17:42.217 INFO  54/54 source files have been analyzed for the text and secrets analysis
+21:17:42.220 INFO  Sensor TextAndSecretsSensor [text] (done) | time=496ms
+21:17:42.223 INFO  ------------- Run sensors on project
+21:17:42.694 INFO  Sensor JavaScript/TypeScript/CSS analysis [javascript]
+21:17:43.607 INFO  Detected os: Mac OS X arch: aarch64 alpine: false. Platform: DARWIN_ARM64
+21:17:43.608 INFO  Deploy location /Users/alexandrecolmenero/.sonar/js/node-runtime, tagetRuntime: /Users/alexandrecolmenero/.sonar/js/node-runtime/node,  version: /Users/alexandrecolmenero/.sonar/js/node-runtime/version.txt
+21:17:44.199 INFO  Using embedded Node.js runtime.
+21:17:44.199 INFO  Using Node.js executable: '/Users/alexandrecolmenero/.sonar/js/node-runtime/node'.
+21:17:46.594 INFO  Memory configuration: OS (16384 MB), Node.js (4288 MB).
+21:17:46.610 INFO  gRPC analyze-project server listening on 127.0.0.1:55642
+21:17:46.819 INFO  Plugin version: [14.3.0.46350]
+21:17:49.016 INFO  Found 0 tsconfig.json file(s): []
+21:17:49.102 INFO  8 source files to be analyzed
+21:17:49.103 INFO  8/8 source files have been analyzed
+21:17:49.111 INFO  Hit the cache for 0 out of 8
+21:17:49.111 INFO  Miss the cache for 8 out of 8: ANALYSIS_MODE_INELIGIBLE [8/8]
+21:17:49.111 INFO  Sensor JavaScript/TypeScript/CSS analysis [javascript] (done) | time=6417ms
+21:17:49.111 INFO  Sensor IaC Project Sensor [iac]
+21:17:49.112 INFO  Sensor IaC Project Sensor [iac] (done) | time=1ms
+21:17:49.113 INFO  Sensor Zero Coverage Sensor
+21:17:49.114 INFO  Sensor Zero Coverage Sensor (done) | time=1ms
+21:17:49.114 INFO  ------------- Gather SCA dependencies on project
+21:17:49.120 INFO  Dependency analysis skipped
+21:17:49.136 INFO  SCM Publisher SCM provider for this project is: git
+21:17:49.137 INFO  SCM Publisher 27 source files to be analyzed
+21:17:51.471 INFO  SCM Publisher 27/27 source files have been analyzed (done) | time=2319ms
+21:17:51.506 INFO  CPD Executor 6 files had no CPD blocks
+21:17:51.509 INFO  CPD Executor Calculating CPD for 28 files
+21:17:51.573 INFO  CPD Executor CPD calculation finished (done) | time=66ms
+21:17:51.600 INFO  SCM revision ID '5cd56459e9be92b41e5ae56f05ad564996c9a9a7'
+21:17:52.242 INFO  Analysis report generated in 651ms, dir size=676.3 kB
+21:17:53.291 INFO  Analysis report compressed in 1048ms, zip size=283.2 kB
+21:17:53.506 INFO  Analysis report uploaded in 215ms
+21:17:53.508 INFO  ANALYSIS SUCCESSFUL, you can find the results at: http://localhost:9000/dashboard?id=banco-digital-uff-2026-2
+21:17:53.510 INFO  Note that you will be able to access the updated dashboard once the server has processed the submitted analysis report
+21:17:53.510 INFO  More about the report processing at http://localhost:9000/api/ce/task?id=cda92412-3d9e-4003-9c38-11df53a275ba
+21:17:53.971 INFO  Analysis total time: 23.894 s
+21:17:53.972 INFO  SonarScanner Engine completed successfully
+21:17:54.023 INFO  EXECUTION SUCCESS
+21:17:54.026 INFO  Total time: 27.395s

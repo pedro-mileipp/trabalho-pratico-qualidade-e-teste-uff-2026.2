@@ -33,8 +33,9 @@
 | 1.20 | 22/11/2026 | Alexandre Colmenero | Entrega 2: ampliação dos testes unitários de `TransacaoPix` para 104 casos e cobertura estrutural todas-arestas (100%, issue #38) na seção 6.10.2 |
 | 1.21 | 22/11/2026 | Alexandre Colmenero | Entrega 2: teste de mutação de `TransacaoPix` com `mutmut` (escore 97,3%; 100% descontando 4 equivalentes, issue #43) na seção 6.10.3 |
 | 1.22 | 22/11/2026 | Daniel Izu | Entrega 2: testes de sistema com Selenium — Tarifas/RF04 (issue #58) na seção 6.2; defeito #78 confirmado na interface |
+| 1.22 | 22/11/2026 | Alexandre Colmenero | Entrega 2: correções do Sonar na funcionalidade PIX (7 → 0 apontamentos, issue #48) na seção 6.10.4 |
 
-> Nota: as versões 1.14 e 1.16 aparecem duplicadas por registros simultâneos de integrantes; a numeração histórica foi preservada porque o AI-LOG e os prompts a citam.
+> Nota: as versões 1.14, 1.16 e 1.22 aparecem duplicadas por registros simultâneos de integrantes; a numeração histórica foi preservada porque o AI-LOG e os prompts a citam.
 
 ---
 
@@ -187,11 +188,11 @@ Além disso, os testes visam garantir a integridade dos dados, o tratamento de e
 
 | Suíte | Casos | Resultado |
 |-------|-------|-----------|
-| Unitária (`tests/unit/`) | 544 | 544 pass · 3 xfail (defeito #78, Tarifas) |
+| Unitária (`tests/unit/`) | 547 | 544 pass · 3 xfail (defeito #78, Tarifas) |
 | Integração (`tests/integration/`) | 84 | 84 pass |
-| Sistema (`tests/system/`) | 31 | 31 pass |
+| Sistema (`tests/system/`) | 50 | 49 pass · 1 xfail (defeito #78, Tarifas) |
 | Requisitos não funcionais (`tests/rnf/`) | 22 | 22 pass |
-| **Total** | **681** | **681 pass · 3 xfail** |
+| **Total** | **703** | **699 pass · 4 xfail** |
 
 Unitários por classe de domínio:
 
@@ -204,7 +205,7 @@ Unitários por classe de domínio:
 | `TarifaBancaria` | 128 | 128 pass · 3 xfail (#78) |
 | `AuthService` e `TransacaoService` | 16 | 16 pass |
 
-> A suíte completa ficou verde em 22/11/2026, após a correção dos bugs de PIX #16 e #17 (commit `e7881bd`, PR #89). Os 3 `xfail` restantes documentam o defeito #78 (Tarifas) e não bloqueiam a execução.
+> A suíte completa ficou verde em 22/11/2026, após a correção dos bugs de PIX #16 e #17 (commit `e7881bd`, PR #89). Os 4 `xfail` restantes documentam o defeito #78 (Tarifas) e não bloqueiam a execução.
 
 ---
 
@@ -383,7 +384,7 @@ Para a execução do sistema e realização dos testes, é necessário dispor de
 
 **Ferramentas:** Selenium WebDriver 4 com Google Chrome em modo headless (driver resolvido pelo Selenium Manager) e pytest.
 
-**Situação em 22/11/2026:** 31 testes de sistema, todos passando — Crédito (13), Auth (12) e Empréstimo (6). O PIX (RF03, issue #56) está planejado na seção 6.10.
+**Situação em 22/11/2026:** 49 testes de sistema passando e 1 `xfail` (defeito #78) — Crédito (13), Auth (12), Empréstimo (6) e Tarifas (18 pass + 1 `xfail`). O PIX (RF03, issue #56) está planejado na seção 6.10.
 
 **Base compartilhada** (`tests/system/conftest.py`), para todos os testes de sistema:
 
@@ -676,5 +677,9 @@ uv run pytest tests/system/pix -v   # e EVIDENCIAS=1 para os prints
 #### 6.10.3 Mutação — issue #43
 
 **Resultado (22/11/2026):** `mutmut` isolado em `app/dominio/pix.py` — **148 mutantes, 144 mortos (97,3%)**; os 4 sobreviventes são equivalentes justificados (100% descontando equivalentes). Meta da disciplina: ≥ 80% ✅. A 1ª execução (104 casos) já atingia 91,9%; os 7 casos novos mataram 8 sobreviventes, com mapeamento mutante → teste verificado por `mutmut apply`. Evidências em [`docs/relatorios/evidencias/mutacao/pix-execucao-1-antes.txt`](relatorios/evidencias/mutacao/pix-execucao-1-antes.txt) e [`pix-execucao-2-depois.txt`](relatorios/evidencias/mutacao/pix-execucao-2-depois.txt); detalhes na seção `TransacaoPix` de [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
+
+#### 6.10.4 Defeitos #16/#17 e inspeção Sonar — issue #48
+
+**Resultado (22/11/2026):** a funcionalidade PIX passou de **7 para 0 apontamentos** no SonarQube local (perfil *Sonar way comprehensive* + Web padrão): 6 de acessibilidade/IDs em `pix.html` (`id`/`for` em `chave`, `tipo` e `valor`) e 1 `python:S1192` em `routes/pix.py` (constante `_TEMPLATE`). A classe `pix.py` segue com 0 apontamentos e CC preservada (11/10). Projeto: 26 → 19 apontamentos abertos (nenhum de PIX). Os defeitos funcionais #16/#17 já haviam sido corrigidos no commit `e7881bd` (PR #89) e são cobertos pelos testes de regressão. Suíte completa: 699 passed, 4 xfailed (defeito #78, Tarifas — unitários e sistema). Detalhes na seção 6.5 de [`docs/relatorios/inspecao_sonar.md`](relatorios/inspecao_sonar.md); evidências em [`docs/relatorios/evidencias/sonar/depois/pix/`](relatorios/evidencias/sonar/depois/pix/).
 
 ---
