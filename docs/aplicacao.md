@@ -80,9 +80,9 @@ Cada classe a seguir é **não-CRUD**, possui desvios/laços e **complexidade ci
 
 Autorização e chargeback de transferências PIX.
 
-- `validar_chave(chave, tipo)` — valida chave por tipo: CPF (algoritmo do dígito verificador), e-mail, telefone (10/11 dígitos) ou aleatória (32 chars).
+- `validar_chave(chave, tipo)` — valida chave por tipo: CPF (algoritmo do dígito verificador), e-mail (exatamente um `@`, com local e domínio válidos — correção do defeito #16), telefone (10/11 dígitos) ou aleatória (32 chars).
 - `autorizar(chave, tipo, valor, saldo, horario)` — retorna `ResultadoPix`: checa valor > 0, chave válida, chave bloqueada, horário noturno, limite (diurno/noturno) e saldo.
-- `solicitar_chargeback(chave, valor, dias, motivo)` — decide chargeback por prazo, valor e motivo (golpe/fraude).
+- `solicitar_chargeback(chave, valor, dias, motivo)` — decide chargeback por prazo, valor e motivo (golpe/fraude); chave bloqueada devolve `False` e não aprova o chargeback incondicionalmente (correção do defeito #17).
 - `_eh_noturno(momento)` — janela noturna configurável (padrão 20h–6h, com tratamento de virada de dia).
 
 ### 4.2 `CalculadoraJuros` (`app/dominio/juros.py`)
