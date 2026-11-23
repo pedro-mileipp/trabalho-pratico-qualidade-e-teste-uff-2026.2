@@ -1,4 +1,4 @@
-# Sessão 25 — Plano e execução dos testes de PIX (issues #38, #43, #48, #56 e #64)
+# Sessão 27 — Plano e execução dos testes de PIX (issues #38, #43, #48, #56 e #64)
 
 | Campo | Valor |
 |---|---|
@@ -152,7 +152,7 @@ No caminho, a IA registrou e corrigiu erros próprios: o cache do mutmut não ro
 
 ## Solução inicial (gerada pela IA) vs. solução final (após revisão)
 
-Exigência do enunciado: preservar a solução inicial, a final e descrever as alterações. Nos testes unitários, a solução inicial foi gravada antes da revisão da mutação (merge `5cddd5e`, PR #92) e a final depois da triagem (merge `5cd5645`, PR #93). O diff está em [`sessao-25-diff-test-pix-inicial-final.diff`](sessao-25-diff-test-pix-inicial-final.diff).
+Exigência do enunciado: preservar a solução inicial, a final e descrever as alterações. Nos testes unitários, a solução inicial foi gravada antes da revisão da mutação (merge `5cddd5e`, PR #92) e a final depois da triagem (merge `5cd5645`, PR #93). O diff está em [`sessao-27-diff-test-pix-inicial-final.diff`](sessao-27-diff-test-pix-inicial-final.diff).
 
 | Artefato | Solução inicial | Solução final | Alterações realizadas |
 |---|---|---|---|
