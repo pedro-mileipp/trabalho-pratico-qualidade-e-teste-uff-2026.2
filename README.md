@@ -132,7 +132,7 @@ Resultados e riscos identificados em [`docs/relatorios/rnf_seguranca.md`](docs/r
 
 ## Inspeção com SonarQube local
 
-O projeto usa o [SonarQube Community Build](https://www.sonarsource.com/products/sonarqube/) em Docker para a inspeção estática da Entrega 2. A análise inicial (“antes”) está documentada em [`docs/relatorios/inspecao_sonar.md`](docs/relatorios/inspecao_sonar.md), com prints e JSON em [`docs/relatorios/evidencias/sonar/antes/`](docs/relatorios/evidencias/sonar/antes/).
+O projeto usa o [SonarQube Community Build](https://www.sonarsource.com/products/sonarqube/) em Docker para a inspeção estática da Entrega 2. A análise inicial (“antes”) está documentada em [`docs/relatorios/inspecao_sonar.md`](docs/relatorios/inspecao_sonar.md), com prints e JSON em [`docs/relatorios/evidencias/sonar/antes/`](docs/relatorios/evidencias/sonar/antes/). O “depois” de cada classe está na seção 6 do relatório, e a **consolidação final** das 5 classes (40 → 19 apontamentos, 26 corrigidos) na seção 7, com evidências em [`docs/relatorios/evidencias/sonar/final/`](docs/relatorios/evidencias/sonar/final/).
 
 ### Pré-requisitos
 
@@ -198,8 +198,8 @@ O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes n
 | `docker-compose.yml` | SonarQube local com versão fixada e volumes persistentes |
 | `scripts/sonar_local.sh` | Sobe o SonarQube, gera token e executa a análise |
 | `sonar-project.properties` | Configuração do projeto para o SonarQube |
-| `docs/relatorios/inspecao_sonar.md` | Relatório de inspeção com seções “antes” e “depois” |
-| `docs/relatorios/evidencias/sonar/` | Prints e JSON das análises do SonarQube |
+| [`docs/relatorios/inspecao_sonar.md`](docs/relatorios/inspecao_sonar.md) | Relatório de inspeção com seções “antes”, “depois” por classe e consolidação final (seção 7) |
+| [`docs/relatorios/evidencias/sonar/`](docs/relatorios/evidencias/sonar/) | Prints e JSON das análises do SonarQube: `antes/`, `depois/<classe>/` e `final/` |
 | `docs/relatorios/evidencias/` | Evidências de cobertura, mutação e Sonar por classe — PIX em [`cobertura/pix-cobertura.txt`](docs/relatorios/evidencias/cobertura/pix-cobertura.txt), [`mutacao/pix-execucao-1-antes.txt`](docs/relatorios/evidencias/mutacao/pix-execucao-1-antes.txt) e [`mutacao/pix-execucao-2-depois.txt`](docs/relatorios/evidencias/mutacao/pix-execucao-2-depois.txt), [`sonar/depois/pix/`](docs/relatorios/evidencias/sonar/depois/pix/) |
 | `docs/descricao_trabalho.md` | Enunciado do trabalho |
 | `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
