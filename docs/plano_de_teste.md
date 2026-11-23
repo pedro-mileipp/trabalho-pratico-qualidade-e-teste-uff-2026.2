@@ -32,6 +32,7 @@
 | 1.19 | 22/11/2026 | Alexandre Colmenero | Entrega 2: atualização global do plano (escopo, estado atual, ferramentas e critérios) e planejamento dos testes de `TransacaoPix` — issues #38, #43, #48 e #56 — na seção 6.10 |
 | 1.20 | 22/11/2026 | Alexandre Colmenero | Entrega 2: ampliação dos testes unitários de `TransacaoPix` para 104 casos e cobertura estrutural todas-arestas (100%, issue #38) na seção 6.10.2 |
 | 1.21 | 22/11/2026 | Alexandre Colmenero | Entrega 2: teste de mutação de `TransacaoPix` com `mutmut` (escore 97,3%; 100% descontando 4 equivalentes, issue #43) na seção 6.10.3 |
+| 1.22 | 22/11/2026 | Daniel Izu | Entrega 2: testes de sistema com Selenium — Tarifas/RF04 (issue #58) na seção 6.2; defeito #78 confirmado na interface |
 
 > Nota: as versões 1.14 e 1.16 aparecem duplicadas por registros simultâneos de integrantes; a numeração histórica foi preservada porque o AI-LOG e os prompts a citam.
 
@@ -451,6 +452,36 @@ Pasta: `tests/system/emprestimo/` (testes em `test_emprestimo_sistema.py`, page 
 | — | Acesso à tela de empréstimo sem login | — | Redireciona para `/login` |
 
 **Resultado (22/11/2026):** 6 cenários de empréstimo (31 testes no total da suíte `tests/system`), todos passando (`uv run pytest tests/system -q`), em execuções repetidas obtendo o mesmo resultado verde (49.36s e 53.05s). Cada teste utiliza um cliente com e-mail único cadastrado via fixture `cliente_logado`, garantindo independência total e banco SQLite limpo por sessão; evidências geradas em `tests/system/emprestimo/evidencias/` com `EVIDENCIAS=1` (screenshots numerados do formulário preenchido, resultado e tela final).
+
+#### Tarifas (RF04) — Daniel Izu, issue [#58](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/58)
+
+Pasta: `tests/system/tarifas/` (testes em `test_tarifas_sistema.py`, page object em `pagina_tarifas.py`). Os cenários automatizam os 15 casos manuais de tarifas (`tests/testes_manuais/tarifas/caso_tarifas.md`) com os mesmos ids e acrescentam as recusas do formulário, o acesso sem login e um caso do defeito [#78](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues/78). A tela chama `TarifaBancaria(TarifasBase()).tarifa_mensal(tipo, saldo, pacote, transacoes)`: a antiguidade não é exposta, e o formulário não aceita valores negativos. Para os seletores, o template `tarifas.html` recebeu só `id="pacote"` (checkbox) e `id="tarifa-resultado"` (parágrafo do resultado); o `conftest.py` compartilhado não foi alterado.
+
+| Id | Cenário | Entrada (tipo / saldo / transações / pacote) | Resultado esperado |
+|---|---|---|---|
+| CT-01 | Corrente, valores zerados | corrente / 0 / 0 / não | R$ 30.00 |
+| CT-02 | Poupança, valores zerados | poupança / 0 / 0 / não | R$ 0.00 |
+| CT-03 | Premium, valores zerados | premium / 0 / 0 / não | R$ 50.00 |
+| CT-04 | Corrente 1 centavo abaixo da isenção | corrente / 4999.99 / 0 / não | R$ 30.00 |
+| CT-05 | Corrente na fronteira da isenção | corrente / 5000 / 0 / não | R$ 0.00 |
+| CT-06 | Premium 1 centavo abaixo da isenção | premium / 49999.99 / 0 / não | R$ 50.00 |
+| CT-07 | Premium na fronteira da isenção | premium / 50000 / 0 / não | R$ 0.00 |
+| CT-08 | Corrente, 10 transações (na cota) | corrente / 0 / 10 / não | R$ 30.00 |
+| CT-09 | Corrente, 11 transações (primeira excedente) | corrente / 0 / 11 / não | R$ 32.50 |
+| CT-10 | Poupança, 20 transações | poupança / 0 / 20 / não | R$ 0.00 |
+| CT-11 | Premium com pacote e saldo na isenção | premium / 50000 / 0 / sim | R$ 0.00 |
+| CT-12 | Corrente com pacote, desconto de 50% | corrente / 5000 / 0 / sim | R$ 15.00 |
+| CT-13 | Premium com pacote, desconto de 30% | premium / 3000 / 0 / sim | R$ 35.00 |
+| CT-14 | Corrente com pacote ignora transações extras | corrente / 0 / 20 / sim | R$ 30.00 |
+| CT-15 | Corrente isenta com transações excedentes | corrente / 5000 / 15 / não | R$ 12.50 |
+| — | Saldo negativo barrado pelo formulário | corrente / -100 / 0 / não | validação HTML5 (`min="0"` / `rangeUnderflow`) impede o envio |
+| — | Transações negativas barradas pelo formulário | corrente / 0 / -1 / não | validação HTML5 (`min="0"` / `rangeUnderflow`) impede o envio |
+| — | Acesso à tela sem login | — | redireciona para `/login` |
+| — | Defeito #78: premium com pacote e saldo entre 5000 e 50000 | premium / 6000 / 0 / sim | esperado R$ 25.00; a tela mostra **R$ 15.00** (`xfail(strict=True)`) |
+
+**Resultado (22/11/2026):** 19 cenários: **18 passando e 1 `xfail`** (#78). Suíte `tests/system`: **49 passed, 1 xfailed** (antes: 31 passed). Execução isolada (`-k ct09`) também passa. Evidências em `tests/system/tarifas/evidencias/` com `EVIDENCIAS=1` (37 prints): para cada cenário, o formulário preenchido antes do envio (`__1_formulario_preenchido`) e a tela final com o resultado (`__2_final`). Como a tela limpa o formulário a cada envio (limitação registrada no caso manual), o print final mostra o resultado com o formulário de volta aos valores padrão. A gravação de evidência em falha foi verificada quebrando de propósito o esperado do CT-09: `falhas/` recebeu o screenshot e o HTML, e o esperado foi restaurado.
+
+**Defeito #78 confirmado na interface:** o valor de 15,00 foi verificado no Chrome (`--runxfail`: `assert 15.0 == 25.0`) e na validação manual do responsável. O defeito continua aberto, aguardando a decisão do grupo; a correção remove o `xfail`. Os testes foram gerados com IA; a solução inicial (`850f87d`) e a revisada (`afe29fa`) estão na sessão 24 do [AI-LOG](ai/AI-LOG.md).
 
 ### 6.3 Requisito não funcional — segurança da autenticação (RNF06)
 
