@@ -11,6 +11,9 @@ evidências. Estas fixtures valem para todas as pastas.
 - ``cliente_logado``: cadastra um cliente novo (e-mail único) pela tela ``/registro``, que já
   deixa a sessão aberta. Cada teste usa o seu próprio cliente, então os testes são independentes.
 
+- ``definir_saldo_sistema``: ajusta o saldo de um cliente direto no SQLite temporário do servidor
+  (a interface não tem depósito). Usado pelos cenários que precisam de saldo, como o PIX.
+
 - ``evidencia``: função para registrar o screenshot de uma etapa do teste, ex.:
   ``evidencia("formulario_preenchido")``. Só grava com ``EVIDENCIAS=1``.
 
@@ -25,6 +28,7 @@ from __future__ import annotations
 
 import os
 import re
+import sqlite3
 import threading
 import uuid
 from pathlib import Path
@@ -70,12 +74,16 @@ def _salvar_evidencia(driver, item, etapa: str) -> None:
 
 
 @pytest.fixture(scope="session")
-def servidor(tmp_path_factory) -> str:
-    banco = tmp_path_factory.mktemp("sistema") / "banco_sistema.db"
+def banco_sistema(tmp_path_factory) -> Path:
+    """Caminho do banco SQLite temporário do servidor de sistema (um por sessão)."""
+    return tmp_path_factory.mktemp("sistema") / "banco_sistema.db"
 
+
+@pytest.fixture(scope="session")
+def servidor(banco_sistema: Path) -> str:
     class ConfigSistema(Config):
         TESTING = True
-        DATABASE = str(banco)
+        DATABASE = str(banco_sistema)
         SECRET_KEY = "chave-dos-testes-de-sistema"
 
     servidor_http = make_server("127.0.0.1", 0, create_app(ConfigSistema), threaded=True)
@@ -142,3 +150,15 @@ def cliente_logado(navegador, servidor) -> str:
     navegador.find_element(By.CSS_SELECTOR, "form button[type='submit']").click()
     WebDriverWait(navegador, ESPERA_SEGUNDOS).until(EC.url_to_be(servidor + "/"))
     return email
+
+
+@pytest.fixture
+def definir_saldo_sistema(banco_sistema):
+    """Ajusta o saldo de um cliente direto no banco temporário (a interface não tem depósito)."""
+
+    def _ajustar(email: str, saldo: float) -> None:
+        with sqlite3.connect(banco_sistema) as conexao:
+            conexao.execute("UPDATE clientes SET saldo = ? WHERE email = ?", (saldo, email))
+            conexao.commit()
+
+    return _ajustar
