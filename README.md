@@ -1,232 +1,80 @@
 # Trabalho Prático — Qualidade e Teste (UFF 2026.2)
 
-Repositório do trabalho prático da disciplina **Qualidade e Teste** (UFF 2026.2).
+Repositório do trabalho prático da disciplina **Qualidade e Teste** (UFF 2026.2), sobre o **Banco Digital**.
 
-## Sobre o trabalho
+## Sobre o projeto
 
-O grupo aplica os conceitos aprendidos na disciplina Qualidade e Teste sobre um software livre desenvolvido por nós — o **Banco Digital**. O objetivo é exercitar as técnicas de teste de software em um sistema real, com duas entregas:
+O Banco Digital é uma aplicação web em **Python + Flask + SQLite** com login e serviços bancários simulados. As regras de negócio ficam em classes de domínio puras (PIX, juros, tarifas, empréstimo e crédito), uma por integrante, com **CC ≥ 10**, o que permite testá-las sem o framework.
 
-### Entrega 1 (peso 3)
-- Descrição do escopo no **[Plano de Teste](docs/plano_de_teste.md)** — também disponível em **[DOCX/Google Docs](https://docs.google.com/document/d/1LWiJPPQAZKMw0ycTe8bxu5VSc6Tf0NlNcL60BzXTZOg/edit?usp=sharing)**
-- Testes unitários de pelo menos uma classe não-CRUD por integrante
-- Casos de teste manuais (uma funcionalidade por integrante)
-- Gestão de casos com TestLink (ao menos um cenário)
-- Reporte de bugs em Git Issues
-- Registro de uso de IA em `docs/ai/AI-LOG.md`
+O trabalho foi dividido em duas entregas: a primeira com testes unitários e casos manuais; a segunda com integração, testes de sistema, cobertura estrutural, mutação, inspeção estática e requisito não funcional de segurança. O escopo e os critérios estão no **[Plano de Teste](docs/plano_de_teste.md)** — também disponível em **[DOCX/Google Docs](https://docs.google.com/document/d/1LWiJPPQAZKMw0ycTe8bxu5VSc6Tf0NlNcL60BzXTZOg/edit?usp=sharing)**.
 
-### Entrega 2 (peso 5)
-- Testes unitários ampliados com isolamento de dependências
-- Testes de integração
-- Cobertura estrutural ≥ 80% (todas-arestas) com mutação ≥ 80%
-- Testes de sistema com **Selenium**
-- Inspeção de código (Sonar) e correção de defeitos
-- Indicação de medidas da ISO 25010 — ver [`docs/relatorios/iso25010.md`](docs/relatorios/iso25010.md)
+A arquitetura e os módulos estão em **[docs/aplicacao.md](docs/aplicacao.md)**.
 
-> O uso de ferramentas de IA Generativa é permitido e incentivado, desde que documentado e avaliado criticamente em `docs/ai/AI-LOG.md`.
+## Artefatos
 
-## Sobre o projeto — Banco Digital
+| Artefato | Link |
+|---|---|
+| Plano de Teste | [Markdown](docs/plano_de_teste.md) · [DOCX/Google Docs](https://docs.google.com/document/d/1LWiJPPQAZKMw0ycTe8bxu5VSc6Tf0NlNcL60BzXTZOg/edit?usp=sharing) |
+| Plano de Projeto | [docs/plano_projeto.md](docs/plano_projeto.md) |
+| Documentação da aplicação | [docs/aplicacao.md](docs/aplicacao.md) |
+| Relatório de cobertura e mutação | [docs/relatorios/cobertura_mutacao.md](docs/relatorios/cobertura_mutacao.md) |
+| Inspeção SonarQube | [docs/relatorios/inspecao_sonar.md](docs/relatorios/inspecao_sonar.md) |
+| RNF de segurança (RNF06) | [docs/relatorios/rnf_seguranca.md](docs/relatorios/rnf_seguranca.md) |
+| Avaliação ISO/IEC 25010 | [docs/relatorios/iso25010.md](docs/relatorios/iso25010.md) |
+| Registro de uso de IA | [docs/ai/AI-LOG.md](docs/ai/AI-LOG.md) |
+| Casos de teste manuais | [tests/testes_manuais/](tests/testes_manuais/) |
+| Relatório do TestLink (Auth) | [PDF](https://drive.google.com/file/d/14yShZiduI8gixsV5wCQqA70DH2TV4SN4/view?usp=sharing) |
+| Evidências de execução | [docs/relatorios/evidencias/](docs/relatorios/evidencias/) |
+| Issues e milestones | [GitHub Issues](https://github.com/pedro-mileipp/trabalho-pratico-qualidade-e-teste-uff-2026.2/issues) |
+| Enunciado | [docs/descricao_trabalho.md](docs/descricao_trabalho.md) |
 
-Sistema web de banco digital em **Python + Flask** com login próprio e serviços bancários simulados. Foi desenhado para ser o alvo das técnicas de teste da disciplina: as regras de negócio ficam isoladas em classes puras (sem dependência do framework), cada uma com **complexidade ciclomática ≥ 10** — uma por integrante.
-
-### Módulos de negócio (alvo dos testes)
-
-| Módulo | Classe | Regras |
-|---|---|---|
-| PIX | `TransacaoPix` | validação de chaves, limites por horário/faixa, lista de bloqueio, chargeback |
-| Juros | `CalculadoraJuros` | juros compostos, faixas de taxa por prazo, mora, aportes |
-| Tarifas | `TarifaBancaria` | tarifa por tipo de conta, faixas de saldo, isenções, pacotes |
-| Empréstimo | `SimuladorEmprestimo` | amortização Price/SAC, teto por renda, validações |
-| Crédito | `DecisorCredito` | score por histórico, limites, aprovação/negação/parcial |
-
-### Arquitetura
-
-```
-app/web  →  app/servicos  →  app/dominio
-              │
-              └── app/repositorios  →  SQLite / memória
-```
-
-- **`dominio/`** — regras de negócio puras (sem Flask), classe sob teste por integrante
-- **`repositorios/`** — persistência com interface injetável (SQLite e memória) para isolamento nos testes
-- **`servicos/`** — orquestração (autenticação, transferências)
-- **`web/`** — blueprints e templates Jinja2 (login, dashboard, PIX, empréstimo, tarifas, crédito)
+Os resultados e as evidências de execução ficam nos relatórios de [cobertura e mutação](docs/relatorios/cobertura_mutacao.md) e [inspeção SonarQube](docs/relatorios/inspecao_sonar.md).
 
 ## Como executar
 
 Requisito: [uv](https://docs.astral.sh/uv/) (gerencia a versão do Python e as dependências).
 
 ```bash
-uv sync --all-extras            # cria o ambiente (Python 3.12) e instala as dependências
+uv sync --all-extras
 uv run flask --app app:create_app run
 ```
 
-Acesse `http://127.0.0.1:5000` e crie uma conta em `/registro`.
+Acesse `http://127.0.0.1:5000` e crie uma conta em `/registro`. A versão do Python é fixada em `.python-version` e as dependências em `pyproject.toml` (travadas em `uv.lock`).
 
-A versão do Python é fixada em `.python-version` e as dependências em `pyproject.toml` (travadas em `uv.lock`).
+## Testes
 
-## Qualidade e lint
+| Suíte | Comando | Onde |
+|---|---|---|
+| Unitários | `uv run pytest tests/unit` | [`tests/unit/`](tests/unit/) |
+| Integração | `uv run pytest tests/integration` | [`tests/integration/`](tests/integration/) |
+| Sistema (Selenium) | `uv run pytest tests/system` | [`tests/system/`](tests/system/) |
+| Requisitos não funcionais | `uv run pytest tests/rnf` | [`tests/rnf/`](tests/rnf/) |
+| Completa | `uv run pytest` | [`tests/`](tests/) |
 
-```bash
-uv run ruff check app/             # lint estático
-uv run radon cc app/dominio -s     # complexidade ciclomática (CC ≥ 10 por módulo)
-```
-
-## Testes e cobertura
-
-```bash
-uv run pytest                                             # toda a suíte
-uv run pytest --cov --cov-branch --cov-report=term-missing # cobertura de arestas das 5 classes de domínio
-uv run pytest tests/unit/test_credito.py --cov=app.dominio.credito --cov-branch --cov-report=term-missing
-                                                          # cobertura de arestas de uma classe (ex.: DecisorCredito)
-```
-
-O relatório de cobertura do domínio lista as 5 classes; `skip_empty = True` ignora apenas arquivos sem código. Resultados por classe em [`docs/relatorios/cobertura_mutacao.md`](docs/relatorios/cobertura_mutacao.md).
-
-### Mutação (mutmut)
-
-A configuração fica em `[tool.mutmut]` no `pyproject.toml` (`source_paths = ["app/dominio"]`, testes unitários em `tests/unit`). O mutmut exige a suíte unitária verde antes de iniciar.
+Cobertura e mutação:
 
 ```bash
+uv run pytest --cov --cov-branch --cov-report=term-missing
 uv run mutmut run --max-children 8
-uv run mutmut results
-uv run mutmut show <id>
 ```
 
-O cache fica em `mutants/` (ignorado pelo Git). Resultados e mutantes sobreviventes por classe em [`docs/relatorios/cobertura_mutacao.md`](docs/relatorios/cobertura_mutacao.md). A configuração foi validada na classe piloto `TarifaBancaria`; evidência em [`docs/relatorios/evidencias/mutacao/`](docs/relatorios/evidencias/mutacao/).
-
-Para mutar uma classe isolada, acrescente `only_mutate = ["app/dominio/<arquivo>.py"]` e restrinja `pytest_add_cli_args_test_selection` ao teste correspondente; remova as duas restrições para o run completo.
-
-### Testes de integração
+Lint e complexidade:
 
 ```bash
-uv run pytest tests/integration -q            # suíte de integração (rotas + serviços ↔ repositório)
-uv run pytest tests/integration/test_servicos_repositorio.py tests/integration/test_contrato_repositorio.py -q   # só serviços ↔ repositório (#54)
-uv run pytest tests/integration -v            # execução detalhada
+uv run ruff check app/
+uv run radon cc app/dominio -s
 ```
 
-Testa a integração entre rotas HTTP Flask, templates Jinja2, gerenciamento de sessões, mensagens flash e banco de dados SQLite temporário por teste. As fixtures compartilhadas (`app`, `cliente`, `cliente_autenticado`, `definir_saldo`) estão em [`tests/integration/conftest.py`](tests/integration/conftest.py) e os testes em [`tests/integration/test_rotas.py`](tests/integration/test_rotas.py). Fase descrita na seção 2.2 do [Plano de Teste](docs/plano_de_teste.md).
+Para os testes de sistema, o Chrome é necessário; o driver é resolvido pelo Selenium Manager.
 
-A integração **serviços ↔ repositório** (#54) chama `AuthService` e `TransacaoService` diretamente, sem HTTP e sem mocks, sobre o `SqliteRepositorio` real (banco em `tmp_path`) e o `MemoriaRepositorio`, com a fixture `repositorio` parametrizada nas duas implementações. Testes em [`tests/integration/test_servicos_repositorio.py`](tests/integration/test_servicos_repositorio.py) e [`tests/integration/test_contrato_repositorio.py`](tests/integration/test_contrato_repositorio.py); cobertura em [`docs/relatorios/evidencias/integracao/servicos-repositorio.txt`](docs/relatorios/evidencias/integracao/servicos-repositorio.txt). Fase descrita na seção 2.2 do [Plano de Teste](docs/plano_de_teste.md).
+## Estrutura
 
-### Testes de sistema (Selenium)
-
-Pré-requisito: Google Chrome instalado (o driver é baixado automaticamente pelo Selenium Manager). Sem o Chrome, esses testes são pulados.
-
-```bash
-uv run pytest tests/system -v                 # roda os testes de sistema (Chrome headless)
-EVIDENCIAS=1 uv run pytest tests/system       # salva prints de cada etapa em <funcionalidade>/evidencias/
-```
-
-Cada funcionalidade tem a sua pasta em `tests/system/` — Auth ([`tests/system/auth/`](tests/system/auth/)), Crédito ([`tests/system/credito/`](tests/system/credito/)), Empréstimo ([`tests/system/emprestimo/`](tests/system/emprestimo/)), Tarifas ([`tests/system/tarifas/`](tests/system/tarifas/)) e PIX ([`tests/system/pix/`](tests/system/pix/)) — com os testes, o page object e as evidências. As fixtures compartilhadas (servidor Flask com banco temporário, navegador, cliente logado, `definir_saldo_sistema` e prints de etapas) estão em [`tests/system/conftest.py`](tests/system/conftest.py). Fase descrita na seção 2.2 do [Plano de Teste](docs/plano_de_teste.md).
-
-### Requisitos não funcionais
-
-```bash
-uv run pytest tests/rnf -v                    # todos os requisitos não funcionais, sem navegador
-uv run pytest tests/rnf/seguranca -v          # só a segurança da autenticação (RNF06)
-```
-
-Cada requisito não funcional tem a sua pasta em `tests/rnf/` (ex.: `tests/rnf/seguranca/`). As fixtures compartilhadas (aplicação com banco temporário, cliente HTTP e cliente cadastrado) estão em [`tests/rnf/conftest.py`](tests/rnf/conftest.py).
-
-Resultados e riscos identificados em [`docs/relatorios/rnf_seguranca.md`](docs/relatorios/rnf_seguranca.md). Fase descrita na seção 2.2 do [Plano de Teste](docs/plano_de_teste.md).
-
-## Inspeção com SonarQube local
-
-O projeto usa o [SonarQube Community Build](https://www.sonarsource.com/products/sonarqube/) em Docker para a inspeção estática da Entrega 2. A análise inicial (“antes”) está documentada em [`docs/relatorios/inspecao_sonar.md`](docs/relatorios/inspecao_sonar.md), com prints e JSON em [`docs/relatorios/evidencias/sonar/antes/`](docs/relatorios/evidencias/sonar/antes/). O “depois” de cada classe está na seção 6 do relatório, e a **consolidação final** das 5 classes (40 → 19 apontamentos, 26 corrigidos) na seção 7, com evidências em [`docs/relatorios/evidencias/sonar/final/`](docs/relatorios/evidencias/sonar/final/).
-
-### Pré-requisitos
-
-- Docker com Docker Compose;
-- [uv](https://docs.astral.sh/uv/) para rodar a suíte e gerar o `coverage.xml`;
-- `curl` e `jq`;
-- `sonar-scanner` (opcional; se não estiver instalado, o script usa a imagem oficial `sonarsource/sonar-scanner-cli:latest` via Docker — a versão do scanner pode variar).
-
-### Subir e analisar
-
-```bash
-# Sobe o SonarQube e aguarda o status UP
-./scripts/sonar_local.sh up
-
-# Gera o token local e associa o projeto ao perfil Python "Sonar way comprehensive"
-./scripts/sonar_local.sh bootstrap
-
-# Gera coverage.xml e envia a análise
-./scripts/sonar_local.sh scan
-```
-
-O comando `scan` envia a análise mesmo que o `pytest` termine com falhas; o código de saída do pytest é preservado para não mascarar problemas. Na primeira execução, acesse `http://localhost:9000` com `admin` / `admin` e troque a senha. O token fica em `.sonar/token` (ignorado pelo Git) e não deve ser commitado. Se a senha do admin já tiver sido alterada, informe-a ao script:
-
-```bash
-SONAR_ADMIN_PASSWORD='sua-senha-local' ./scripts/sonar_local.sh bootstrap
-```
-
-### Comandos auxiliares
-
-```bash
-./scripts/sonar_local.sh status   # verifica se o SonarQube está UP
-./scripts/sonar_local.sh token    # imprime o token atual
-./scripts/sonar_local.sh down     # para o container, preservando os volumes
-./scripts/sonar_local.sh reset    # remove container e volumes (apaga o histórico)
-```
-
-O container usa a imagem fixada `sonarqube:26.11.0.134175-community` e volumes nomeados (`sonarqube_data`, `sonarqube_extensions`, `sonarqube_logs`). A porta `9000` é publicada apenas para uso local; não exponha esse serviço na internet. O `sonar-project.properties` contém apenas configuração do projeto (sem token).
-
-## Estrutura do Repositório
-
-| Caminho | Descrição |
+| Pasta | Conteúdo |
 |---|---|
-| `app/` | Código-fonte do sistema (Flask) |
-| `app/dominio/` | Classes de negócio puras (alvo dos testes, CC ≥ 10) |
-| `app/repositorios/` | Persistência (SQLite + memória) com interface injetável |
-| `app/servicos/` | Orquestração (auth, transações) |
-| `app/web/` | Rotas e telas (login, dashboard, PIX, empréstimo, tarifas, crédito) |
-| `tests/unit/` | Testes unitários (1 arquivo por classe de domínio) |
-| [`tests/integration/`](tests/integration/) | Entrega 2 — testes de integração das rotas Flask com `test_client`: fixtures em [`conftest.py`](tests/integration/conftest.py) e testes em [`test_rotas.py`](tests/integration/test_rotas.py) |
-| [`tests/integration/test_servicos_repositorio.py`](tests/integration/test_servicos_repositorio.py) | Entrega 2 — integração `AuthService`/`TransacaoService` ↔ repositório real (SQLite e memória), sem mocks (#54) |
-| [`tests/integration/test_contrato_repositorio.py`](tests/integration/test_contrato_repositorio.py) | Entrega 2 — contrato de `Repositorio` nas duas implementações e divergências entre elas (#54) |
-| [`tests/system/`](tests/system/) | Entrega 2 — testes de sistema com Selenium: fixtures compartilhadas em `conftest.py` e uma pasta por funcionalidade |
-| [`tests/system/auth/`](tests/system/auth/) | Testes de sistema — Autenticação (RF01/RF02): [`test_auth_sistema.py`](tests/system/auth/test_auth_sistema.py), page object [`pagina_auth.py`](tests/system/auth/pagina_auth.py) e evidências em [`evidencias/`](tests/system/auth/evidencias/) |
-| [`tests/system/credito/`](tests/system/credito/) | Testes de sistema — Crédito (RF06): [`test_credito_sistema.py`](tests/system/credito/test_credito_sistema.py), page object [`pagina_credito.py`](tests/system/credito/pagina_credito.py) e evidências em [`evidencias/`](tests/system/credito/evidencias/) |
-| [`tests/system/emprestimo/`](tests/system/emprestimo/) | Testes de sistema — Empréstimo (RF05): [`test_emprestimo_sistema.py`](tests/system/emprestimo/test_emprestimo_sistema.py), page object [`pagina_emprestimo.py`](tests/system/emprestimo/pagina_emprestimo.py) e evidências em [`evidencias/`](tests/system/emprestimo/evidencias/) |
-| [`tests/system/tarifas/`](tests/system/tarifas/) | Testes de sistema — Tarifas (RF04): [`test_tarifas_sistema.py`](tests/system/tarifas/test_tarifas_sistema.py), page object [`pagina_tarifas.py`](tests/system/tarifas/pagina_tarifas.py) e evidências em [`evidencias/`](tests/system/tarifas/evidencias/) |
-| [`tests/system/pix/`](tests/system/pix/) | Testes de sistema — PIX (RF03): [`test_pix_sistema.py`](tests/system/pix/test_pix_sistema.py), page object [`pagina_pix.py`](tests/system/pix/pagina_pix.py) e evidências em [`evidencias/`](tests/system/pix/evidencias/) |
-| [`tests/system/tarifas/`](tests/system/tarifas/) | Testes de sistema — Tarifas (RF04): [`test_tarifas_sistema.py`](tests/system/tarifas/test_tarifas_sistema.py), page object [`pagina_tarifas.py`](tests/system/tarifas/pagina_tarifas.py) e evidências em [`evidencias/`](tests/system/tarifas/evidencias/) |
-| [`tests/rnf/`](tests/rnf/) | Entrega 2 — testes de requisitos não funcionais: fixtures compartilhadas em `conftest.py` e uma pasta por requisito |
-| [`tests/rnf/seguranca/`](tests/rnf/seguranca/) | Segurança da autenticação (RNF06): [`test_seguranca_autenticacao.py`](tests/rnf/seguranca/test_seguranca_autenticacao.py) |
-| [`docs/relatorios/rnf_seguranca.md`](docs/relatorios/rnf_seguranca.md) | Entrega 2 — relatório do RNF de segurança: verificações, riscos identificados e avaliação ISO 25010 (Segurança) |
-| [`docs/relatorios/iso25010.md`](docs/relatorios/iso25010.md) | Entrega 2 — avaliação ISO/IEC 25010:2023: escala de 1 a 5, importância e medida das 9 características, com evidências e melhorias recomendadas (#62) |
-| `docker-compose.yml` | SonarQube local com versão fixada e volumes persistentes |
-| `scripts/sonar_local.sh` | Sobe o SonarQube, gera token e executa a análise |
-| `sonar-project.properties` | Configuração do projeto para o SonarQube |
-| [`docs/relatorios/inspecao_sonar.md`](docs/relatorios/inspecao_sonar.md) | Relatório de inspeção com seções “antes”, “depois” por classe e consolidação final (seção 7) |
-| [`docs/relatorios/evidencias/sonar/`](docs/relatorios/evidencias/sonar/) | Prints e JSON das análises do SonarQube: `antes/`, `depois/<classe>/` e `final/` |
-| `docs/relatorios/evidencias/` | Evidências de cobertura, mutação e Sonar por classe — PIX em [`cobertura/pix-cobertura.txt`](docs/relatorios/evidencias/cobertura/pix-cobertura.txt), [`mutacao/pix-execucao-1-antes.txt`](docs/relatorios/evidencias/mutacao/pix-execucao-1-antes.txt) e [`mutacao/pix-execucao-2-depois.txt`](docs/relatorios/evidencias/mutacao/pix-execucao-2-depois.txt), [`sonar/depois/pix/`](docs/relatorios/evidencias/sonar/depois/pix/) |
-| `docs/descricao_trabalho.md` | Enunciado do trabalho |
-| `docs/plano_projeto.md` | Plano de projeto (stack, estrutura, roadmap das entregas) |
-| `docs/aplicacao.md` | Documentação completa da aplicação e sua arquitetura |
-| [`docs/plano_de_teste.md`](docs/plano_de_teste.md) | Plano de Teste oficial (Entregas 1 e 2): escopo, metodologia em cascata, entregáveis, ambiente e termos |
-| [Plano de Teste (DOCX)](https://docs.google.com/document/d/1LWiJPPQAZKMw0ycTe8bxu5VSc6Tf0NlNcL60BzXTZOg/edit?usp=sharing) | Versão em DOCX/Google Docs do Plano de Teste oficial |
-| `tests/testes_manuais/` | Casos de teste manuais (Entrega 1) — PIX em [`tests/testes_manuais/pix/caso_pix.md`](tests/testes_manuais/pix/caso_pix.md) com evidências em `evidencias/` |
-| `tests/testes_manuais/auth/` | Casos de teste manuais (Entrega 1) — Auth em [`tests/testes_manuais/auth/caso_auth.md`](tests/testes_manuais/auth/caso_auth.md) com evidências em `evidencias/` |
-| `tests/testes_manuais/tarifas/` | Casos de teste manuais (Entrega 1) — Tarifas em [`tests/testes_manuais/tarifas/caso_tarifas.md`](tests/testes_manuais/tarifas/caso_tarifas.md) com evidências em `evidencias/` |
-| `tests/testes_manuais/emprestimo/` | Casos de teste manuais (Entrega 1) — Empréstimo em [`tests/testes_manuais/emprestimo/caso_emprestimo.md`](tests/testes_manuais/emprestimo/caso_emprestimo.md) com evidências em `evidencias/` |
-| `tests/testes_manuais/credito/` | Casos de teste manuais (Entrega 1) — Crédito em [`tests/testes_manuais/credito/caso_credito.md`](tests/testes_manuais/credito/caso_credito.md) com evidências em `evidencias/` |
-| `docs/ai/AI-LOG.md` | Registro de uso de IA (a preencher nas entregas) |
-| `docs/ai/prompts/sessao-11-caso-manual-tarifas.md` | [Sessão 11](docs/ai/prompts/sessao-11-caso-manual-tarifas.md) — Caso de teste manual de Tarifas |
-| `docs/ai/prompts/sessao-18-testes-integracao-rotas.md` | [Sessão 18](docs/ai/prompts/sessao-18-testes-integracao-rotas.md) — Testes de integração das rotas Flask com test_client |
-| `docs/ai/prompts/sessao-23-integracao-servicos-repositorio.md` | [Sessão 23](docs/ai/prompts/sessao-23-integracao-servicos-repositorio.md) — Testes de integração serviços ↔ repositório (#54) |
-| `docs/ai/prompts/sessao-24-selenium-tarifas.md` | [Sessão 24](docs/ai/prompts/sessao-24-selenium-tarifas.md) — Testes de sistema Selenium de Tarifas (#58) |
-| `docs/ai/prompts/sessao-25-iso25010.md` | [Sessão 25](docs/ai/prompts/sessao-25-iso25010.md) — Avaliação ISO/IEC 25010:2023 (#62) |
-| `docs/ai/prompts/sessao-26-correcao-78.md` | [Sessão 26](docs/ai/prompts/sessao-26-correcao-78.md) — Correção do defeito #78 (meia tarifa do pacote premium) |
-| `pyproject.toml` | Dependências e configuração de ferramentas |
-| `.coveragerc` | Cobertura de arestas, caminhos relativos e gate de 80% |
-| `.python-version` | Versão do Python gerenciada pelo uv |
-
-## Relatórios de TestLink
-
-Os casos de teste manuais documentados no TestLink possuem relatórios em PDF exportados. O relatório do caso **Auth** (funcionalidade de autenticação) está disponível em:
-
-📄 [Auth - Relatório TestLink (PDF)](https://drive.google.com/file/d/14yShZiduI8gixsV5wCQqA70DH2TV4SN4/view?usp=sharing)
+| `app/` | Domínio, repositórios, serviços e camada web |
+| `tests/` | Unitários, integração, sistema, RNF e casos manuais |
+| `docs/` | Plano, relatórios, AI-LOG e documentação |
+| `scripts/` | Automação do SonarQube local |
 
 ## Contribuidores
 
