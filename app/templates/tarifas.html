@@ -14,11 +14,11 @@
     <input type="number" id="saldo" name="saldo" step="0.01" min="0" value="0">
     <label for="transacoes">Transações no mês</label>
     <input type="number" id="transacoes" name="transacoes" min="0" value="0">
-    <label><input type="checkbox" name="pacote"> Possui pacote de serviços</label>
+    <label><input type="checkbox" id="pacote" name="pacote"> Possui pacote de serviços</label>
     <button type="submit">Calcular</button>
   </form>
   {% if tarifa is not none %}
-    <p><strong>Tarifa mensal:</strong> R$ {{ "%.2f"|format(tarifa) }}</p>
+    <p id="tarifa-resultado"><strong>Tarifa mensal:</strong> R$ {{ "%.2f"|format(tarifa) }}</p>
   {% endif %}
 </div>
 {% endblock %}
