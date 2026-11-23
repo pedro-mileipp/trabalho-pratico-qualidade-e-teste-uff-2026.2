@@ -43,7 +43,9 @@ BLOQUEADAS = ["bloq@x.com"]
         pytest.param("11111111111", ChaveTipo.CPF, False, id="cpf_todos_digitos_iguais"),
         pytest.param("12345678901", ChaveTipo.CPF, False, id="cpf_dv_invalido"),
         pytest.param("52998224735", ChaveTipo.CPF, False, id="laco_cpf_falha_primeiro_dv"),
+        pytest.param("52998224733", ChaveTipo.CPF, False, id="laco_cpf_falha_so_primeiro_dv"),
         pytest.param("52998224726", ChaveTipo.CPF, False, id="laco_cpf_falha_segundo_dv"),
+        pytest.param("47824504000", ChaveTipo.CPF, True, id="pe_cpf_valido_dv_zero"),
         pytest.param("123", ChaveTipo.CPF, False, id="cpf_poucos_digitos"),
         pytest.param("529982247250", ChaveTipo.CPF, False, id="cpf_digitos_demais"),
         pytest.param("abc", ChaveTipo.CPF, False, id="cpf_sem_digitos"),
@@ -116,6 +118,7 @@ def test_validar_chave(pix, chave, tipo, esperado):
         pytest.param(VALID_EMAIL, ChaveTipo.EMAIL, 1000.01, 10000, time(6, 0), [], ResultadoPix.FORA_HORARIO, id="vl_6h00_noturno"),
         pytest.param(VALID_EMAIL, ChaveTipo.EMAIL, 5000.01, 10000, time(6, 1), [], ResultadoPix.ACIMA_LIMITE, id="vl_6h01_diurno"),
         # --- saldo (valor-limite e ausência de saldo) ---
+        pytest.param(VALID_EMAIL, ChaveTipo.EMAIL, 1.0, 10000, time(12, 0), [], ResultadoPix.APROVADA, id="vl_valor_um_real"),
         pytest.param(VALID_EMAIL, ChaveTipo.EMAIL, 100, 100, time(12, 0), [], ResultadoPix.APROVADA, id="autorizar_saldo_exato"),
         pytest.param(VALID_EMAIL, ChaveTipo.EMAIL, 100, 99.99, time(12, 0), [], ResultadoPix.SALDO_INSUFICIENTE, id="vl_saldo_abaixo_um_centavo"),
         pytest.param(VALID_EMAIL, ChaveTipo.EMAIL, 100, 100.01, time(12, 0), [], ResultadoPix.APROVADA, id="vl_saldo_acima_um_centavo"),
@@ -177,7 +180,9 @@ def test_autorizar_configuracao_customizada(valor, saldo, horario, esperado):
         pytest.param(VALID_EMAIL, 5000, 30, "fraude", [], True, id="td_fraude_ignora_valor"),
         # --- prazo e valor (valor-limite) ---
         pytest.param(VALID_EMAIL, 100, 0, None, [], True, id="chargeback_dias_zero"),
+        pytest.param(VALID_EMAIL, 1.0, 0, None, [], True, id="vl_chargeback_valor_um_real"),
         pytest.param(VALID_EMAIL, 100, 7, None, [], True, id="chargeback_dias_7"),
+        pytest.param(VALID_EMAIL, 6000.0, 7, None, [], True, id="vl_chargeback_dias_7_valor_alto"),
         pytest.param(VALID_EMAIL, 100, 8, None, [], True, id="chargeback_dias_8_valor_baixo"),
         pytest.param(VALID_EMAIL, 6000, 8, None, [], False, id="chargeback_dias_8_valor_alto"),
         pytest.param(VALID_EMAIL, 5000, 30, None, [], True, id="chargeback_dias_30_valor_exato"),
@@ -233,6 +238,8 @@ def test_chargeback_configuracao_customizada(dias, valor, esperado):
         pytest.param(time(22, 0), time(2, 0), time(1, 0), True, id="noturno_custom_virada_1h"),
         pytest.param(time(22, 0), time(2, 0), time(21, 59), False, id="noturno_custom_virada_antes"),
         pytest.param(time(22, 0), time(2, 0), time(2, 1), False, id="noturno_custom_virada_depois"),
+        pytest.param(time(12, 0), time(12, 0), time(12, 0), True, id="vl_janela_ponto_exata"),
+        pytest.param(time(12, 0), time(12, 0), time(12, 1), False, id="vl_janela_ponto_depois"),
     ],
 )
 def test_eh_noturno(inicio, fim, momento, esperado):

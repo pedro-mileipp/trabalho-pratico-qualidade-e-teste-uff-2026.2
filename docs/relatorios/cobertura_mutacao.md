@@ -746,6 +746,61 @@ A técnica de cada caso novo está no prefixo do id do `pytest.param`.
 
 ### Mutação (baseada em defeitos) — #43
 
-> A preencher na issue #43 (execução com `mutmut`, triagem dos sobreviventes e escore final).
+**Ferramenta:** `mutmut` 3.8.0, com a receita de **classe isolada** da issue #36 (acrescentada temporariamente ao `pyproject.toml`, sem versionar, e removida após a medição):
+
+```toml
+only_mutate = ["app/dominio/pix.py"]
+pytest_add_cli_args_test_selection = ["tests/unit/test_pix.py"]
+```
+
+**Comandos**
+
+```bash
+rm -rf .mutmut-cache mutants   # força a re-execução com a suíte nova
+uv run mutmut run --max-children 4
+uv run mutmut results
+uv run mutmut show <mutante>
+```
+
+**Resultado (22/11/2026)**
+
+| | 1ª execução — antes (suíte da #38, 104 casos) | 2ª execução — depois (suíte da #43, 111 casos) |
+|---|---|---|
+| Mutantes gerados | 148 | 148 |
+| Mortos | 136 | **144** |
+| Sobreviventes | 12 | 4 (todos equivalentes) |
+| Timeout / suspeitos | 0 | 0 |
+| Escore (mortos / gerados) | 91,9% | **97,3%** |
+| Escore descontando os equivalentes (mortos / não equivalentes) | 136 / 140 = 97,1% | **144 / 144 = 100%** |
+| Evidência | [`pix-execucao-1-antes.txt`](evidencias/mutacao/pix-execucao-1-antes.txt) | [`pix-execucao-2-depois.txt`](evidencias/mutacao/pix-execucao-2-depois.txt) |
+
+Meta da disciplina: ≥ 80%. ✅
+
+**Triagem dos 12 sobreviventes da 1ª execução**
+
+| Mutante | Linha original → mutação | Classificação | Caso que mata |
+|---|---|---|---|
+| `autorizar__mutmut_4` | `valor <= 0` → `valor <= 1` | Morto na 2ª execução | `vl_valor_um_real` (valor 1,00 é válido) |
+| `solicitar_chargeback__mutmut_7` | `valor <= 0` → `valor <= 1` | Morto na 2ª execução | `vl_chargeback_valor_um_real` |
+| `solicitar_chargeback__mutmut_23` | `dias <= 7` → `dias < 7` | Morto na 2ª execução | `vl_chargeback_dias_7_valor_alto` (7 dias com valor acima do teto: o original aprova antes da regra de valor) |
+| `_eh_noturno__mutmut_1` | `inicio <= fim` → `inicio < fim` | Morto na 2ª execução | `vl_janela_ponto_depois` (janela com início == fim) |
+| `_validar_cpf__mutmut_16` | `range(9, 11)` → `range(10, 11)` | Morto na 2ª execução | `laco_cpf_falha_so_primeiro_dv` (CPF que falha só no 1º dígito verificador) |
+| `_validar_cpf__mutmut_34` | `resto == 10` → `resto == 11` | Morto na 2ª execução | `pe_cpf_valido_dv_zero` (resto 10 no 2º DV, transformado em 0) |
+| `_validar_cpf__mutmut_35` | `resto = 0` → `resto = None` | Morto na 2ª execução | `pe_cpf_valido_dv_zero` |
+| `_validar_cpf__mutmut_36` | `resto = 0` → `resto = 1` | Morto na 2ª execução | `pe_cpf_valido_dv_zero` |
+| `validar_chave__mutmut_3` | `(chave or "")` → `(chave or "XXXX")` | Equivalente | — |
+| `solicitar_chargeback__mutmut_14` | `(motivo or "")` → `(motivo or "XXXX")` | Equivalente | — |
+| `_validar_cpf__mutmut_9` | `digitos == digitos[0] * 11` → `digitos == digitos[1] * 11` | Equivalente | — |
+| `_validar_email__mutmut_8` | `partition("@")` → `rpartition("@")` | Equivalente | — |
+
+O mapeamento mutante → teste foi conferido aplicando cada mutante sozinho (`mutmut apply`) e rodando só o teste indicado: 8/8 mortos (registrado na evidência).
+
+**Justificativa dos 4 equivalentes**
+
+- `validar_chave__mutmut_3` e `solicitar_chargeback__mutmut_14`: a mutação só altera o valor usado quando o argumento é `None`/falsy. `"XXXX"` não valida como chave de nenhum tipo (CPF, e-mail, telefone ou aleatória de 32) e não contém `golpe`/`fraude` — o resultado é sempre o mesmo.
+- `_validar_cpf__mutmut_9`: em uma string de 11 caracteres, `digitos == digitos[0] * 11` e `digitos == digitos[1] * 11` só são verdadeiras quando todos os dígitos são iguais; as condições são idênticas.
+- `_validar_email__mutmut_8`: a linha só é alcançada quando `email.count("@") == 1`, caso em que `partition` e `rpartition` devolvem exatamente a mesma divisão.
+
+**Lição registrada:** a cobertura de arestas já era 100%, mas a mutação revelou fronteiras não testadas — valor `1,00` (mutação de `<= 0` para `<= 1`), 7 dias com valor acima do teto, janela noturna com início == fim e o ramo `resto == 10` do CPF (que exige um CPF válido com dígito verificador 0).
 
 Evidência da cobertura: [`evidencias/cobertura/pix-cobertura.txt`](evidencias/cobertura/pix-cobertura.txt).
