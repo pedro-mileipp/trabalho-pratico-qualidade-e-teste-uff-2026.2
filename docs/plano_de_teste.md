@@ -31,6 +31,7 @@
 | 1.18 | 22/11/2026 | Daniel Izu | Entrega 2: testes de integração serviços ↔ repositório, sem mocks, no `SqliteRepositorio` e no `MemoriaRepositorio` (issue #54) na seção 6.9 |
 | 1.19 | 22/11/2026 | Alexandre Colmenero | Entrega 2: atualização global do plano (escopo, estado atual, ferramentas e critérios) e planejamento dos testes de `TransacaoPix` — issues #38, #43, #48 e #56 — na seção 6.10 |
 | 1.20 | 22/11/2026 | Alexandre Colmenero | Entrega 2: ampliação dos testes unitários de `TransacaoPix` para 104 casos e cobertura estrutural todas-arestas (100%, issue #38) na seção 6.10.2 |
+| 1.21 | 22/11/2026 | Alexandre Colmenero | Entrega 2: teste de mutação de `TransacaoPix` com `mutmut` (escore 97,3%; 100% descontando 4 equivalentes, issue #43) na seção 6.10.3 |
 
 > Nota: as versões 1.14 e 1.16 aparecem duplicadas por registros simultâneos de integrantes; a numeração histórica foi preservada porque o AI-LOG e os prompts a citam.
 
@@ -185,17 +186,17 @@ Além disso, os testes visam garantir a integridade dos dados, o tratamento de e
 
 | Suíte | Casos | Resultado |
 |-------|-------|-----------|
-| Unitária (`tests/unit/`) | 537 | 537 pass · 3 xfail (defeito #78, Tarifas) |
+| Unitária (`tests/unit/`) | 544 | 544 pass · 3 xfail (defeito #78, Tarifas) |
 | Integração (`tests/integration/`) | 84 | 84 pass |
 | Sistema (`tests/system/`) | 31 | 31 pass |
 | Requisitos não funcionais (`tests/rnf/`) | 22 | 22 pass |
-| **Total** | **674** | **674 pass · 3 xfail** |
+| **Total** | **681** | **681 pass · 3 xfail** |
 
 Unitários por classe de domínio:
 
 | Classe | Casos | Resultado |
 |--------|-------|-----------|
-| `TransacaoPix` | 104 | 104 pass |
+| `TransacaoPix` | 111 | 111 pass |
 | `DecisorCredito` | 96 | 96 pass |
 | `CalculadoraJuros` | 68 | 68 pass |
 | `SimuladorEmprestimo` | 125 | 125 pass |
@@ -640,5 +641,9 @@ uv run pytest tests/system/pix -v   # e EVIDENCIAS=1 para os prints
 #### 6.10.2 Unitários e cobertura estrutural — issue #38
 
 **Resultado (22/11/2026):** suíte ampliada de 68 para **104 casos**, todos passando; cobertura de arestas mantida em **100%** (101 statements, 50 branches). Os 2 casos que falhavam na Entrega 1 eram os defeitos #16 e #17, corrigidos no commit `e7881bd` (PR #89) e mantidos como regressão. Comando, saída e data em [`docs/relatorios/evidencias/cobertura/pix-cobertura.txt`](relatorios/evidencias/cobertura/pix-cobertura.txt); detalhes na seção `TransacaoPix` de [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
+
+#### 6.10.3 Mutação — issue #43
+
+**Resultado (22/11/2026):** `mutmut` isolado em `app/dominio/pix.py` — **148 mutantes, 144 mortos (97,3%)**; os 4 sobreviventes são equivalentes justificados (100% descontando equivalentes). Meta da disciplina: ≥ 80% ✅. A 1ª execução (104 casos) já atingia 91,9%; os 7 casos novos mataram 8 sobreviventes, com mapeamento mutante → teste verificado por `mutmut apply`. Evidências em [`docs/relatorios/evidencias/mutacao/pix-execucao-1-antes.txt`](relatorios/evidencias/mutacao/pix-execucao-1-antes.txt) e [`pix-execucao-2-depois.txt`](relatorios/evidencias/mutacao/pix-execucao-2-depois.txt); detalhes na seção `TransacaoPix` de [`docs/relatorios/cobertura_mutacao.md`](relatorios/cobertura_mutacao.md).
 
 ---
